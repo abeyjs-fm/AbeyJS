@@ -6,6 +6,7 @@ import "./styles/doc-shell.css";
 import "./styles/doc-site-appearance.css";
 import "./styles/doc-find.css";
 import { attachDocSiteSearch } from "./doc-search-attach.js";
+import { installDocsSiteRootAnchorGuard } from "./docs-site-url.js";
 import { createOmega } from "./omegaSetup.js";
 import { getRoutes } from "./routes.js";
 
@@ -36,6 +37,7 @@ const docsShellSearchHost = document.createElement("div");
 docsShellSearchHost.className = "doc-site-appbar-search-host";
 
 let disposeDocsShellSearchUi: (() => void) | undefined;
+let disposeDocsRootAnchorGuard: (() => void) | undefined;
 
 const result = bootstrapOmegaApp(app, {
   createOmega,
@@ -101,6 +103,10 @@ const result = bootstrapOmegaApp(app, {
 const { router, dispose, runtime } = result;
 void runtime;
 
+disposeDocsRootAnchorGuard = installDocsSiteRootAnchorGuard(
+  router ? (path) => router.navigate(path) : undefined,
+);
+
 if (router) {
   disposeDocsShellSearchUi = attachDocSiteSearch(docsShellSearchHost, (path) => {
     router.navigate(path);
@@ -115,6 +121,8 @@ if (import.meta.hot) {
   import.meta.hot.dispose(() => {
     disposeDocsShellSearchUi?.();
     disposeDocsShellSearchUi = undefined;
+    disposeDocsRootAnchorGuard?.();
+    disposeDocsRootAnchorGuard = undefined;
     dispose();
   });
 }

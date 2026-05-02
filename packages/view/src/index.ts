@@ -27,6 +27,12 @@ export {
   type CreatePathRouterOptions,
   type PathRouter,
 } from "./router/path-router.js";
+export {
+  hrefUnderPathnameBase,
+  pathIsUnderPathnameBase,
+  rewriteRootAbsoluteAnchorsForPathnameBase,
+  installPathnameBaseAnchorClickGuard,
+} from "./router/pathname-base-nav.js";
 export { firstNavPath, matchAppRoute, type AppRoute, type AppRouteNavChild } from "./shell/app-routes.js";
 export {
   fetchSidebarNav,

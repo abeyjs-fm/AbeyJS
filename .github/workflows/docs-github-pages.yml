@@ -44,7 +44,9 @@ jobs:
       # GitHub Pages paths are case-sensitive: base must match the repo segment in the URL (`/AbeyJS/` not `/abeyjs/`).
       - name: Build docs (subpath = repository name casing)
         run: |
+          OWNER="${GITHUB_REPOSITORY%%/*}"
           SLUG="${GITHUB_REPOSITORY##*/}"
+          export DOC_SITE_ORIGIN="https://${OWNER}.github.io/${SLUG}"
           export DOCS_SITE_BASE="/${SLUG}/"
           npm run docs:build
           cp docs/web/dist/index.html docs/web/dist/404.html

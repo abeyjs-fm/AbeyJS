@@ -66,6 +66,7 @@ File: **`.github/workflows/docs-github-pages.yml`**
 | `npm ci` | Install workspaces (linked `packages/*`). |
 | `npm run build` (root) | Runs **`build:packages`** — each **`@abeyjs/*`** workspace one after another (**`scripts/abeyjs-workspace-order.cjs`**, **`view` before `openapi`**). That guarantees **`dist/index.d.ts`** exists before dependents’ **`tsc`**. Omitting this in CI yields **`TS2307`** (**`dist`** is not in git). Running `openapi`'s `tsc` before `view` has written **`dist/`** — e.g. concurrent workspace builds from a long **`npm run build -w …`** list — causes the same failure. |
 | **`DOCS_SITE_BASE`** | Vite **`base`** for **`docs/web`** — CI sets **`/` + `${GITHUB_REPOSITORY##*/}` + `/`** using the **exact repository name casing**. GitHub Pages URLs are **case-sensitive**; a lowercased slug when the repo is **`AbeyJS`** makes **`index.html`** request **`/abeyjs/assets/...`** while the site is served under **`/AbeyJS/`** → **404** on JS/CSS. Locally omit env → **`/`** via `vite.config.ts`. |
+| **`DOC_SITE_ORIGIN`** | Absolute site root **without** trailing slash (e.g. **`https://abeyjs-fm.github.io/AbeyJS`**) for **canonical**, **Open Graph**, **Twitter**, and **JSON-LD**. CI sets it from **`GITHUB_REPOSITORY`**. Override locally with **`DOC_SITE_ORIGIN`** or **`DOCS_SITE_ORIGIN`**; default in **`vite.config.ts`** matches the AbeyJs org Pages URL. **`index.html`** uses **`%DOC_SITE_ORIGIN%`** placeholders expanded at build time. |
 | `npm run docs:build` | Root script → **`abeyjs-docs-web`** **`tsc` + `vite build`**. |
 | Copy **`index.html` → `404.html`** | So deep links (**`/guides/quick-start`**, etc.) return the SPA shell; client router resolves the route. |
 | **`.nojekyll`** | Disables Jekyll so files GitHub might ignore otherwise are kept. |
@@ -91,8 +92,9 @@ Exported helpers (**`normalizeBasename`**, **`withBasename`**, **`stripBasenameF
 
 | File | Role |
 |------|------|
-| **`src/docs-site-url.ts`** | Builds prefixed **`href`**s and **`rewriteDocsSiteAnchors`** on static **`href="/..."`** links in **`app.docs.home`** / **`app.docs.welcome`** shadow roots when **`BASE_URL` ≠ `/`**. Public welcome search uses **`docsSiteAssign`** because there is no shell **`router`** yet. |
+| **`src/docs-site-url.ts`** | Thin wrappers around **`@abeyjs/view`**: **`hrefUnderPathnameBase`**, **`rewriteRootAbsoluteAnchorsForPathnameBase`**, **`installPathnameBaseAnchorClickGuard`**, passing **`import.meta.env.BASE_URL`**. Same **`/panel` → host root** fix; **`installDocsSiteRootAnchorGuard`** wired from **`main.ts`**. **`docsSiteAssign`** for welcome search (no **`router`**). |
 | **`src/main.ts`** | **`pathnameBase: import.meta.env.BASE_URL`** on **`shell`** so the authenticated docs shell tracks subpath routing. |
+| **`public/`** | Vite **`publicDir`** (**`vite.config.ts`**): files copied verbatim to **`dist/`** root (`favicon.svg`, **`icon.png`**, **`robots.txt`, …). Root-absolute **`href="/..."`** in **`index.html`** get **`base`** applied on build (CI **`DOCS_SITE_BASE`**). |
 
 ### Local production check (optional)
 
