@@ -14,12 +14,13 @@ Copies a Vite + TypeScript starter into `<folder>`.
 |------|--------|--------|
 | `--template` | `admin`, `abeyjs`, `minimal` | `minimal` is a tiny package skeleton with only `@abeyjs/core`. |
 | `--shell` | `dashboard`, `appbar` | Applies only to `--template admin`. |
+| `--skip-install` | — | Skip the automatic `npm install` after the template is written. |
 
-Does **not** run `npm install`.
+Runs **`npm install`** in the new project folder by default (omit with **`--skip-install`** or **`SKIP_ABEYJS_SCAFFOLD_INSTALL=1`**).
 
 ### `abeyjs add openapi <folder>`
 
-Patches an existing AbeyJs + Vite app **without** requiring a prior `connect`. Implementation: **`src/openapi-add-wires.ts`** (`addOpenapiToApp`).
+Patches an existing AbeyJs + Vite app **without** requiring a prior `connect`. Implementation: **`src/openapi-add-wires.ts`** (`addOpenapiToApp`). After patching **`package.json`**, the CLI runs **`npm install`** in that folder unless you pass **`--skip-install`** or set **`SKIP_ABEYJS_SCAFFOLD_INSTALL=1`**.
 
 | Addition | Purpose |
 |----------|---------|
@@ -32,6 +33,7 @@ Patches an existing AbeyJs + Vite app **without** requiring a prior `connect`. I
 |------|---------|
 | `--proxy` | `https://127.0.0.1:7019` |
 | `--openapi-path` | `/swagger/v1/swagger.json` |
+| `--skip-install` | — | Skip **`npm install`** after updating **`package.json`**. |
 
 Runtime CRUD wiring still uses **`@abeyjs/openapi`** (`discover*` / `registerOpenApi*` / **`mountOpenApiCrudView`**) — see **`packages/openapi/README.md`**.
 
@@ -56,7 +58,7 @@ Reads **`.abeyjs/connect.json`** (+ YAML overrides) and materializes OM / TS sca
 
 Requires a successful **`connect`** (`connect.json` present with entities).
 
-### `abeyjs generate ecosystem <Name> [--feature-root <path>] [--target <dir>]`
+### `abeyjs generate ecosystem <Name> [--feature-root <path>] [--target <dir>] [--show-nav|--no-show-nav]`
 
 Creates a **vertical slice** (feature folder) with a working sample: tick intent → agent → flow → channel event → UI update.
 
@@ -64,6 +66,7 @@ Creates a **vertical slice** (feature folder) with a working sample: tick intent
 |------|---------|
 | `--target` | App root (must contain `src/`). Defaults to `.`; resolved with the same rules as other commands (`INIT_CWD`, etc.). |
 | `--feature-root` | Where to create the folder (relative to `--target` unless absolute). Default: `src/<kebab>` or, if you ran the CLI **from inside** `src/foo`, `src/foo/<kebab>`. Must stay under `src/`. |
+| `--show-nav` / `--no-show-nav` | Emit `showInNav: false` on the generated `componentRoute` nav object when hidden (`--hide-nav` is an alias for `--no-show-nav`). If neither flag is passed: **TTY** asks in Spanish/English; **non-interactive** defaults to visible (same as `--show-nav`). |
 
 **Emitted tree** (implementation: `src/generate-ecosystem.ts`):
 
@@ -74,17 +77,17 @@ Creates a **vertical slice** (feature folder) with a working sample: tick intent
 | `omega/agent.ts` | Stateful agent; ticks increment `viewState` and publish `eventTicked`. |
 | `omega/flow.ts` | Listens for tick intent and `eventTicked`, emits UI expressions. |
 | `omega/register.ts` | **`install<Name>Omega(runtime)`** — registers agent, flow, `onIntent` → `handleIntent`. |
-| `ui/app-<kebab>.ts` | `@AbeyComponent` with `template` from **`?raw`** view + styles `?url`; dispatches tick intent. |
-| `ui/app-<kebab>.view.html` | Tiny template with `(click)` binding. |
-| `<kebab>.css` | Scoped layout for the section. |
+| `ui/app.<kebab>.view.ts` | `@AbeyComponent`: **`import { template }`** from **`.view.html`** (OM) + **`stylesText`** from **`.view.css?inline`**; dispatches tick intent. |
+| `ui/app.<kebab>.view.html` | Tiny template with `(click)` binding. |
+| `ui/app.<kebab>.view.css` | Estilos del bloque (misma convención de nombres que **views/home** en admin). |
 | `model/`, `data/` | Empty stubs for DTOs and data access. |
 
 **Auto-wiring** (best effort, only if files exist):
 
 1. **`omegaSetup.ts`** (`src/` or project root): inserts `import { install… }` and `install…(runtime)` after `registerModule(registerCommon)`, else after `createOmegaRuntime()`, else before `return { runtime }`.
-2. **`routes.ts`**: inserts `componentRoute('/<kebab>', …)` importing `ui/app-<kebab>.ts` **before** the 404 `pageRoute`, and adds `componentRoute` import from `@abeyjs/view` when needed.
+2. **`routes.ts`**: inserts `componentRoute('/<kebab>', …)` importing `ui/app.<kebab>.view.ts` **before** the 404 `pageRoute`, and adds `componentRoute` import from `@abeyjs/view` when needed. Nav metadata respects **`showInNav`** (prompt or flags).
 
-Generated UI uses **`?raw`** HTML, not the OM template compiler pipeline.
+Generated UI follows the **admin** stack: OM **`.view.html`** + **`stylesText`** / **`?inline`** (requires **`abeyVitePlugin`** in `vite.config.ts`).
 
 Full behaviour, option types, and JSDoc live in **`src/generate-ecosystem.ts`** (`runGenerateEcosystem`, `normalizeEcosystemPascal`, `buildEcosystemWireInstructions`).
 
@@ -135,3 +138,7 @@ Run the compiled CLI:
 ```bash
 node packages/cli/dist/cli.js help
 ```
+
+### Install messages (`npm i` / `npm i -g`)
+
+`preinstall` / `postinstall` print a short banner (like many CLIs): “installing…”, then **global** vs **local** and suggested commands. To skip (CI or noisy workspace reinstalls): set **`SKIP_ABEYJS_INSTALL_MSG=1`** or rely on **`CI=true`**.

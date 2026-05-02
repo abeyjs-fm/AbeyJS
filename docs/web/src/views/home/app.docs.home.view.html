@@ -1,0 +1,166 @@
+<section class="doc-home">
+
+  <header class="doc-home__hero">
+    <div class="doc-home__hero-inner">
+      <div class="doc-home__hero-main">
+        <span class="doc-home__kicker">AbeyJs documentation</span>
+        <h1>Documentation from the same stack you run in production</h1>
+        <p class="doc-home__lead">
+          Declarative routes, compiled OM views (<code class="doc-home__code">*.view.html</code>),
+          OmegaRuntime, and intents over the channel. Guides written from the monorepo, with clear limits
+          and direct links to the code where it matters.
+        </p>
+        <p class="doc-home__scope" role="note">
+          <strong>This site is AbeyJs documentation only.</strong>
+          Dark chrome / violet–blue branding and wide layout are CSS for this site (<code class="doc-home__code">docs/web/src/styles</code>).
+          The <strong>shell</strong> from <code class="doc-home__code">@abeyjs/view</code> serves routes, outlet, and menu; you theme it with variables and stylesheets (e.g. <code class="doc-home__code">themeVarsLight/Dark</code>, your own theme): other apps do not inherit the same look by default.
+        </p>
+        <nav class="doc-home__cta-row" aria-label="Quick links">
+          <a class="doc-home__cta doc-home__cta--primary" href="/guides/intro">Introduction</a>
+          <a class="doc-home__cta" href="/guides/quick-start">Quick start</a>
+          <a class="doc-home__cta" href="/omega">Tools</a>
+          <a class="doc-home__cta" href="/guides">All guides</a>
+        </nav>
+      </div>
+
+      <aside class="doc-home__aside" aria-label="Suggested reading order">
+        <strong class="doc-home__aside-title">Suggested order</strong>
+        <ol class="doc-home__path">
+          <li>
+            <a href="/guides/intro" class="doc-home__path-a">Introduction</a>
+            <span class="doc-home__path-hint">map of the stack and what AbeyJs is not</span>
+          </li>
+          <li>
+            <a href="/guides/quick-start" class="doc-home__path-a">Quick start</a>
+            <span class="doc-home__path-hint">CLI, templates, first <code class="doc-home__code">abey.json</code></span>
+          </li>
+          <li>
+            <a href="/guides/bootstrap-shell" class="doc-home__path-a">Bootstrap · shell</a>
+            <span class="doc-home__path-hint">chrome, outlet, optional API menu</span>
+          </li>
+          <li>
+            <a href="/guides/routing" class="doc-home__path-a">Routing</a>
+            <span class="doc-home__path-hint"><code class="doc-home__code">AppRoute</code>, <code class="doc-home__code">componentRoute</code></span>
+          </li>
+          <li>
+            <a href="/guides/abey-component" class="doc-home__path-a">@AbeyComponent</a>
+            <span class="doc-home__path-hint">when you have a real screen mounted</span>
+          </li>
+        </ol>
+        <p class="doc-home__aside-note">
+          Next: <a href="/guides/omega" class="doc-home__inline-a">Omega runtime</a>,
+          <a href="/guides/cli" class="doc-home__inline-a">CLI</a>, and for CRUD,
+          <a href="/guides/crud-auto" class="doc-home__inline-a">OpenAPI</a>.
+          Per-package reference under
+          <a href="/omega" class="doc-home__inline-a">Tools</a> (<code class="doc-home__code">@abeyjs/*</code>).
+        </p>
+      </aside>
+    </div>
+  </header>
+
+  <h2 class="doc-home__sectionTitle">Basics</h2>
+  <div class="doc-home__grid">
+    <a class="doc-card" href="/guides/intro">
+      <span class="doc-card__tag">1</span>
+      <h3 class="doc-card__title">Introduction</h3>
+      <p class="doc-card__desc">Philosophy, monorepo packages, glossary, and what AbeyJs is not.</p>
+    </a>
+    <a class="doc-card" href="/guides/quick-start">
+      <span class="doc-card__tag">2</span>
+      <h3 class="doc-card__title">Quick start</h3>
+      <p class="doc-card__desc">CLI, templates, <code class="doc-home__code">abey.json</code>, files you touch on day one.</p>
+    </a>
+    <a class="doc-card" href="/guides/bootstrap-shell">
+      <span class="doc-card__tag">3</span>
+      <h3 class="doc-card__title">Bootstrap · shell</h3>
+      <p class="doc-card__desc"><code class="doc-home__code">bootstrapOmegaApp</code>, shell options table, auth, remote menu, HMR.</p>
+    </a>
+    <a class="doc-card" href="/guides/routing">
+      <span class="doc-card__tag">4</span>
+      <h3 class="doc-card__title">Routing</h3>
+      <p class="doc-card__desc"><code class="doc-home__code">AppRoute</code>, <code class="doc-home__code">componentRoute</code>, <code class="doc-home__code">navChildren</code>, API menu.</p>
+    </a>
+  </div>
+
+  <h2 class="doc-home__sectionTitle">Tools · npm</h2>
+  <div class="doc-home__grid doc-home__grid--band">
+    <a class="doc-card doc-card--accent" href="/omega">
+      <span class="doc-card__tag doc-card__tag--soft">Ω</span>
+      <h3 class="doc-card__title"><code class="doc-home__code">@abeyjs/*</code> packages</h3>
+      <p class="doc-card__desc">One page per package: role, typical install, APIs you import first.</p>
+    </a>
+  </div>
+
+  <h2 class="doc-home__sectionTitle">@abeyjs/view</h2>
+  <div class="doc-home__grid">
+    <a class="doc-card" href="/guides/abey-component">
+      <span class="doc-card__tag">5</span>
+      <h3 class="doc-card__title">@AbeyComponent</h3>
+      <p class="doc-card__desc">OM class, <code class="doc-home__code">state</code>, channel providers, lazy per route.</p>
+    </a>
+    <a class="doc-card" href="/guides/data-views">
+      <span class="doc-card__tag">6</span>
+      <h3 class="doc-card__title">Lists · forms</h3>
+      <p class="doc-card__desc"><code class="doc-home__code">mountListView*</code>, <code class="doc-home__code">mountFormView</code>, optional Zod.</p>
+    </a>
+  </div>
+
+  <h2 class="doc-home__sectionTitle">Omega &amp; tooling</h2>
+  <div class="doc-home__grid">
+    <a class="doc-card" href="/guides/omega">
+      <span class="doc-card__tag">7</span>
+      <h3 class="doc-card__title">Omega runtime</h3>
+      <p class="doc-card__desc">Channel, <code class="doc-home__code">dispatch</code>, intent conventions, CLI ecosystem.</p>
+    </a>
+    <a class="doc-card" href="/guides/cli">
+      <span class="doc-card__tag">8</span>
+      <h3 class="doc-card__title">CLI</h3>
+      <p class="doc-card__desc">init, connect, add openapi, generate views / ecosystem, codegen.</p>
+    </a>
+    <a class="doc-card" href="/guides/monorepo">
+      <span class="doc-card__tag">9</span>
+      <h3 class="doc-card__title">Monorepo</h3>
+      <p class="doc-card__desc">Workspaces, build, docs web, how to iterate on <code class="doc-home__code">packages/*</code>.</p>
+    </a>
+  </div>
+
+  <h2 class="doc-home__sectionTitle">Vision, OpenAPI &amp; tables</h2>
+  <div class="doc-home__grid">
+    <a class="doc-card" href="/guides/vision">
+      <span class="doc-card__tag">10</span>
+      <h3 class="doc-card__title">Product vision</h3>
+      <p class="doc-card__desc">Product contract, requirement/code matrix, HTML/CSS and OpenAPI registration.</p>
+    </a>
+    <a class="doc-card" href="/guides/abey-templates">
+      <span class="doc-card__tag">11</span>
+      <h3 class="doc-card__title">OM templates</h3>
+      <p class="doc-card__desc">Vite compiler, supported syntax, <code class="doc-home__code">abey.json</code>, module exports.</p>
+    </a>
+    <a class="doc-card" href="/guides/crud-auto">
+      <span class="doc-card__tag">12</span>
+      <h3 class="doc-card__title">CRUD OpenAPI</h3>
+      <p class="doc-card__desc">Item table with repo state; wiring with add openapi.</p>
+    </a>
+    <a class="doc-card" href="/guides/security">
+      <span class="doc-card__tag">13</span>
+      <h3 class="doc-card__title">Security</h3>
+      <p class="doc-card__desc">XSS policy, <code class="doc-home__code">escapeHtml</code>, <code class="doc-home__code">setSanitizedHtml</code>, APIs.</p>
+    </a>
+    <a class="doc-card" href="/guides/tables">
+      <span class="doc-card__tag">14</span>
+      <h3 class="doc-card__title">abey-table</h3>
+      <p class="doc-card__desc">Product-style table: columns, actions, pagination; custom element.</p>
+    </a>
+    <a class="doc-card" href="/guides/table-flows">
+      <span class="doc-card__tag">15</span>
+      <h3 class="doc-card__title">Tables · flows</h3>
+      <p class="doc-card__desc">Flow mode: intents + channel events for columns and grid.</p>
+    </a>
+    <a class="doc-card" href="/guides/entities-forms">
+      <span class="doc-card__tag">16</span>
+      <h3 class="doc-card__title">Entities · forms</h3>
+      <p class="doc-card__desc">Class with decorators, <code class="doc-home__code">classToAbeyFormConfig</code>, API vs Flow selects.</p>
+    </a>
+  </div>
+
+</section>

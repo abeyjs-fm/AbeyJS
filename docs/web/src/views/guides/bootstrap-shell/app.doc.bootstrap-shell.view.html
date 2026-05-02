@@ -1,0 +1,183 @@
+<section data-role="doc-guide-root">
+  <article data-doc="markdown">
+<p><code>bootstrapOmegaApp</code> is the entry when building an Omega SPA: wraps <strong><code>mountRoutedApp</code></strong>, publishes navigation to the channel on route changes, optional public branch before loading authenticated chrome.</p>
+<p>Interior order:</p>
+<ol>
+<li><strong><code>auth</code></strong> (optional): URL hits <strong><code>publicPaths</code></strong> <em>and</em> user not authenticated ⇒ run <strong><code>mountPublic(root)</code></strong>, <strong>skip</strong> dashboard. Authenticated user on public URL ⇒ <strong><code>location.replace</code></strong> to <strong><code>redirectIfAuthed</code></strong> (default <strong><code>/home</code></strong>).</li>
+<li><strong>Shell</strong>: otherwise <strong><code>mountRoutedApp</code></strong> on the same <strong><code>root</code></strong> with <strong><code>config.shell</code></strong>.</li>
+<li><strong>Runtime</strong>: resolved by <strong><code>createOmega</code></strong> when supplied; returned object has <strong><code>router</code></strong>, <strong><code>dispose</code></strong>, <strong><code>runtime</code></strong>.</li>
+</ol>
+<p>Inspect <strong><code>packages/view/src/bootstrap/omega-bootstrap.ts</code></strong> for line-by-line detail; here we condense <strong><code>MountRoutedAppConfig</code></strong>.</p>
+<h3><code>auth</code> branch (quick ref)</h3>
+<pre><code class="language-ts">auth: {
+  publicPaths: [&quot;/login&quot;, &quot;/reset&quot;],
+  isAuthenticated: () =&gt; Boolean(/* your cookie/session */),
+  redirectIfAuthed: &quot;/dashboard&quot;,
+  mountPublic: (root) =&gt; {
+    /* mount login SPA; return dispose if timers/subscriptions */
+  },
+},
+</code></pre>
+<p>Without <code>auth</code>, <strong><code>shell</code></strong> always loads with routes you pass.</p>
+<hr>
+<h2>Shell options (<code>MountRoutedAppConfig</code>)</h2>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Worth committing</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>brand</code></td>
+<td><code>string</code></td>
+<td>Title/mark primary in app bar/sidebar depending on variant.</td>
+</tr>
+<tr>
+<td><code>subBrand</code></td>
+<td><code>string?</code></td>
+<td>Optional subtitle (“admin”, environment…).</td>
+</tr>
+<tr>
+<td><code>variant</code></td>
+<td><code>&#39;admin&#39;</code> | <code>&#39;landing&#39;</code> | <code>&#39;blank&#39;</code></td>
+<td><strong><code>admin</code></strong> = sidebar + outlet; <strong><code>landing</code></strong> = top horizontal bar + public-ish layout; <strong><code>blank</code></strong> = <strong><code>main.abey-outlet</code> only</strong>, no preset nav (embeds).</td>
+</tr>
+<tr>
+<td><code>routes</code></td>
+<td><code>AppRoute[]</code></td>
+<td>Flat route table; <strong><code>/guides/routing</code></strong>.</td>
+</tr>
+<tr>
+<td><code>dashboardLayout</code></td>
+<td><code>boolean?</code></td>
+<td>Default <strong><code>true</code></strong> when <code>variant === &#39;admin&#39;</code>; Omega dashboard density vs lighter bar (<code>false</code>).</td>
+</tr>
+<tr>
+<td><code>appearance</code></td>
+<td><code>&#39;dark&#39;</code> | <code>&#39;light&#39;</code>?</td>
+<td>Initial admin chrome. <strong><code>persistAppearance</code></strong> default true: <strong>localStorage wins</strong> under <strong><code>ABEY_SHELL_APPEARANCE_STORAGE_KEY</code></strong>.</td>
+</tr>
+<tr>
+<td><code>persistAppearance</code></td>
+<td><code>boolean?</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>showAppearanceToggle</code></td>
+<td><code>boolean?</code></td>
+<td>☀️/🌙 icons admin; <strong><code>prefers-reduced-motion</code></strong> respected. Default true.</td>
+</tr>
+<tr>
+<td><code>logoMark</code></td>
+<td><code>string?</code></td>
+<td>Short stripe initials/logo; ignored with <strong><code>brandTitleSplit</code></strong> + custom text + logo.</td>
+</tr>
+<tr>
+<td><code>brandLogoSrc</code> / <code>brandLogoAlt</code></td>
+<td><code>string?</code></td>
+<td>Dashboard image logo; theme hides CSS jewel when <code>&lt;img&gt;</code> present.</td>
+</tr>
+<tr>
+<td><code>brandTitleSplit</code></td>
+<td><code>{ lead; tail }?</code></td>
+<td>Split mark (“Abey” + “JS”) with <strong><code>--abey-brand-tail-*</code></strong> gradient.</td>
+</tr>
+<tr>
+<td><code>appBarActions</code></td>
+<td><code>ShellAppBarAction[]?</code></td>
+<td>Right app-bar buttons.<strong><code>[]</code></strong> removes demos; <strong>omit</strong> = FA placeholders (<strong>load FA</strong> in index). Dropdowns via <strong><code>dropdownMenu</code></strong>.</td>
+</tr>
+<tr>
+<td><code>appBarActionsAppend</code></td>
+<td><code>…?</code></td>
+<td>Append after defaults or <strong><code>appBarActions</code></strong>.</td>
+</tr>
+<tr>
+<td><code>rootClassName</code></td>
+<td><code>string?</code></td>
+<td><code>#app</code> classes, e.g. <code>abey abey-app my-brand</code>.</td>
+</tr>
+<tr>
+<td><code>fallbackPath</code></td>
+<td><code>string?</code></td>
+<td>Initial nav when pathname does not match.</td>
+</tr>
+<tr>
+<td><code>onRouteChange</code></td>
+<td><code>(path,route)=&gt;void?</code></td>
+<td>Callback beside <strong><code>omega/nav:changed</code></strong> publish.</td>
+</tr>
+<tr>
+<td><code>appDocumentTitle</code></td>
+<td><code>string?</code></td>
+<td><code>&lt;title&gt;</code> base; active route updates when <strong><code>title</code></strong> set.</td>
+</tr>
+<tr>
+<td><code>outletRouteTransition</code></td>
+<td><code>boolean?</code></td>
+<td>Fade/slide outlet transition; <strong><code>false</code></strong> instant swap (dense docs). Default true.<strong><code>prefers-reduced-motion</code></strong> honored.</td>
+</tr>
+<tr>
+<td><code>themeVars</code> / <code>themeVarsDark</code> / <code>themeVarsLight</code></td>
+<td><code>Record&lt;string,string&gt;?</code></td>
+<td>Inline tokens on shell host (<code>abey-accent</code> sans <code>--</code>). <strong><code>themeVarsDark</code></strong> when <strong><code>abey--dark</code></strong>.</td>
+</tr>
+<tr>
+<td><code>sidebarMenuMode</code></td>
+<td>see below</td>
+<td>Admin sidebar only.</td>
+</tr>
+</tbody></table>
+<h3><code>sidebarMenuMode</code> (admin)</h3>
+<p>Valid <strong><code>static</code> | <code>slim</code> | <code>reveal</code> | <code>horizontal</code> | <code>overlay</code> | <code>compact</code> | <code>drawer</code></strong>. <strong><code>horizontal</code></strong> replaces aside with nav under app bar. This docs <strong><code>main.ts</code></strong> uses <strong><code>compact</code></strong> for prose-heavy layout.</p>
+<p>Without <strong><code>@abeyjs/view/theme/omega-default.css</code></strong>, modes still render structure but lose cohesive hierarchy visuals.</p>
+<hr>
+<h3><strong><code>omega/nav:changed</code></strong> event</h3>
+<p>Successful navigation publishes to <strong><code>runtime.channel</code></strong> (when runtime exists):</p>
+<ul>
+<li><strong><code>from</code></strong> / <strong><code>to</code></strong>: normalized pathnames.</li>
+<li><strong><code>title</code></strong>: active <strong><code>AppRoute</code></strong> title or null.</li>
+<li><strong><code>routePath</code></strong>: row <strong><code>path</code></strong>.</li>
+</ul>
+<p>Telemetry, breadcrumbs, client history—without tying to raw <code>History</code>.</p>
+<hr>
+<h3>Sidebar from API or mock (<code>fetchSidebarNav</code>, <code>buildRoutesFromApi</code>)</h3>
+<p>Servers <strong>never invent screens</strong>. Client ships all <strong><code>mount</code></strong> code; backend only adjusts <strong>order</strong>, <strong>labels</strong>, <strong>icons</strong>.</p>
+<ol>
+<li><strong><code>const base = getRoutes()</code></strong>: JSON paths must have real TS rows.</li>
+<li><strong><code>await fetchSidebarNav(opts?)</code></strong>: dev infers (<strong><code>import.meta.env.DEV</code></strong>) tries <strong><code>GET /mock-nav.json</code></strong> (<code>public/mock-nav.json</code> in Vite). Prod typical: <strong><code>GET /api/nav</code></strong> with <strong><code>credentials: &#39;include&#39;</code></strong>. Response <strong><code>{ &quot;items&quot;: ApiNavItem[] }</code></strong> with <strong><code>path</code></strong>, <strong><code>label</code></strong>, optional <strong><code>navIconFa</code></strong>, nested <strong><code>children</code></strong>.</li>
+<li>If items valid ⇒ <strong><code>routes = buildRoutesFromApi(base, items)</code></strong>.</li>
+<li>Pass array to <strong><code>shell.routes</code></strong>.</li>
+</ol>
+<p>Missing base paths silently drop.<strong><code>path: &#39;*&#39;</code></strong> lands <strong>last</strong>.</p>
+<p>Full snippet in <strong><code>examples/*/src/main.ts</code></strong> and <strong>admin</strong> template:</p>
+<pre><code class="language-ts">const base = getRoutes();
+let routes = base;
+const apiItems = await fetchSidebarNav({
+  mockUrl: &quot;/mock-nav.json&quot;,
+  apiUrl: &quot;/api/nav&quot;,
+  preferMockFetch: false,
+  mockDelayMs: 0,
+});
+if (apiItems?.length) {
+  routes = buildRoutesFromApi(base, apiItems);
+}
+bootstrapOmegaApp(root, {
+  createOmega,
+  shell: { /* … */ routes },
+});
+</code></pre>
+<h3>Vite teardown / HMR</h3>
+<p>Register in <strong><code>main.ts</code></strong>:</p>
+<pre><code class="language-ts">if (import.meta.hot) {
+  import.meta.hot.dispose(() =&gt; {
+    dispose();
+  });
+}
+</code></pre>
+<p>Without it reloads stack duplicate shells invisible in <code>#app</code>.</p>
+<p>Next: <strong><code>/guides/routing</code></strong>.</p>
+  </article>
+</section>

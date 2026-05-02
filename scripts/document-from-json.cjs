@@ -1,7 +1,7 @@
 /**
  * Genera `{nombre}.g.ts` dentro de **`src/generate/`** del proyecto AbeyJs en el que estés (según `cwd`).
  *
- * - Solo genera si `cwd` está **dentro de una app** que declara `@abeyjs/*` en `package.json` (no el monorepo raíz ni paquetes `@abeyjs/...`).
+ * - Solo genera si `cwd` está **dentro de una app** que declara `@abeyjs/*` en `package.json` (no la raíz del repo `abeyjs` ni paquetes `@abeyjs/...`).
  * - Sin argumentos: crea **`src/generate/.omega-doc-paste-temp.json`**, intenta abrir el editor (`code --wait`, `EDITOR`, `notepad`…),
  *   pegás/guardás el JSON y en la consola presionás **Enter** para generar el `.g.ts` y borrar el temporal.
  * - Con argumento: ruta a un `.json` existente (igual que antes).
@@ -31,7 +31,7 @@ function hasOmegaAppDependencies(pkg) {
 
 /**
  * Carpeta de app Vite/AbeyJs: `package.json` con deps `@abeyjs/*`, nombre no es paquete `@abeyjs/…`,
- * no es el monorepo raíz, y existe `src/`.
+ * no es la raíz del repo (`name`: `abeyjs`), y existe `src/`.
  */
 function findOmegaAppRoot(startDir) {
   let d = path.resolve(startDir);
@@ -41,8 +41,8 @@ function findOmegaAppRoot(startDir) {
       try {
         const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf8"));
         const name = String(pkg.name ?? "");
-        if (name === "abeyjs-monorepo") {
-          /* seguir subiendo */
+        if (name === "abeyjs" || name === "abeyjs-monorepo") {
+          /* raíz del repositorio AbeyJs — no es una app */
         } else if (!name.startsWith("@abeyjs/") && hasOmegaAppDependencies(pkg)) {
           const srcDir = path.join(d, "src");
           if (fs.existsSync(srcDir) && fs.statSync(srcDir).isDirectory()) {
@@ -300,7 +300,7 @@ async function main() {
         "No se detectó un proyecto de aplicación AbeyJs.",
         "  Requisitos: estar en (o debajo de) una carpeta con package.json que use @abeyjs/* y que tenga src/.",
         "  Ejemplo: cd examples/MyMiusic",
-        "  No se usa la raíz del monorepo (abeyjs-monorepo) ni paquetes @abeyjs/... de packages/.",
+        "  No se usa la raíz del repositorio (package `abeyjs`) ni paquetes @abeyjs/... bajo packages/.",
       ].join("\n"),
     );
     process.exit(1);

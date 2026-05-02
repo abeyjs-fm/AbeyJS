@@ -1,25 +1,12 @@
-# AbeyJs template files (`.view.html` / `.abey`)
+# OM templates (`.view.html` / `.abey`)
 
-The Vite plugin **`abeyVitePlugin`** from **`@abeyjs/compiler`** compiles **`*.view.html`** and **`*.abey`** into TypeScript modules (**`template`**, **`compiledTemplate`**, **`mount`**, optional **`@Component`** custom element). Behaviour, pass order, cache, and tooling are documented in **`packages/compiler/README.md`** — that file is the source of truth for syntax.
+Summary of **what the compiler understands today** and how to wire Vite. Detailed passes and edge cases: **`packages/compiler/README.md`**—if this guide disagrees, **the README wins** until we align.
 
-This page is a **short orientation** plus pointers to starters that already use OM templates.
+## What problem it solves
 
----
+**`.view.html`** and **`.abey`** are not static HTML from a server: Vite compiles them to **TypeScript modules** exporting `template`, `compiledTemplate`, `mount`, and sometimes an `AbeyComponentElement` class from frontmatter `@Component`. The bundler gets tree-shaking, code splitting, and normal `.ts` typecheck.
 
-## Supported surface (today)
-
-Structural and binding features match the compiler implementation, including:
-
-- Optional YAML **`---`** frontmatter with **`@Component({ selector, styles, … })`**.
-- Structural blocks: **`@if` / `@else`**, **`@for`**, sugary **`*if` / `*for`**, **`@switch`** lowering.
-- Text: **`{{ expr }}`** and **`{ expr }`** in text nodes.
-- Attributes: **`[prop]`**, **`(click)`**, **`[(model)]`**, **`attr="{{ }}"`**, mixed **`href="/u/{{ id }}"`**, **`<select [items]>`**, etc.
-
-Expressions are opaque strings emitted into generated **`mount()`** — **no compile-time typing** on template expressions yet.
-
----
-
-## Vite wiring
+## Vite plugin
 
 ```ts
 import { defineConfig } from "vite";
@@ -30,26 +17,68 @@ export default defineConfig({
 });
 ```
 
-Optional **`abey.json`** beside Vite **`root`** for global styles (**`packages/compiler/README.md`**).
+- Runs **`enforce: "pre"`** so markup transforms first.
+- Template hot reload usually **full dev-server reload** today; fine-grained HMR is still work in progress.
 
----
+## `abey.json` (optional, next to Vite root)
 
-## Starters shipped with the CLI
+```json
+{
+  "styles": ["./src/styles/global.css", "@abeyjs/uikit/styles/abey-table.css"]
+}
+```
 
-The **`empty`** template (CLI flags **`--template abeyjs`** or **`--template empty`**) includes a compiled home view:
+The plugin emits **`/abey-styles.js`**—import it **once** in `main.ts`. If you skip it, **production** has no `index.html` magic: blank apps or 404 scripts.
 
-- **`src/views/home/app.home.view.html`** + **`app.home.view.ts`** (`@AbeyComponent` wrapper).
+## Syntax surface (current)
 
-See **`packages/cli/templates/README.md`** for how **`admin`** / **`empty`** differ.
+**Structural:** `@if` / `@else`, `@for (x of xs)`, `@switch` (lowers to `@if` ladder).
 
----
+**Sugar:** `*if`, `*for` on nodes.
 
-## TypeScript imports
+**Text:** `{{ expr }}` and `{expr}` in text nodes.
 
-Declare virtual modules when needed (snippet in **`packages/compiler/README.md`** under “TypeScript: typing template imports”).
+**Attrs:** `[prop]`, `(event)="handler($event)"`, `[(model)]`, `attr="{{ expr }}"`, mixes like `href="/u/{{ id }}"`, `<select [items]>`.
 
----
+**Optional YAML frontmatter** `---` … `---` with `@Component({ selector, styles, state?, aot? })`. Default `aot` **true** with qualifying HTML tries AOT `createElement`; otherwise falls back to `compiledTemplate` parse.
 
-## Older “Astro-like `{ctx}` `.abey`” notes
+**Hard limit:** expressions are **opaque strings** to the compiler—**no** template typecheck yet.
 
-Older drafts described TypeScript **`{}`** blocks in markup with **`export type Ctx`**. That **does not match** the current **`compileAbeyToTs`** pipeline (**`packages/compiler/src/abey-compile.ts`**, **`{{ }}` / OM directives** above). Prefer **`.view.html` / `.abey`** authored with the OM surface documented in the compiler README.
+## Compiled module exports
+
+| Symbol | Use |
+|--------|-----|
+| `template` | Original markup; feed `@AbeyComponent({ template })` for “live” binder. |
+| `compiledTemplate` | HTML with `data-abey-*` for classic `mount()`. |
+| `mount(outlet, ctx)` | Returns `{ render, dispose }` for imperative binding. |
+| Custom element class | If frontmatter defines `@Component`. |
+
+## TypeScript project typings
+
+In `src/vite-env.d.ts` (or similar):
+
+```ts
+declare module "*.view.html" {
+  export const template: string;
+  export const compiledTemplate: string;
+  export function mount(outlet: HTMLElement, ctx: Record<string, unknown>): {
+    render: () => void;
+    dispose: () => void;
+  };
+}
+```
+
+Tighten `ctx` if your app uses a stricter contract.
+
+## `.abey` “old Astro-style” files
+
+Legacy drafts mentioned embedded TS `{ctx}` blocks; **current pipeline** is `compileAbeyToTs` aligned with OM above. External docs that contradict this are obsolete—prefer **`.view.html`**.
+
+## Starters
+
+- **`empty` / `abeyjs`** template: `src/views/home/app.home.view.*`.
+- **`admin`**: denser product conventions.
+
+Template differences: `packages/cli/templates/README.md`.
+
+Next: **`/guides/abey-component`** to add TS from the compiler, or **`/guides/monorepo`** if you develop the compiler itself.

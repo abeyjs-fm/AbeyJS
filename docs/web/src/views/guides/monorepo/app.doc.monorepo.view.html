@@ -1,0 +1,76 @@
+<section data-role="doc-guide-root">
+  <article data-doc="markdown">
+<p>The repo uses <strong>npm workspaces</strong>: publishable <code>packages/*</code>, demo <code>examples/*</code>, <code>docs/*</code> sources + Vite docs site.</p>
+<h2>Folder map</h2>
+<table>
+<thead>
+<tr>
+<th>Folder</th>
+<th>Contents</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>packages/core</code> … <code>packages/view</code></td>
+<td>Published framework core, synchronized internal semver.</td>
+</tr>
+<tr>
+<td><code>packages/compiler</code></td>
+<td>Vite plugin + OM compiler.</td>
+</tr>
+<tr>
+<td><code>packages/cli</code></td>
+<td><code>abeyjs</code> binary.</td>
+</tr>
+<tr>
+<td><code>packages/openapi</code>, <code>http</code>, <code>validation</code>, <code>uikit</code>, etc.</td>
+<td>Optional product layers.</td>
+</tr>
+<tr>
+<td><code>examples/mi-admin</code>, <code>crud-app</code>, …</td>
+<td>Golden integration paths—breaking them in a PR signals regression.</td>
+</tr>
+<tr>
+<td><code>docs/*.md</code></td>
+<td>Guide Markdown (regenerate OM HTML via script).</td>
+</tr>
+<tr>
+<td><code>docs/web</code></td>
+<td>Consumable docs SPA (<code>npm run docs:dev</code>).</td>
+</tr>
+</tbody></table>
+<h2>Root scripts we use daily</h2>
+<table>
+<thead>
+<tr>
+<th>Script</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>npm run build</code></td>
+<td>Compiles TS packages in dependency order (publish / local link).</td>
+</tr>
+<tr>
+<td><code>npm run docs:dev</code></td>
+<td>Serves docs on <strong>5190</strong>.</td>
+</tr>
+<tr>
+<td><code>npm run docs:build</code></td>
+<td>Static output <code>docs/web/dist</code> (GitHub Pages / preview).</td>
+</tr>
+</tbody></table>
+<p>Before a release version bump, review <strong><code>build:packages</code></strong> / <strong><code>publish:packages</code></strong> (maintainer sequence).</p>
+<h2>Working on <code>packages/view</code> without publishing</h2>
+<p>With linked workspaces (<code>npm install</code> at root), <code>examples/*</code> resolves <strong><code>@abeyjs/view</code></strong> to the locally built tree after <strong><code>npm run build -w @abeyjs/view</code></strong> (or root build). TS changes missing in the consumer usually means <strong>you forgot to build the package</strong>—consumers do not transpile our raw src by default unless you add special path mapping.</p>
+<h2>Docs web + Markdown</h2>
+<ol>
+<li>Edit <strong><code>docs/&lt;file&gt;.md</code></strong> (or OM HTML directly if skipping the pipeline).</li>
+<li>From <strong><code>docs/web</code></strong>: <code>npm run generate:guides-html</code> writes HTML under <strong><code>src/views/guides/**</code></strong>.</li>
+<li><code>npm run docs:dev</code> or <code>docs:build</code>.</li>
+</ol>
+<p>If you only touch TS doc views without MD, step 2 is unnecessary.</p>
+<h2>Framework vs docs PRs</h2>
+<p>Publishable runtime change → PR touches <code>packages/*</code> plus ideally a test or minimal repro. Docs-only explanatory change → <code>docs/*.md</code> + regenerate guide HTML.</p>
+<p>If you already read <strong><code>/guides/cli</code></strong>, next jump is often <strong><code>/guides/crud-auto</code></strong> (OpenAPI pipeline) or <strong><code>/guides/vision</code></strong> (product contract).</p>
+  </article>
+</section>

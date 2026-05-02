@@ -1,0 +1,89 @@
+<section data-role="doc-guide-root">
+  <article data-doc="markdown">
+<p><code>OmegaRuntime</code> (<code>@abeyjs/runtime</code>) is the object you typically create once in <strong><code>omegaSetup.ts</code></strong> and share (channel + dispatch + optional plugin registry). The runtime should feel <strong>familiar</strong> if you know CQRS-lite buses: nominal typed intents from <strong><code>@abeyjs/core</code></strong> and follow-up effects via <strong><code>channel.publish</code></strong>.</p>
+<h2>Live pieces inside the process</h2>
+<table>
+<thead>
+<tr>
+<th>Concept</th>
+<th>Where it actually lives</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Built <strong>intent</strong></td>
+<td><code>intentOf(&quot;Domain/ActionName&quot;, payload)</code></td>
+</tr>
+<tr>
+<td><strong><code>dispatch</code></strong></td>
+<td><code>runtime.dispatch(intent)</code> hits handlers registered in <strong><code>omegaSetup</code></strong>, plugins’ <strong><code>onIntent</code></strong>, etc.</td>
+</tr>
+<tr>
+<td><strong><code>channel</code></strong></td>
+<td>Namespaced pub/sub strings you choose (<code>omega/...</code> is only convention)</td>
+</tr>
+<tr>
+<td><strong>Flows</strong></td>
+<td><strong><code>@abeyjs/flows</code></strong>: declarative graphs reacting to intents/events</td>
+</tr>
+<tr>
+<td><strong>Agents</strong></td>
+<td><strong><code>@abeyjs/agents</code></strong>: encapsulate observable state + intents</td>
+</tr>
+<tr>
+<td><strong><code>StateCell</code> / state</strong></td>
+<td>state package / OpenAPI agent view slices</td>
+</tr>
+</tbody></table>
+<p><strong>Do not confuse:</strong> <strong><code>dispatch</code> ≠ HTTP</strong>. HTTP belongs in agents using <strong><code>OmegaHttp</code></strong>. Intents are the <strong>first link</strong> client-side after user input.</p>
+<hr>
+<h2>Recommended cycle (UI → server → DOM)</h2>
+<ol>
+<li>OM click calls <strong><code>state</code> handler</strong> ⇒ <strong><code>dispatch(intentOf(...))</code></strong>.</li>
+<li>Listener (flow or pure function registered in setup) runs async/sync work.</li>
+<li>Result ⇒ <strong><code>channel.publish</code></strong> (same handler or next flow block).</li>
+<li>OM view / reactive list / form subscriber updates local model.</li>
+</ol>
+<p>This makes intent <strong>replay</strong> in tests easy with a fake channel. It also isolates HTTP in the agent when OpenAPI evolves.</p>
+<hr>
+<h2>Intent naming</h2>
+<p>We prefer <strong><code>PascalDomain</code></strong> + verb for readability in logs:</p>
+<ul>
+<li><strong><code>Music/TrackCreate</code></strong>, <strong><code>Finance/InvoiceList</code></strong>.</li>
+</ul>
+<p>With <strong><code>registerOpenApiAllCrud</code></strong>, names like <strong><code>ApiProducts/List</code></strong> derive from paths to reduce clashes; rename or filter in the view layer when needed. More on OpenAPI: <strong><code>/guides/crud-auto</code></strong>.</p>
+<hr>
+<h2>CLI ecosystem generator (<strong><code>abeyjs generate ecosystem</code></strong>)</h2>
+<p>Vertical slice scaffolding—not new philosophy:</p>
+<ul>
+<li><strong><code>omega/semantics.ts</code></strong>: symbolic intents.</li>
+<li><strong><code>agent</code> / <code>behavior</code> / <code>flow</code></strong>: full example lifecycle.</li>
+<li><strong><code>installXxxOmega(runtime)</code></strong>: function you wire from <code>omegaSetup</code>.</li>
+</ul>
+<p>Maintained as example <strong>within the repo</strong> because large teams copied inconsistent structures. Your later tweaks are not semver-rigid library output—baseline reference snapshot.</p>
+<p>When you need the broader <strong>product vision</strong> doc, read <strong><code>/guides/vision</code></strong> in addition to this technical page.</p>
+<hr>
+<h2>Team debugging tips</h2>
+<table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Check first</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Intents “never arrive”</td>
+<td>Setup before final bootstrap? Idempotent handlers vs repeated teardown?</td>
+</tr>
+<tr>
+<td>Double effect same intent</td>
+<td>Two conflicting flows—add discriminator on payload/channel topic.</td>
+</tr>
+<tr>
+<td>Stale UI</td>
+<td>View subscribed to the right agent cells (see <code>examples/crud-app</code>).</td>
+</tr>
+</tbody></table>
+<p>For telemetry across integrations use shell <strong><code>omega/nav:changed</code></strong> in addition to domain intents.</p>
+<p>Next: <strong><code>/guides/cli</code></strong>.</p>
+  </article>
+</section>

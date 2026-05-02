@@ -56,7 +56,8 @@ Minimal shape:
 ```
 
 - Each string is a path **relative to `abey.json`** (or resolvable from the project); the plugin generates a small module that **imports** them so Vite processes URLs and HMR.
-- If the file exists, `transformIndexHtml` injects `<script type="module" src="/abey-styles.js"></script>` into `<head>`.
+- Global styles: add `import "/abey-styles.js"` in `main.ts` (resolved by the Abey Vite plugin from `abey.json`); do not rely on an HTML-injected script — it is not emitted on `vite build` and causes a blank app / *Invalid or unexpected token* when the browser loads a 404 HTML page as JS.
+- `@AbeyComponent` in `*.ts`: enable `"experimentalDecorators": true` in `tsconfig.json`, or use `abeyVitePlugin()` — it merges that flag into Vite’s `esbuild` options. If decorators are not lowered, emitted JS still contains `@` and a lazy route’s dynamic `import()` fails with *Invalid or unexpected token*.
 
 ---
 

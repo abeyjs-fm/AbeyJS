@@ -21,7 +21,7 @@ export type AbeyUxViewInitCtx = {
 };
 
 /**
- * Small "module metadata" helper (Angular-like) without decorators.
+ * Small "module metadata" helper without decorators.
  * It resolves module-local styles, creates a `TemplateView`, and passes both to your mount function.
  */
 export function defineAbeyUxView(

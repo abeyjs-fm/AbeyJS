@@ -1,0 +1,775 @@
+/*
+ * Capa compartida Markdown (`[data-role="doc-guide-root"]`, `[data-doc="markdown"]`) para todas las guías OM.
+ * Importar en cada `app.doc.*.view.ts` antes del `*.view.css` colocalizado del componente.
+ */
+
+:host {
+  display: block;
+  margin-inline: auto;
+  padding: 1.25rem clamp(0.85rem, 2.2vw, 1.75rem) 2.75rem;
+  width: min(100%, calc(var(--doc-prose-max) + 10rem));
+  box-sizing: border-box;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148, 163, 184, 0.22) transparent;
+
+  /* Tokens locales si el tema no define todos */
+  --dg-accent: var(--abey-accent, #2e7dff);
+  --dg-accent-soft: color-mix(in srgb, var(--dg-accent) 18%, transparent);
+  --dg-surface: var(--abey-surface-elev, #ffffff);
+  --dg-surface-muted: color-mix(
+    in srgb,
+    var(--abey-text, #334155) 4.5%,
+    var(--dg-surface)
+  );
+  --dg-ring: rgba(129, 140, 248, 0.35);
+  --dg-shadow:
+    0 1px 0 rgba(15, 23, 42, 0.04), 0 14px 40px rgba(15, 23, 42, 0.07),
+    0 0 0 1px rgba(148, 163, 184, 0.12);
+  --dg-prose-strong: color-mix(
+    in srgb,
+    var(--abey-text, #1e293b) 92%,
+    var(--dg-accent)
+  );
+}
+
+:host-context(.abey-shell-app:not(.abey--dark)) {
+  scrollbar-color: rgba(100, 116, 139, 0.3) transparent;
+}
+
+:host-context(.doc-site.abey-shell-app:not(.abey--dark)) {
+  scrollbar-color: color-mix(
+      in srgb,
+      var(--abey-accent, #3182ce) 22%,
+      rgba(100, 116, 139, 0.25)
+    )
+    transparent;
+}
+
+:host::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+:host::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+:host::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+:host::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+:host::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(100, 116, 139, 0.28);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+:host::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.4);
+}
+
+:host-context(.abey-shell-app.abey--dark)::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.2);
+}
+
+:host-context(.abey-shell-app.abey--dark)::-webkit-scrollbar-thumb:hover {
+  background: color-mix(
+    in srgb,
+    var(--abey-accent, #2e7dff) 32%,
+    rgba(148, 163, 184, 0.3)
+  );
+}
+
+:host-context(
+    .doc-site.abey-shell-app:not(.abey--dark)
+  )::-webkit-scrollbar-thumb {
+  background: color-mix(
+    in srgb,
+    var(--abey-accent, #3182ce) 26%,
+    rgba(100, 116, 139, 0.2)
+  );
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+:host-context(
+    .doc-site.abey-shell-app:not(.abey--dark)
+  )::-webkit-scrollbar-thumb:hover {
+  background: color-mix(
+    in srgb,
+    var(--abey-accent, #3182ce) 42%,
+    rgba(71, 85, 105, 0.25)
+  );
+}
+
+/* Sitio docs: host a ancho outlet; `--doc-prose-max` viene de doc-shell (+ tema en `#app`). */
+:host-context(.doc-site.abey-shell-app) {
+  width: 100%;
+  max-width: none;
+  margin-inline: 0;
+}
+
+/* Tarjeta `[data-role="doc-guide-root"]` al ancho completo del host (en lite el panel blanco ya no “flota” estrecho). */
+:host-context(.doc-site.abey-shell-app) [data-role="doc-guide-root"] {
+  width: 100%;
+  max-width: none;
+  box-sizing: border-box;
+}
+
+:host-context(.abey-shell-app.abey--dark) {
+  --dg-surface: rgba(30, 41, 59, 0.45);
+  --dg-surface-muted: rgba(51, 65, 85, 0.35);
+  --dg-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.03) inset, 0 18px 50px rgba(0, 0, 0, 0.32),
+    0 0 0 1px rgba(148, 163, 184, 0.12);
+  --dg-accent-soft: color-mix(in srgb, var(--dg-accent) 22%, transparent);
+  --dg-prose-strong: color-mix(
+    in srgb,
+    var(--abey-text, #f1f5f9) 94%,
+    var(--dg-accent)
+  );
+}
+
+[data-role="doc-guide-root"] {
+  position: relative;
+  min-height: 100%;
+  padding: clamp(1.35rem, 2.8vw, 2.15rem) clamp(1.1rem, 2.8vw, 2.25rem)
+    clamp(1.85rem, 3vw, 2.65rem);
+  border-radius: var(--doc-radius, 11px);
+  border: 1px solid color-mix(in srgb, var(--doc-divider) 95%, transparent);
+  background:
+    radial-gradient(
+      120% 140% at 100% -20%,
+      var(--dg-accent-soft),
+      transparent 42%
+    ),
+    var(--dg-surface);
+  box-shadow: var(--dg-shadow);
+  backdrop-filter: blur(10px);
+  isolation: isolate;
+}
+
+/* Viñetas decorativas de fondo (no compiten con el texto) */
+[data-role="doc-guide-root"]::after {
+  content: "";
+  position: absolute;
+  inset: auto -12% -18% auto;
+  width: min(340px, 55vw);
+  height: min(340px, 48vw);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 40% 40%,
+    color-mix(in srgb, var(--dg-accent) 12%, transparent),
+    transparent 68%
+  );
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.85;
+}
+
+:host-context(.abey-shell-app.abey--dark) [data-role="doc-guide-root"]::after {
+  opacity: 0.55;
+  background: radial-gradient(
+    circle at 35% 35%,
+    color-mix(in srgb, var(--dg-accent) 18%, transparent),
+    transparent 65%
+  );
+}
+
+/* Franja gradiente tipo “marcador” de guía */
+[data-role="doc-guide-root"]::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: min(320px, 55%);
+  height: 5px;
+  border-radius: var(--doc-radius, 11px) var(--doc-radius-sm, 7px) 12rem 12rem;
+  background: linear-gradient(
+    90deg,
+    var(--dg-accent) 0%,
+    color-mix(in srgb, var(--dg-accent) 38%, var(--doc-brand-purple, #9d2cff))
+      72%,
+    transparent 100%
+  );
+  opacity: 0.92;
+  pointer-events: none;
+}
+
+:host-context(.doc-site.abey-shell-app.abey--dark)
+  [data-role="doc-guide-root"]::before {
+  height: 4px;
+  opacity: 1;
+  background: linear-gradient(
+    90deg,
+    var(--dg-accent),
+    color-mix(in srgb, var(--dg-accent) 42%, var(--doc-brand-purple, #9d2cff)),
+    transparent 100%
+  );
+  filter: saturate(115%);
+}
+
+:host-context(.doc-site.abey-shell-app.abey--dark)
+  [data-role="doc-guide-root"] {
+  border-color: color-mix(
+    in srgb,
+    var(--dg-accent) 38%,
+    rgba(244, 244, 246, 0.12)
+  );
+  background:
+    radial-gradient(
+      ellipse 130% 75% at 96% -6%,
+      color-mix(in srgb, var(--dg-accent) 18%, transparent),
+      transparent 46%
+    ),
+    radial-gradient(
+      ellipse 70% 50% at 2% 100%,
+      color-mix(in srgb, var(--doc-brand-purple, #9d2cff) 12%, transparent),
+      transparent 48%
+    ),
+    var(--dg-surface);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.07) inset,
+    0 26px 72px rgba(0, 0, 0, 0.48),
+    0 0 0 1px color-mix(in srgb, var(--dg-accent) 14%, transparent),
+    0 0 min(92px, 18vw) color-mix(in srgb, var(--dg-accent) 7%, transparent);
+}
+
+/* ─── Markdown (article[data-doc="markdown"]) ───────────────────────────────────────── */
+
+[data-doc="markdown"] {
+  position: relative;
+  z-index: 1;
+  color: var(--abey-text, #1f2937);
+  font-size: 1.02rem;
+  line-height: 1.74;
+}
+
+/* Primer párrafo: lead */
+[data-doc="markdown"] > p:first-of-type {
+  font-size: 1.08rem;
+  line-height: 1.72;
+  color: color-mix(in srgb, var(--abey-text, #334155) 88%, transparent);
+  letter-spacing: -0.01em;
+}
+
+[data-doc="markdown"] strong {
+  color: var(--dg-prose-strong);
+  font-weight: 700;
+}
+
+[data-doc="markdown"] > *:first-child {
+  margin-top: 0;
+}
+
+[data-doc="markdown"] h1 {
+  margin: 0 0 0.85rem;
+  padding-bottom: 0.55rem;
+  border-bottom: 1px solid var(--doc-divider);
+  font-size: clamp(1.85rem, 2.2vw + 1rem, 2.2rem);
+  font-weight: 850;
+  letter-spacing: -0.038em;
+  line-height: 1.14;
+}
+
+[data-doc="markdown"] h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 2.35rem 0 0.75rem;
+  padding: 0.62rem 0 0;
+  padding-left: 0.14rem;
+  border-top: none;
+  font-size: 1.28rem;
+  font-weight: 780;
+  letter-spacing: -0.03em;
+  scroll-margin-top: 6rem;
+  color: color-mix(in srgb, var(--abey-text, #111827) 97%, var(--dg-accent));
+}
+
+[data-doc="markdown"] h2::before {
+  content: "";
+  flex: 0 0 5px;
+  height: 1.15em;
+  border-radius: 4px;
+  background: linear-gradient(
+    180deg,
+    var(--dg-accent),
+    color-mix(in srgb, var(--dg-accent) 48%, var(--doc-brand-purple, #9d2cff))
+  );
+}
+
+[data-doc="markdown"] h2:first-child {
+  margin-top: 0;
+}
+
+[data-doc="markdown"] h3 {
+  margin: 1.65rem 0 0.45rem;
+  padding: 0.28rem 0.55rem 0.28rem 0.6rem;
+  font-size: 1.065rem;
+  font-weight: 720;
+  letter-spacing: -0.022em;
+  border-radius: 6px;
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--dg-accent) 9%, var(--dg-surface)),
+    var(--dg-surface-muted)
+  );
+  border: 1px solid color-mix(in srgb, var(--doc-divider) 80%, transparent);
+  width: fit-content;
+  max-width: 100%;
+}
+
+[data-doc="markdown"] h4 {
+  margin: 1.25rem 0 0.4rem;
+  font-size: 0.78rem;
+  font-weight: 750;
+  letter-spacing: 0.068em;
+  text-transform: uppercase;
+  opacity: 0.9;
+  color: color-mix(in srgb, var(--abey-text, #374151) 94%, var(--dg-accent));
+}
+
+[data-doc="markdown"] p {
+  margin: 0.78rem 0;
+}
+
+[data-doc="markdown"] a {
+  color: var(--dg-accent);
+  font-weight: 550;
+  text-decoration: underline solid 0.1em transparent;
+  text-underline-offset: 0.16em;
+  border-radius: 3px;
+  transition:
+    color 0.12s ease,
+    text-decoration-color 0.14s ease,
+    background-color 0.14s ease;
+}
+
+[data-doc="markdown"] a:hover {
+  text-decoration-color: currentColor;
+  background-color: color-mix(in srgb, var(--dg-accent) 9%, transparent);
+}
+
+[data-doc="markdown"] a:focus-visible {
+  outline: 2px solid var(--dg-ring);
+  outline-offset: 2px;
+  text-decoration: none;
+}
+
+[data-doc="markdown"] ul,
+[data-doc="markdown"] ol {
+  margin: 0.75rem 0 1.05rem;
+  padding-left: 1.42rem;
+}
+
+/* Pasos numerados nivel raíz → tarjetas con badge */
+[data-doc="markdown"] > ol {
+  counter-reset: dgstep;
+  list-style: none;
+  padding-left: 0;
+  margin: 1.05rem 0 1.35rem;
+}
+
+[data-doc="markdown"] > ol > li {
+  counter-increment: dgstep;
+  position: relative;
+  padding: 0.88rem 1rem 0.92rem 3.35rem;
+  margin: 0.7rem 0;
+  border-radius: var(--doc-radius-sm, 7px);
+  border: 1px solid color-mix(in srgb, var(--doc-divider) 88%, transparent);
+  background: linear-gradient(
+    125deg,
+    color-mix(in srgb, var(--dg-accent) 10%, var(--dg-surface)),
+    var(--dg-surface-muted)
+  );
+  box-shadow:
+    inset 0 1px rgba(255, 255, 255, 0.05),
+    0 2px 14px rgba(15, 23, 42, 0.06);
+}
+
+[data-doc="markdown"] > ol > li::before {
+  content: counter(dgstep);
+  position: absolute;
+  left: 0.82rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1.92rem;
+  height: 1.92rem;
+  line-height: 1.92rem;
+  text-align: center;
+  font-size: 0.82rem;
+  font-weight: 800;
+  border-radius: 50%;
+  color: white;
+  background: linear-gradient(
+    145deg,
+    var(--dg-accent),
+    color-mix(in srgb, var(--dg-accent) 55%, #6366f1)
+  );
+  box-shadow:
+    inset 0 1px rgba(255, 255, 255, 0.22),
+    0 3px 10px color-mix(in srgb, var(--dg-accent) 35%, transparent);
+}
+
+[data-doc="markdown"] > ol ol {
+  margin: 0.65rem 0 0.35rem;
+  padding-left: 1.35rem;
+  list-style: decimal;
+  counter-reset: none;
+}
+
+[data-doc="markdown"] > ol ol > li {
+  padding: 0.28rem 0;
+  margin: 0.22rem 0;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+}
+
+[data-doc="markdown"] > ol ol > li::before {
+  display: none;
+}
+
+[data-doc="markdown"] li {
+  margin: 0.38rem 0;
+}
+
+[data-doc="markdown"] ul > li {
+  padding-left: 0.12rem;
+}
+
+[data-doc="markdown"] > ol ol li {
+  padding-left: 0.12rem;
+}
+
+[data-doc="markdown"] li::marker {
+  color: color-mix(in srgb, var(--dg-accent) 88%, gray);
+}
+
+[data-doc="markdown"] ul li::marker {
+  font-size: 0.92em;
+}
+
+[data-doc="markdown"] blockquote {
+  position: relative;
+  margin: 1.15rem 0;
+  padding: 1rem 1.1rem 1rem 2.85rem;
+  border-left: 4px solid var(--dg-accent);
+  border-radius: 0 var(--doc-radius-sm) var(--doc-radius-sm) 0;
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--dg-accent) 10%, transparent),
+    transparent 86%
+  );
+  font-size: 0.975rem;
+  line-height: 1.62;
+}
+
+[data-doc="markdown"] blockquote::before {
+  content: "\201C";
+  position: absolute;
+  left: 0.75rem;
+  top: 0.35rem;
+  font-size: 2.65rem;
+  font-weight: 800;
+  line-height: 1;
+  color: color-mix(in srgb, var(--dg-accent) 72%, gray);
+  opacity: 0.35;
+  font-family: Georgia, "Times New Roman", serif;
+  pointer-events: none;
+}
+
+[data-doc="markdown"] code {
+  padding: 0.16rem 0.4rem;
+  border-radius: 6px;
+  font-size: 0.84em;
+  font-family:
+    ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas, monospace;
+  background: var(--doc-code-bg-light);
+  border: 1px solid color-mix(in srgb, var(--doc-divider) 70%, transparent);
+}
+
+:host-context(.abey-shell-app.abey--dark) [data-doc="markdown"] code {
+  background: var(--doc-code-bg-dark);
+  border-color: color-mix(in srgb, var(--doc-divider) 55%, transparent);
+}
+
+[data-doc="markdown"] pre {
+  position: relative;
+  overflow: auto;
+  margin: 1.35rem 0;
+  padding: 1.15rem 1.2rem 1.05rem;
+  padding-top: 2.05rem;
+  border-radius: var(--doc-radius-sm);
+  border: 1px solid color-mix(in srgb, var(--doc-divider) 75%, transparent);
+  font-size: 0.84rem;
+  line-height: 1.62;
+  font-family: ui-monospace, "Cascadia Code", Menlo, Consolas, monospace;
+  box-shadow:
+    inset 0 1px rgba(255, 255, 255, 0.04),
+    0 2px 10px rgba(15, 23, 42, 0.12);
+}
+
+[data-doc="markdown"] pre::before {
+  content: "Código";
+  position: absolute;
+  left: 0.85rem;
+  top: 0.58rem;
+  font-size: 0.645rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.72;
+}
+
+[data-doc="markdown"] pre:has(code.language-typescript)::before,
+[data-doc="markdown"] pre:has(code.language-ts)::before {
+  content: "TypeScript";
+}
+
+[data-doc="markdown"] pre:has(code.language-javascript)::before,
+[data-doc="markdown"] pre:has(code.language-js)::before {
+  content: "JavaScript";
+}
+
+[data-doc="markdown"] pre:has(code.language-bash)::before,
+[data-doc="markdown"] pre:has(code.language-sh)::before,
+[data-doc="markdown"] pre:has(code.language-shell)::before {
+  content: "Terminal";
+}
+
+[data-doc="markdown"] pre:has(code.language-json)::before {
+  content: "JSON";
+}
+
+[data-doc="markdown"] pre:has(code.language-html)::before {
+  content: "HTML";
+}
+
+[data-doc="markdown"] pre:has(code.language-css)::before {
+  content: "CSS";
+}
+
+[data-doc="markdown"] pre:has(code.language-text)::before,
+[data-doc="markdown"] pre:has(code.language-plain)::before {
+  content: "Texto";
+}
+
+/* Brillo esquina en bloques código */
+[data-doc="markdown"] pre::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: min(140px, 35%);
+  height: 28px;
+  background: linear-gradient(
+    -115deg,
+    transparent 42%,
+    color-mix(in srgb, var(--dg-accent) 28%, transparent) 100%
+  );
+  opacity: 0.45;
+  border-radius: 0 var(--doc-radius-sm) 0 10rem;
+  pointer-events: none;
+}
+
+:host-context(.abey-shell-app:not(.abey--dark)) [data-doc="markdown"] pre {
+  background:
+    radial-gradient(
+      circle at 10% -20%,
+      rgba(99, 102, 241, 0.12),
+      transparent 40%
+    ),
+    #0f172a;
+  color: #e2e8f0;
+}
+
+:host-context(.abey-shell-app.abey--dark) [data-doc="markdown"] pre {
+  background:
+    radial-gradient(
+      circle at 12% -30%,
+      rgba(129, 140, 248, 0.18),
+      transparent 45%
+    ),
+    rgba(15, 23, 42, 0.82);
+  color: #f1f5f9;
+}
+
+[data-doc="markdown"] pre code {
+  padding: 0;
+  border-radius: 0;
+  background: transparent !important;
+  border: none !important;
+  font-size: inherit;
+}
+
+[data-doc="markdown"] hr {
+  border: none;
+  height: 1px;
+  margin: 2rem 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--doc-divider) 20%,
+    var(--doc-divider) 80%,
+    transparent
+  );
+}
+
+[data-doc="markdown"] table {
+  margin: 1.25rem 0;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.91rem;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  border-radius: var(--doc-radius-sm);
+  border: 1px solid var(--doc-divider);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset;
+}
+
+[data-doc="markdown"] th,
+[data-doc="markdown"] td {
+  border: none;
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--doc-divider) 92%, transparent);
+  border-right: 1px solid
+    color-mix(in srgb, var(--doc-divider) 92%, transparent);
+  padding: 0.58rem 0.82rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+[data-doc="markdown"] th:last-child,
+[data-doc="markdown"] td:last-child {
+  border-right: none;
+}
+
+[data-doc="markdown"] tbody tr:last-child td {
+  border-bottom: none;
+}
+
+[data-doc="markdown"] tbody tr:nth-child(even) td {
+  background: color-mix(
+    in srgb,
+    var(--abey-text, #64748b) 3.5%,
+    var(--dg-surface)
+  );
+}
+
+[data-doc="markdown"] tbody tr {
+  transition:
+    background-color 0.14s ease,
+    box-shadow 0.14s ease;
+}
+
+[data-doc="markdown"] tbody tr:hover td {
+  background: color-mix(in srgb, var(--dg-accent) 7%, var(--dg-surface));
+}
+
+[data-doc="markdown"] tbody tr:hover td:first-child {
+  box-shadow: inset 3px 0 0
+    color-mix(in srgb, var(--dg-accent) 58%, transparent);
+}
+
+[data-doc="markdown"] thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--dg-accent) 14%, var(--dg-surface)),
+    color-mix(in srgb, var(--dg-accent) 6%, var(--dg-surface))
+  );
+  font-weight: 750;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--abey-text, #334155) 92%, var(--dg-accent));
+  box-shadow: 0 2px 0 color-mix(in srgb, var(--doc-divider) 95%, transparent);
+}
+
+:host-context(.doc-site.abey-shell-app:not(.abey--dark))
+  [data-doc="markdown"]
+  thead
+  th {
+  background: linear-gradient(180deg, #edf2f7 0%, #e8edf3 100%);
+  color: #2d3748;
+}
+
+:host-context(.abey-shell-app.abey--dark) [data-doc="markdown"] thead th {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--dg-accent) 24%, rgba(15, 23, 42, 0.6)),
+    color-mix(in srgb, var(--dg-accent) 10%, rgba(15, 23, 42, 0.45))
+  );
+  color: color-mix(in srgb, var(--abey-text, #e2e8f0) 88%, var(--dg-accent));
+}
+
+:host-context(.abey-shell-app.abey--dark)
+  [data-doc="markdown"]
+  tbody
+  tr:nth-child(even)
+  td {
+  background: rgba(15, 23, 42, 0.22);
+}
+
+:host-context(.abey-shell-app.abey--dark)
+  [data-doc="markdown"]
+  tbody
+  tr:hover
+  td {
+  background: color-mix(in srgb, var(--dg-accent) 12%, rgba(15, 23, 42, 0.45));
+}
+
+:host-context(.abey-shell-app.abey--dark)
+  [data-doc="markdown"]
+  tbody
+  tr:hover
+  td:first-child {
+  box-shadow: inset 3px 0 0
+    color-mix(in srgb, var(--dg-accent) 75%, transparent);
+}
+
+:host-context(.abey-shell-app.abey--dark) [data-doc="markdown"] blockquote {
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--dg-accent) 14%, transparent),
+    transparent 88%
+  );
+  border-left-color: color-mix(
+    in srgb,
+    var(--dg-accent) 65%,
+    var(--doc-brand-purple, #9d2cff)
+  );
+}
+
+:host-context(.abey-shell-app.abey--dark)
+  [data-doc="markdown"]
+  blockquote::before {
+  opacity: 0.42;
+}
+
+/* Huérfanos del shell antiguo (si reaparecen) */
+[data-role="doc-guide-host"] {
+  min-height: 2rem;
+}
+
+[data-role="doc-guide-error"] {
+  margin: 0.85rem 0 0;
+  font-size: 0.935rem;
+  color: #dc2626;
+}
+
+[data-role="doc-guide-error"][hidden] {
+  display: none;
+}

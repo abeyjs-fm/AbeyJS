@@ -1,19 +1,25 @@
-# `abey-table` (AbeyJs UI Kit)
+# `abey-table` (UI kit)
 
-Web Component para tablas con:
+Use this web component for a **dense grid** product-console style (row selection, action menu, pagination) **without** full `mountListViewSync` for a mock or live catalog. Plays with the rest of AbeyJs: drive from plain TS state or wire the runtime in **flow** mode (see **`/guides/table-flows`**).
 
-- selección (`checkbox`)
-- acciones por fila (menú)
-- paginación (`page`, `pageSize`, `pageSizes`)
-- columnas “freeze” izquierda/derecha (`frozen`)
+Register the class once at startup (`AbeyTableElement.define("abey-table")`)—the kit does not assume the custom element already exists.
 
-## Uso básico (sin flows)
+## What you get out of the box
+
+Table web component with:
+
+- selection (`checkbox`)
+- per-row actions (menu)
+- pagination (`page`, `pageSize`, `pageSizes`)
+- left/right **frozen** columns (`frozen`)
+
+## Basic usage (no flows)
 
 ```html
 <abey-table selectable pagesizes="10,20,30" pagesize="10" page="1"></abey-table>
 ```
 
-Luego en TS:
+Then in TS:
 
 ```ts
 import { AbeyTableElement } from "@abeyjs/uikit";
@@ -29,40 +35,39 @@ table.config = {
 };
 ```
 
-## Props/Config (TS)
+## Props / config (TS)
 
 `table.config`:
 
 - **rows**: `Row[]`
 - **columns**: `Array<{ key, header, width?, align?, frozen?, render?, value? }>`
   - **frozen**: `"left" | "right"`
-  - **width** recomendado en `px` cuando usas `frozen` (para calcular offsets)
+  - **width** in `px` recommended with `frozen` (offset math)
 - **actions**: `Array<{ id, label, eventName?, onSelect? }>`
 - **selectable**: `boolean`
 - **getRowId**: `(row) => string`
 
 Renderers:
 
-- **`table.renderers`**: registry de renderers por key.  
-  Ej: una columna puede usar `render: "submitter"` y la tabla lo resuelve con `table.renderers.submitter`.
+- **`table.renderers`**: registry by key.  
+  Example: column `render: "submitter"` resolves via `table.renderers.submitter`.
 
-## Atributos HTML
+## HTML attributes
 
-Paginación:
+Pagination:
 
-- **`page`**: número (1-based)
-- **`pagesize`**: número
+- **`page`**: number (1-based)
+- **`pagesize`**: number
 - **`pagesizes`**: `"10,20,30"` (CSV)
-- **`totalitems`**: número (opcional)
+- **`totalitems`**: number (optional)
 
 Flags:
 
 - **`selectable`**
 - **`dense`**
 
-## Eventos DOM
+## DOM events
 
 - **`selectionchange`**: `detail = { selectedIds: Set<string>, selectedItems: Row[] }`
 - **`actionClick`**: `detail = { actionId, rowId, row }` (cancelable)
-- **`loadNetwork`**: `detail = { page, pageSize }` *(solo si `loadnetwork="true"`)*
-
+- **`loadNetwork`**: `detail = { page, pageSize }` *(only if `loadnetwork="true"`)*

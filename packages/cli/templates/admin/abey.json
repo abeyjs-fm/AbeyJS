@@ -1,4 +1,4 @@
 {
-  "styles": ["@abeyjs/uikit/styles/abey-table.css"]
+  "styles": ["./src/om-global.css"]
 }
 

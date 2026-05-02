@@ -7,12 +7,16 @@ import { environment } from "./environment.js";
  */
 export function createOmega(): { runtime: OmegaRuntime } {
   const runtime = createOmegaRuntime();
+  // Ancho por defecto (~80 %) para vistas / slices; sobrescribe con `--abey-slice-max-width` en `:root`.
+  if (typeof document !== "undefined") {
+    document.documentElement.style.setProperty("--abey-slice-max-width", "80%");
+  }
 
-  // Inspector bridge (DEV only): auto-connect on localhost.
-  // Disable with: `?omegaInspector=off`
+  // Inspector (DEV): solo si `VITE_INSPECTOR_HUB` está definido (.env.development) y el hub corre.
+  // Apagar bridge: `?omegaInspector=off`
   if (typeof window !== "undefined") {
     try {
-      if (!(import.meta as any).env?.DEV) {
+      if (!import.meta.env.DEV) {
         return { runtime };
       }
       const u = new URL(window.location.href);

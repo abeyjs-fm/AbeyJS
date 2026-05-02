@@ -1,0 +1,140 @@
+<section data-role="doc-guide-root">
+  <article data-doc="markdown">
+<p>For teams that <strong>dislike</strong> three parallel definitions of the same DTO (TypeScript table, form draft, hand-written Zod). Decorators live in <code>@abeyjs/uikit</code> and target “classic” flat-entity forms; if your screen is a document with lines (<strong>invoice</strong>, etc.), do not force this pattern—use dedicated meta like the billing examples in the repo.</p>
+<p>With one <strong>marker class</strong> you get from a single file:</p>
+<ul>
+<li><strong>form UI</strong> (<code>&lt;abey-form&gt;</code>)</li>
+<li><strong>validation</strong> (Zod)</li>
+<li><strong>typed JSON</strong> for API I/O</li>
+<li><strong>listing</strong> (table) using the same model</li>
+</ul>
+<p>Avoid duplication like:</p>
+<ul>
+<li><code>type Entity</code> (table)</li>
+<li><code>type EntityDraft</code> (form)</li>
+<li>per-screen manual validation</li>
+</ul>
+<hr>
+<h2>1) Entity (class) with decorators</h2>
+<p>Real example: <code>AlumnoEntity</code> in <code>examples/MyMiusic/src/ecosystems/alumnos/model/alumnos.types.ts</code>.</p>
+<p>Main ideas:</p>
+<ul>
+<li><strong>UI + JSON fields</strong>: normal class properties.</li>
+<li><strong>PK</strong>: <code>@PrimaryKey()</code> (logical default <code>&quot;id&quot;</code> if unset).</li>
+<li><strong>API-only (no UI)</strong>: <code>@Hidden()</code> (e.g. <code>id</code>).</li>
+<li><strong>Optional</strong>: <code>@Optional()</code> (empty/undefined per type).</li>
+</ul>
+<p>Decorators (from <code>@abeyjs/uikit</code>):</p>
+<ul>
+<li><code>@FormModel({ title })</code></li>
+<li><code>@Label(&quot;...&quot;)</code></li>
+<li><code>@Required(&quot;...&quot;)</code></li>
+<li><code>@Regex(/.../, &quot;...&quot;)</code></li>
+<li><code>@Email()</code></li>
+<li><code>@FormFieldKind(&quot;number&quot; | &quot;text&quot; | &quot;select&quot; | ...)</code></li>
+<li><code>@Optional()</code></li>
+<li><code>@Hidden()</code></li>
+<li><code>@PrimaryKey()</code></li>
+</ul>
+<hr>
+<h2>2) Auto-generate the form (<code>&lt;abey-form&gt;</code>)</h2>
+<p>From the class you get <code>AbeyFormConfig</code> (fields + schema):</p>
+<pre><code class="language-ts">import { classToAbeyFormConfig, AbeyFormElement } from &quot;@abeyjs/uikit&quot;;
+import { AlumnoEntity } from &quot;./model/alumnos.types.js&quot;;
+
+AbeyFormElement.define(&quot;abey-form&quot;);
+const form = document.querySelector(&quot;abey-form&quot;)!;
+form.config = classToAbeyFormConfig(AlumnoEntity);
+</code></pre>
+<p><code>classToAbeyFormConfig(...)</code> yields:</p>
+<ul>
+<li><code>fields: ViewField[]</code> (render)</li>
+<li><code>schema: ZodType</code> (submit validation)</li>
+</ul>
+<hr>
+<h2>3) Typed / validated JSON for the API</h2>
+<p>Turn form or network input into valid typed JSON:</p>
+<pre><code class="language-ts">import { parseClassJson } from &quot;@abeyjs/uikit&quot;;
+import { AlumnoEntity } from &quot;./model/alumnos.types.js&quot;;
+
+const dto = parseClassJson(AlumnoEntity, input); // throws if invalid
+// JSON.stringify(dto) → ready for API
+</code></pre>
+<p><strong>Zod schema only:</strong></p>
+<pre><code class="language-ts">import { classToSchema } from &quot;@abeyjs/uikit&quot;;
+const schema = classToSchema(AlumnoEntity);
+</code></pre>
+<hr>
+<h2>4) Select / FK (static list or API)</h2>
+<h3>A) Static value/label list</h3>
+<pre><code class="language-ts">import { SelectStatic, Optional } from &quot;@abeyjs/uikit&quot;;
+
+@SelectStatic([
+  { value: &quot;taylor&quot;, label: &quot;Taylor Swift&quot; },
+  { value: &quot;badbunny&quot;, label: &quot;Bad Bunny&quot; },
+])
+@Optional()
+favoriteArtistId?: string;
+</code></pre>
+<h3>B) Via API (GET default, optional POST)</h3>
+<p><code>@SelectApi(...)</code> defines <strong>how</strong> to load options:</p>
+<pre><code class="language-ts">import { SelectApi, Optional } from &quot;@abeyjs/uikit&quot;;
+import type { SelectApiOptions } from &quot;@abeyjs/uikit&quot;;
+
+@SelectApi({
+  endpoint: &quot;/genre&quot;,
+  valueField: &quot;id&quot;,
+  labelField: &quot;name&quot;,
+  dataPath: &quot;data&quot;,
+} satisfies SelectApiOptions)
+@Optional()
+genreId?: string;
+</code></pre>
+<h4><code>dataPath</code></h4>
+<p>Dot path inside JSON to the array:</p>
+<ul>
+<li>Response <code>{ &quot;data&quot;: [ ... ] }</code> → <code>dataPath: &quot;data&quot;</code></li>
+<li>Response <code>{ &quot;result&quot;: { &quot;rows&quot;: [ ... ] } }</code> → <code>dataPath: &quot;result.rows&quot;</code></li>
+</ul>
+<h4><code>method</code> and <code>body</code></h4>
+<p>Default <code>method</code> is <code>&quot;GET&quot;</code>. For POST APIs:</p>
+<pre><code class="language-ts">@SelectApi({
+  endpoint: &quot;/genres/search&quot;,
+  method: &quot;POST&quot;,
+  body: { query: &quot;rock&quot;, page: 1, pageSize: 50 },
+  valueField: &quot;id&quot;,
+  labelField: &quot;name&quot;,
+  dataPath: &quot;data&quot;,
+} satisfies SelectApiOptions)
+</code></pre>
+<hr>
+<h2>5) Wire selects to the network via flow (Omega)</h2>
+<p><code>&lt;abey-form&gt;</code> does not <code>fetch</code> by default—the app decides.</p>
+<p>Recommended pattern:</p>
+<ul>
+<li>UI sets <code>cfg.resolveSelectOptions = async (opts) =&gt; ...</code></li>
+<li><code>resolveSelectOptions</code> fires an <strong>intent</strong> (<code>runtime.dispatch(intentOf(...))</code>)</li>
+<li><strong>Flow/agent</strong> handles it with <code>OmegaHttp</code></li>
+<li>Agent emits <strong>event</strong> <code>{ requestId, items }</code></li>
+<li><code>resolveSelectOptions</code> waits for that event and returns rows to the form</li>
+</ul>
+<p>Example (Deezer genres) in this repo:</p>
+<ul>
+<li><code>examples/MyMiusic/src/ecosystems/alumnos/ui/app-alumnos.ts</code> (<code>resolveSelectOptions</code>)</li>
+<li><code>examples/MyMiusic/src/ecosystems/alumnos/omega/agent.ts</code> (<code>http.getJson</code> / <code>postJson</code>)</li>
+<li><code>examples/MyMiusic/src/ecosystems/alumnos/omega/flow.ts</code> / <code>behavior.ts</code> / <code>register.ts</code></li>
+</ul>
+<hr>
+<h2>6) PK (primary key)</h2>
+<p>Mark PK on entity:</p>
+<pre><code class="language-ts">@Hidden()
+@PrimaryKey()
+@Optional()
+id?: string;
+</code></pre>
+<p>Read from code:</p>
+<pre><code class="language-ts">import { classPrimaryKey } from &quot;@abeyjs/uikit&quot;;
+const pk = classPrimaryKey(AlumnoEntity); // `&quot;id&quot;` if not declared
+</code></pre>
+  </article>
+</section>

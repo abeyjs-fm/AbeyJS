@@ -1,0 +1,127 @@
+<section data-role="doc-guide-root">
+  <article data-doc="markdown">
+<p>What <strong><code>@abeyjs/cli</code></strong> publishes as stable contract. Flags missing here but shown in <strong><code>--help</code></strong> → <strong>trust the binary</strong> — we aim to avoid desync.<strong>Live implementation:</strong> <code>packages/cli/src/cli.ts</code>.</p>
+<h2>Install / invocation</h2>
+<pre><code class="language-bash">npx @abeyjs/cli --help
+# or global
+npm i -g @abeyjs/cli
+abeyjs --version
+</code></pre>
+<h2>Project commands</h2>
+<h3><code>new</code> · <code>init</code> · <code>create</code> (aliases)</h3>
+<p>Scaffold folder with Vite + TS + OM plugin.</p>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>`--template admin</td>
+<td>abeyjs</td>
+</tr>
+<tr>
+<td>`--shell dashboard</td>
+<td>appbar`</td>
+</tr>
+<tr>
+<td><code>--skip-install</code></td>
+<td>Skip <strong><code>npm install</code></strong>. Env <strong><code>SKIP_ABEYJS_SCAFFOLD_INSTALL=1</code></strong> mirrors post-CI behavior.</td>
+</tr>
+</tbody></table>
+<h2>OpenAPI wiring</h2>
+<h3><code>abeyjs add openapi &lt;dir&gt;</code></h3>
+<p>Inserts Vite proxies (<code>/api</code>, <code>/swagger</code> typical), <code>.env.example</code>, hooks markers <strong><code>ABEYJS-OPENAPI-WIRE</code></strong> in setup/routes when detected.</p>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>Use</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>--proxy &lt;url&gt;</code></td>
+<td>Backend default proxy (e.g. local Kestrel).</td>
+</tr>
+<tr>
+<td><code>--openapi-path &lt;path&gt;</code></td>
+<td>Swagger JSON/YAML path on proxy host.</td>
+</tr>
+<tr>
+<td><code>--skip-install</code></td>
+<td></td>
+</tr>
+</tbody></table>
+<h3><code>abeyjs connect &lt;url-or-local-swagger-path&gt;</code></h3>
+<p>Produces <strong><code>.abeyjs/connect.json</code></strong> + <strong><code>abeyjs.connect.yml</code></strong>: contract metadata for later generators.</p>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>--target &lt;dir&gt;</code></td>
+<td>App folder (default cwd/inferred).</td>
+</tr>
+<tr>
+<td><code>--insecure</code></td>
+<td>Accept untrusted TLS (dev).</td>
+</tr>
+</tbody></table>
+<p>TTY mode classifies entities <strong>crud</strong> / <strong>action</strong> / <strong>service</strong> / skip interactively.</p>
+<p><strong>Often required</strong> before <strong><code>generate views</code></strong>.</p>
+<h2>Generators</h2>
+<h3><code>abeyjs generate views</code></h3>
+<p>Emit OM views + TS from connected contract.</p>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>--target</code></td>
+<td>App root.</td>
+</tr>
+<tr>
+<td>`--scaffold minimal</td>
+<td>full`</td>
+</tr>
+</tbody></table>
+<h3><code>abeyjs generate ecosystem &lt;PascalName&gt;</code></h3>
+<p>Vertical slice <strong><code>omega/</code> + <code>ui/</code></strong> plus example tick.</p>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>--target</code></td>
+<td>Target app.</td>
+</tr>
+<tr>
+<td><code>--feature-root</code></td>
+<td>Subfolder under <strong><code>src/</code></strong> (must stay under src).</td>
+</tr>
+<tr>
+<td><code>--show-nav</code> / <code>--no-show-nav</code></td>
+<td>Add visible <strong><code>componentRoute</code></strong> in admin sidebar template.</td>
+</tr>
+</tbody></table>
+<h3><code>abeyjs codegen &lt;spec.yaml|json&gt; -o &lt;dir&gt;</code></h3>
+<p><strong>openapi-typescript</strong> → path types + <strong><code>omegaSetup.generated.ts</code></strong> stub (does not replace domain logic). Useful typing baseline for huge OpenAPI.</p>
+<h2>AbeyJs monorepo utility (core dev)</h2>
+<pre><code class="language-bash">npm run abeyjs:generate:ecosystem -- MyModule --target examples/mi-admin
+</code></pre>
+<p>Root shorthand to avoid typoing <strong><code>node packages/cli/dist/cli.js</code></strong>.</p>
+<h2>More detail</h2>
+<p><code>packages/cli/README.md</code> accumulates release edge cases. README vs versioned binary divergence ⇒ <strong>file a bug</strong>.</p>
+<p>Next: <strong><code>/guides/monorepo</code></strong>.</p>
+  </article>
+</section>

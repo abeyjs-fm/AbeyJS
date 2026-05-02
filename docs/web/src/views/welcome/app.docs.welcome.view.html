@@ -1,0 +1,159 @@
+<div class="ab-w">
+  <header class="ab-w__nav" aria-label="Welcome">
+    <a class="ab-w__brand" href="/panel" aria-label="AbeyJs documentation">
+      <span class="ab-w__brand-ic" aria-hidden="true">A</span>
+      <span class="ab-w__brand-txt"><span class="ab-w__brand-lead">Abey</span><span class="ab-w__brand-tail">Js</span></span>
+    </a>
+    <div class="ab-w__nav-mid">
+      <div data-doc-find-mount></div>
+    </div>
+    <nav class="ab-w__nav-end" aria-label="Quick links">
+      <a class="ab-w__link gh" href="https://github.com/abeyjs-fm" target="_blank" rel="noopener noreferrer">
+        <i class="fa-brands fa-github" aria-hidden="true"></i> GitHub
+      </a>
+    </nav>
+  </header>
+
+  <main class="ab-w__main">
+    <section class="ab-w__hero">
+      <div class="ab-w__hero-copy">
+        <span class="ab-w__pill">v0 · preview</span>
+        <h1 class="ab-w__h1"><span class="ab-w__h1-lead">Abey</span><span class="ab-w__h1-tail">JS</span></h1>
+        <p class="ab-w__tagline">Ship faster. Think less. Build more.</p>
+        <p class="ab-w__lead">
+          Declarative Omega + OM: compiled views, routed shell, cohesive forms and tables without hand-wiring infrastructure every time.
+        </p>
+        <div class="ab-w__hero-cta">
+          <a href="/panel" class="ab-w-btn ab-w-btn--primary">
+            <i class="fa-solid fa-rocket" aria-hidden="true"></i>
+            Get started
+          </a>
+          <a href="/guides/quick-start" class="ab-w-btn ab-w-btn--ghost">
+            <i class="fa-solid fa-download" aria-hidden="true"></i>
+            Install
+          </a>
+          <a href="#ab-w-demo" class="ab-w-btn ab-w-btn--ghost">
+            <i class="fa-solid fa-code" aria-hidden="true"></i>
+            Demo
+          </a>
+        </div>
+      </div>
+      <div class="ab-w__hero-art" aria-hidden="true">
+        <div class="ab-w__grid-floor"></div>
+        <div class="ab-w__glass-window">
+          <div class="ab-w__glass-chrome">
+            <span class="ab-w__glass-dots">
+              <span class="ab-w__glass-dot ab-w__glass-dot--r"></span>
+              <span class="ab-w__glass-dot ab-w__glass-dot--y"></span>
+              <span class="ab-w__glass-dot ab-w__glass-dot--g"></span>
+            </span>
+            <span class="ab-w__glass-title">user-form.om.ts</span>
+          </div>
+          <div class="ab-w__glass-snippet">
+            <p class="ab-w__glass-row"><span class="ab-w__tok-k">import</span> <span class="ab-w__tok-p ab-w__tok-brace-l"></span> <span class="ab-w__tok-t">Required</span><span class="ab-w__tok-p">,</span> <span class="ab-w__tok-t">Email</span> <span class="ab-w__tok-p ab-w__tok-brace-r"></span> <span class="ab-w__tok-k">from</span> <span class="ab-w__tok-s">&quot;&#64;abeyjs&#47;uikit&quot;</span><span class="ab-w__tok-p">;</span></p>
+            <p class="ab-w__glass-row">&nbsp;</p>
+            <p class="ab-w__glass-row"><span class="ab-w__tok-k">export</span> <span class="ab-w__tok-k">class</span> <span class="ab-w__tok-type">UserForm</span> <span class="ab-w__tok-p ab-w__tok-brace-l"></span></p>
+            <p class="ab-w__glass-row ab-w__glass-row--indent"><span class="ab-w__tok-d">&#64;Required()</span></p>
+            <p class="ab-w__glass-row ab-w__glass-row--indent"><span class="ab-w__tok-prop">name</span> <span class="ab-w__tok-o">=</span> <span class="ab-w__tok-s">&quot;&quot;</span><span class="ab-w__tok-p">;</span></p>
+            <p class="ab-w__glass-row ab-w__glass-row--indent"><span class="ab-w__tok-d">&#64;Email()</span></p>
+            <p class="ab-w__glass-row ab-w__glass-row--indent"><span class="ab-w__tok-prop">email</span> <span class="ab-w__tok-o">=</span> <span class="ab-w__tok-s">&quot;&quot;</span><span class="ab-w__tok-p">;</span></p>
+            <p class="ab-w__glass-row"><span class="ab-w__tok-p ab-w__tok-brace-r"></span></p>
+          </div>
+          <div class="ab-w__glass-glow"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="ab-w-demo" class="ab-w__demo">
+      <h2 class="ab-w__demo-title"><i class="fa-solid fa-bolt" aria-hidden="true"></i> A working screen in seconds:</h2>
+      <div class="ab-w__demo-split">
+        <div class="ab-w__code">
+          <pre><code>import { Hidden, Required, Email } from &quot;@abeyjs/uikit&quot;;
+
+export class UserForm {
+  @Required()
+  name = &quot;&quot;;
+
+  @Email()
+  email = &quot;&quot;;
+
+  @Hidden()
+  _meta = {};
+}</code></pre>
+        </div>
+        <div class="ab-w__demo-arrow" aria-hidden="true">
+          <i class="fa-solid fa-arrow-right"></i>
+        </div>
+        <div class="ab-w__ui-preview">
+          <p class="ab-w__ui-title">User information</p>
+          <label class="ab-w-fake-label">Name</label>
+          <div class="ab-w-fake-input">Maria Torres</div>
+          <label class="ab-w-fake-label">Email</label>
+          <div class="ab-w-fake-input">hello@example.dev</div>
+          <button type="button" class="ab-w-fake-submit" tabindex="-1">Save</button>
+        </div>
+      </div>
+      <p class="ab-w__demo-footer">
+        <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>
+        No repetitive component wiring. Declare the model and open the docs whenever you want to go deeper.
+      </p>
+    </section>
+
+    <section class="ab-w__features" aria-labelledby="ab-w-features-h">
+      <h2 id="ab-w-features-h" class="ab-w__features-h">Why AbeyJS?</h2>
+      <ul class="ab-w__feature-grid">
+        <li class="ab-w-card">
+          <span class="ab-w-card__ic purple"><i class="fa-solid fa-brain" aria-hidden="true"></i></span>
+          <h3>Declarative</h3>
+          <p>Less ceremony: stable configuration and OM views instead of scattered layers with no contract.</p>
+        </li>
+        <li class="ab-w-card">
+          <span class="ab-w-card__ic teal"><i class="fa-solid fa-bolt" aria-hidden="true"></i></span>
+          <h3>Generated UI</h3>
+          <p>Lists and forms aligned to data and APIs; compiler and CLI scaffold the boring parts.</p>
+        </li>
+        <li class="ab-w-card">
+          <span class="ab-w-card__ic blue"><i class="fa-solid fa-rotate" aria-hidden="true"></i></span>
+          <h3>Omega runtime</h3>
+          <p>A single intent channel between view, shell, and services—without hand-coupling DOM details.</p>
+        </li>
+        <li class="ab-w-card">
+          <span class="ab-w-card__ic orange"><i class="fa-solid fa-puzzle-piece" aria-hidden="true"></i></span>
+          <h3>Modular</h3>
+          <p>Focused @abeyjs/* packages—bring in only what your app needs.</p>
+        </li>
+        <li class="ab-w-card">
+          <span class="ab-w-card__ic green"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i></span>
+          <h3>XSS-conscious</h3>
+          <p>An explicit contract for sanitized HTML where it matters—documented in the security guides.</p>
+        </li>
+      </ul>
+    </section>
+
+    <section class="ab-w__cta-banner" aria-label="Open documentation hub">
+      <div class="ab-w__cta-banner-inner">
+        <span class="ab-w__cta-rocket" aria-hidden="true"><i class="fa-solid fa-rocket"></i></span>
+        <div>
+          <h2 class="ab-w__cta-h">Ready to build more with less friction?</h2>
+          <p class="ab-w__cta-p">Technical docs, repo-driven guides, and one page per npm package.</p>
+        </div>
+        <div class="ab-w__cta-actions">
+          <a href="/panel" class="ab-w-btn ab-w-btn--primary ab-w-btn--lg">
+            Get started <i class="fa-solid fa-arrow-right-long" aria-hidden="true"></i>
+          </a>
+          <a href="/guides" class="ab-w__cta-muted">Browse all guides →</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="ab-w__foot">
+    <div class="ab-w__foot-brand">AbeyJS</div>
+    <div class="ab-w__foot-row">
+      <span>© 2026 AbeyJs. Tools and documentation under active development.</span>
+      <span class="ab-w__foot-social">
+        <a href="https://github.com/abeyjs-fm" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-github" aria-hidden="true"></i><span class="sr">GitHub</span></a>
+      </span>
+    </div>
+  </footer>
+</div>

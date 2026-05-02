@@ -1,15 +1,25 @@
 /**
  * **`@AbeyComponent` / `AbeyComponentElement`**: binds compiler-style templates + **`state`** (+ optional **`OmegaRuntime`** at **`runtimepath`**) using **`bindAbeyTemplate`** and **`mountModuleStyles`**.
+ *
+ * With **`stylesText`** (raw CSS, e.g. Vite `import css from "./x.css?inline"`), markup is mounted under **open Shadow DOM** so styles ship in the same JS chunk as the lazy route and stay scoped to the component.
  */
 import type { OmegaRuntime } from "@abeyjs/runtime";
 import { mountModuleStyles, type ModuleStylesHandle } from "./mount-module-styles.js";
 import { bindAbeyTemplate, type BoundTemplate } from "./bind-abey-template.js";
 import { tryInjectFromDom } from "../di/dom-di.js";
 
+const ABEY_SHADOW_INNER = "[data-abey-component-inner]";
+
 export type AbeyComponentMeta = {
   selector: string;
   template: string;
   stylesHrefs?: string[];
+  /**
+   * Raw CSS strings (e.g. `import sheet from "./view.css?inline"` in Vite). When non-empty, the template is
+   * rendered inside **open shadow root** with `<style>` tags so styles load with the component module (no extra
+   * network round-trip for `?url` stylesheets) and do not leak globally.
+   */
+  stylesText?: string[];
   /**
    * Optional DOM-DI providers that will be prepended to the component template.
    * This enables `injectFromDom("x", this)` inside the component without touching outer HTML.
@@ -81,18 +91,20 @@ export class AbeyComponentElement extends HTMLElement {
     return this.#runtime;
   }
 
-  /** Avoid `querySelector` in components: lookup by `id` within this component root. */
+  /** Avoid `querySelector` in components: lookup by `id` within this component (shadow or light DOM). */
   protected elById<T extends Element = Element>(id: string): T | null {
     const key = String(id ?? "").trim();
     if (!key) return null;
-    return (this.querySelector(`#${CSS.escape(key)}`) as T | null) ?? null;
+    const scope = (this.shadowRoot ?? this) as ParentNode;
+    return (scope.querySelector(`#${CSS.escape(key)}`) as T | null) ?? null;
   }
 
-  /** Avoid `querySelector` in components: lookup by `data-role="..."` within this component root. */
+  /** Avoid `querySelector` in components: lookup by `data-role="..."` within this component (shadow or light DOM). */
   protected elByRole<T extends Element = Element>(role: string): T | null {
     const key = String(role ?? "").trim();
     if (!key) return null;
-    return (this.querySelector(`[data-role="${CSS.escape(key)}"]`) as T | null) ?? null;
+    const scope = (this.shadowRoot ?? this) as ParentNode;
+    return (scope.querySelector(`[data-role="${CSS.escape(key)}"]`) as T | null) ?? null;
   }
 
   /**
@@ -100,7 +112,17 @@ export class AbeyComponentElement extends HTMLElement {
    * Lets you write: `const channel = this.channel<any>();`
    */
   protected channel<T = unknown>(): T | undefined {
-    return (tryInjectFromDom<T>("channel", this) ?? ((this.#runtime as any)?.channel as T | undefined)) as T | undefined;
+    const from = this.#bindingMount();
+    return (tryInjectFromDom<T>("channel", from) ?? ((this.#runtime as any)?.channel as T | undefined)) as T | undefined;
+  }
+
+  /** Inner mount node (shadow inner wrapper) or the host element for DOM-DI. */
+  #bindingMount(): Element {
+    if (this.shadowRoot) {
+      const inner = this.shadowRoot.querySelector(ABEY_SHADOW_INNER);
+      if (inner) return inner as Element;
+    }
+    return this;
   }
 
   connectedCallback(): void {
@@ -275,6 +297,11 @@ export class AbeyComponentElement extends HTMLElement {
     this.#styles = null;
   }
 
+  #useShadow(meta: AbeyComponentMeta | undefined): boolean {
+    const blocks = meta?.stylesText ?? [];
+    return blocks.some((s) => String(s ?? "").trim().length > 0);
+  }
+
   #mount(): void {
     this.#dispose();
 
@@ -282,6 +309,7 @@ export class AbeyComponentElement extends HTMLElement {
     this.#runtime = getRuntimeFromPath(this.#runtimePath);
 
     const meta = (this.constructor as typeof AbeyComponentElement).meta;
+    const shadowMode = this.#useShadow(meta);
     if (!this.#mounted) {
       // Component is responsible for its own template, but only once.
       const providers = (meta?.providers ?? [])
@@ -299,13 +327,29 @@ export class AbeyComponentElement extends HTMLElement {
           return `<abey-provide token="${token}"></abey-provide>`;
         })
         .join("");
-      this.innerHTML = `${providers}${meta?.template ?? ""}`;
+      const body = `${providers}${meta?.template ?? ""}`;
+      if (shadowMode) {
+        if (!this.shadowRoot) this.attachShadow({ mode: "open" });
+        const styleTags = (meta?.stylesText ?? [])
+          .map((s) => String(s ?? "").replace(/<\/style/gi, "<\\/style"))
+          .filter((s) => s.trim().length > 0)
+          .map((css) => `<style data-abey-encapsulated="1">${css}</style>`)
+          .join("");
+        this.shadowRoot!.innerHTML = `${styleTags}<div data-abey-component-inner="1">${body}</div>`;
+      } else {
+        this.innerHTML = body;
+      }
       this.#mounted = true;
       this.setAttribute("data-abey-component", "mounted");
     }
 
+    const bindRoot = (() => {
+      if (!shadowMode) return this;
+      const inner = this.shadowRoot?.querySelector(ABEY_SHADOW_INNER) as HTMLElement | null;
+      return inner ?? this;
+    })();
     this.#styles = mountModuleStyles((meta?.stylesHrefs ?? []).map(String));
-    this.#bound = bindAbeyTemplate(this, { runtime: this.#runtime, state: this.#ctx(), element: this });
+    this.#bound = bindAbeyTemplate(bindRoot, { runtime: this.#runtime, state: this.#ctx(), element: bindRoot });
     this.render();
 
     // Si el runtime aún no existe (p. ej. `__abeyRuntime` se setea después), reintentar montar.
@@ -328,7 +372,7 @@ export class AbeyComponentElement extends HTMLElement {
 /**
  * Registers a component as a real custom element.
  * Usage:
- * - `defineAbeyComponent({ selector: "app-foo", template, stylesHrefs }, class extends AbeyComponentElement { ... })`
+ * - `defineAbeyComponent({ selector: "app-foo", template, stylesText: [css] }, class extends AbeyComponentElement { ... })`
  */
 export function defineAbeyComponent<T extends CustomElementConstructor>(
   meta: AbeyComponentMeta,
@@ -346,10 +390,10 @@ export function defineAbeyComponent<T extends CustomElementConstructor>(
 }
 
 /**
- * Decorator-style API (Angular-like):
+ * Class decorator that registers **`defineAbeyComponent`** metadata on the target constructor.
  *
  * ```ts
- * @AbeyComponent({ selector: "app-foo", template, stylesHrefs: [...] })
+ * @AbeyComponent({ selector: "app-foo", template, stylesText: [sheet] })
  * class AppFoo extends AbeyComponentElement {}
  * ```
  */

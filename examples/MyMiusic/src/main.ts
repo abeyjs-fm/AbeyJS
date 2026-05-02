@@ -1,3 +1,4 @@
+import "/abey-styles.js";
 import { bootstrapOmegaApp, registerAbeyJsUi } from "@abeyjs/view";
 import "@abeyjs/view/theme/omega-default.css";
 import { createOmega } from "./omegaSetup.js";

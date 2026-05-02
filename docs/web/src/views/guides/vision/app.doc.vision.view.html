@@ -1,0 +1,171 @@
+<section data-role="doc-guide-root">
+  <article data-doc="markdown">
+<p>Baseline for <strong>what we want AbeyJs to be</strong> vs code already in the monorepo: where you can rely safely and where you still assemble yourself. Not marketing—the map we use to prioritize issues and releases.</p>
+<hr>
+<h2>0. Why AbeyJs vs repetitive CRUD</h2>
+<p>Classic flow: per entity you rebuild table, form, validation, async state, DTO wiring—each line risks <strong>drift</strong> with the backend.</p>
+<p><strong>Project bet:</strong> if the backend ships reliable <strong>OpenAPI</strong>, the client can <strong>discover</strong> collection/item pairs and mount <strong>list + form + intents</strong> on a reactive agent (<code>@abeyjs/openapi</code>). “Manual mode” still exists: ignore it and hand-build DOM; the <strong>differentiator</strong> is productive work with <strong>one source of truth: the spec</strong>.</p>
+<p>Keep these files handy when discussing with the team:</p>
+<ul>
+<li><code>packages/openapi/src/register.ts</code> — agent + intent registration.</li>
+<li><code>packages/openapi/src/discover-crud.ts</code> — path heuristics.</li>
+<li>End-to-end example: <code>examples/crud-app</code> folder.</li>
+</ul>
+<p>Feature checklist (table 1–15) and status <strong>in code today</strong>: <strong><code>/guides/crud-auto</code></strong> (same as <code>docs/crud-automatico-omegax.md</code> in the repo).</p>
+<hr>
+<h2>1. Requirement ↔ implementation matrix</h2>
+<table>
+<thead>
+<tr>
+<th>Requirement</th>
+<th>Coverage today</th>
+<th>Where to look</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Reactive model (UI from data)</td>
+<td>Yes — observable cells</td>
+<td><code>@abeyjs/core</code> (<code>StateCell</code> and related).</td>
+</tr>
+<tr>
+<td>Optional global “no manual state”</td>
+<td>Partial — you decide view vs agent split</td>
+<td>App architecture.</td>
+</tr>
+<tr>
+<td>Granular table reactivity</td>
+<td>Yes — RAF batching, per-row merge</td>
+<td><code>mountListViewSync</code>, <code>packages/view/src/dom/mount-list-sync.ts</code>.</td>
+</tr>
+<tr>
+<td>Automatic CRUD from OpenAPI</td>
+<td>Partial → grows with spec</td>
+<td><code>@abeyjs/openapi</code>; collection routes + <code>/{id}</code> typically.</td>
+</tr>
+<tr>
+<td>Types from OpenAPI</td>
+<td>Yes — <code>abeyjs codegen</code></td>
+<td><code>@abeyjs/cli</code>.</td>
+</tr>
+<tr>
+<td>Client validation (Zod)</td>
+<td>Yes</td>
+<td><code>@abeyjs/validation</code>; inferred/generated schemas.</td>
+</tr>
+<tr>
+<td>Server validation</td>
+<td>Outside framework</td>
+<td>Your stack (.NET, Node, etc.).</td>
+</tr>
+<tr>
+<td>Generic REST</td>
+<td>Yes — <code>OmegaHttp</code></td>
+<td><code>@abeyjs/http</code>, <code>createOmegaHttp</code>.</td>
+</tr>
+<tr>
+<td>List/form agent loading/error</td>
+<td>Yes — OpenAPI agent view slices</td>
+<td>Registered agent code.</td>
+</tr>
+<tr>
+<td>“Low boilerplate UI” mode</td>
+<td>Partial</td>
+<td><code>mount*View</code> helpers; single public zero-line CRUD screen TBD if we want it.</td>
+</tr>
+<tr>
+<td>Manual DOM + defs hybrids</td>
+<td>Yes — custom <code>mount</code> + partial <code>mountListView*</code></td>
+<td><code>AppRoute.mount</code>.</td>
+</tr>
+<tr>
+<td>Full DOM control</td>
+<td>Yes — primitives optional</td>
+<td>Any HTML/TS.</td>
+</tr>
+<tr>
+<td>Runtime plugins</td>
+<td>Yes — explicit teardown</td>
+<td><code>OmegaRuntime.registerPlugin</code> (<code>@abeyjs/core</code>).</td>
+</tr>
+<tr>
+<td>Keyed table engine</td>
+<td>Yes</td>
+<td><code>rowKey</code>, <code>mergeListRowsByKey</code>.</td>
+</tr>
+<tr>
+<td>XSS-safe defaults</td>
+<td>Yes — see <strong><code>/guides/security</code></strong>.</td>
+<td></td>
+</tr>
+<tr>
+<td>CRM/ERP operational scale</td>
+<td>Product/ops</td>
+<td>Pagination, caching, etc.—not all in core.</td>
+</tr>
+</tbody></table>
+<p><strong>Discovery gap we closed:</strong> discovery used to be rigid without <code>/{id}</code> on items; specs can define item paths and get/put/patch/delete so the agent completes update/delete when appropriate.</p>
+<hr>
+<h2>2. HTML: safe by default, explicit risk</h2>
+<p>Full normative rules: <strong><code>/guides/security</code></strong>. Operational summary:</p>
+<ul>
+<li>Happy path: <code>textContent</code>, escaped <code>{{ }}</code> bindings, no magic <code>innerHTML</code> from data.</li>
+<li>Rich HTML: <code>setSanitizedHtml</code> + policy (<code>configureSanitize</code>, e.g. DOMPurify).</li>
+<li>Advanced: your <code>innerHTML</code> → <strong>100% your responsibility</strong>.</li>
+</ul>
+<hr>
+<h2>3. CSS: Omega theme coexistence</h2>
+<ul>
+<li>Standard entry: <code>import &quot;@abeyjs/view/theme/omega-default.css&quot;</code> — <code>--abey-*</code> vars, BEM <code>abey-</code> prefix.</li>
+<li>Your CSS (Tailwind, modules, …) lives by import order and specificity.</li>
+<li>Customize: container tokens → targeted overrides → replace layout blocks keeping primitives.</li>
+<li>Light/dark: admin shell integrates toggle + persistence; you can force initial appearance and <code>themeVars*</code> from JS (see <strong><code>/guides/bootstrap-shell</code></strong>).</li>
+</ul>
+<hr>
+<h2>4. OpenAPI registration — APIs we rely on</h2>
+<ul>
+<li><strong><code>registerOpenApiCrud</code>:</strong> one discovery → one agent; <code>…/List</code>, <code>…/Create</code> and, when spec allows, <code>…/Update</code>, <code>…/Delete</code>.</li>
+<li><strong><code>registerWithDiscovered</code>:</strong> after you filtered a <code>DiscoveredCrud</code>.</li>
+<li><strong><code>registerOpenApiAllCrud</code>:</strong> multi-entity sweep; <code>entityPascal</code> composes path segments to reduce collisions (e.g. <code>/api/products</code> → <code>ApiProducts</code>).</li>
+<li>HTTP alignment: <code>putJson</code>, <code>patchJson</code>, <code>deletePath</code> in <code>packages/http/src/client.ts</code>.</li>
+</ul>
+<hr>
+<h2>5. Plugins</h2>
+<p><code>runtime.registerPlugin({ id, install })</code> — <code>install</code> returns optional teardown; runtime <code>disposeAll</code> runs them. No component tree required—hook <code>channel</code> or <code>onIntent</code> alone.</p>
+<hr>
+<h2>6. Packages (summary)</h2>
+<table>
+<thead>
+<tr>
+<th>Package</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>@abeyjs/core</code></td>
+<td>Intents, runtime base, <code>StateCell</code>, plugins.</td>
+</tr>
+<tr>
+<td><code>@abeyjs/view</code></td>
+<td>Shell, routes, lists/forms, OM host.</td>
+</tr>
+<tr>
+<td><code>@abeyjs/http</code></td>
+<td>Traceable client.</td>
+</tr>
+<tr>
+<td><code>@abeyjs/validation</code></td>
+<td>Zod + per-field errors.</td>
+</tr>
+<tr>
+<td><code>@abeyjs/openapi</code></td>
+<td>Discovery + CRUD agent.</td>
+</tr>
+<tr>
+<td><code>@abeyjs/cli</code></td>
+<td>Init, connect, codegen, generators.</td>
+</tr>
+</tbody></table>
+<p>Ready examples: monorepo <code>examples/</code> folder.</p>
+<p>Next on the web: <strong><code>/guides/abey-templates</code></strong> or <strong><code>/guides/crud-auto</code></strong> depending on OM syntax vs OpenAPI pipeline.</p>
+  </article>
+</section>

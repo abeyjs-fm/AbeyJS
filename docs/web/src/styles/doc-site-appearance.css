@@ -1,0 +1,807 @@
+/*
+ * AbeyJs Docs — aspecto propio (marca, halos shell, scrollbar viewport, vistas `pageRoute`).
+ * Va después de omega-default + `doc-shell.css` (plantilla / tokens prose).
+ */
+
+:root {
+  /* Matiz secundario marca; `--abey-accent` viene del tema en `main.ts` */
+  --doc-brand-hue-2: #6848fc;
+  --doc-brand-purple: #9d2cff;
+  --doc-scrollbar-dark-thumb: rgba(100, 116, 139, 0.22);
+  --doc-scrollbar-dark-thumb-hover: rgba(148, 163, 184, 0.34);
+  --doc-scrollbar-dark-thumb-accent: color-mix(
+    in srgb,
+    var(--abey-accent, #2e7dff) 32%,
+    transparent
+  );
+  --doc-scrollbar-light-thumb: rgba(100, 116, 139, 0.32);
+  --doc-scrollbar-light-thumb-hover: rgba(71, 85, 105, 0.45);
+}
+
+/* ─── Barras del navegador (html/body) en sitio docs: discretas, sin botones ─── */
+html:has(.doc-site.abey--dark),
+html:has(.doc-site.abey--dark) body {
+  scrollbar-width: thin;
+  scrollbar-color: var(--doc-scrollbar-dark-thumb) transparent;
+}
+
+html:has(.doc-site.abey--dark)::-webkit-scrollbar,
+html:has(.doc-site.abey--dark) body::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+html:has(.doc-site.abey--dark)::-webkit-scrollbar-track,
+html:has(.doc-site.abey--dark) body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+html:has(.doc-site.abey--dark)::-webkit-scrollbar-thumb,
+html:has(.doc-site.abey--dark) body::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: var(--doc-scrollbar-dark-thumb);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+html:has(.doc-site.abey--dark)::-webkit-scrollbar-thumb:hover,
+html:has(.doc-site.abey--dark) body::-webkit-scrollbar-thumb:hover {
+  background: var(--doc-scrollbar-dark-thumb-hover);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+html:has(.doc-site.abey--dark)::-webkit-scrollbar-thumb:active,
+html:has(.doc-site.abey--dark) body::-webkit-scrollbar-thumb:active {
+  background: var(--doc-scrollbar-dark-thumb-accent);
+}
+
+html:has(.doc-site.abey--dark)::-webkit-scrollbar-button,
+html:has(.doc-site.abey--dark) body::-webkit-scrollbar-button {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+html:has(.doc-site.abey--dark)::-webkit-scrollbar-corner,
+html:has(.doc-site.abey--dark) body::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+html:has(.doc-site:not(.abey--dark)),
+html:has(.doc-site:not(.abey--dark)) body {
+  scrollbar-width: thin;
+  scrollbar-color: var(--doc-scrollbar-light-thumb) transparent;
+}
+
+html:has(.doc-site:not(.abey--dark))::-webkit-scrollbar-thumb,
+html:has(.doc-site:not(.abey--dark)) body::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: var(--doc-scrollbar-light-thumb);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+html:has(.doc-site:not(.abey--dark))::-webkit-scrollbar,
+html:has(.doc-site:not(.abey--dark)) body::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+html:has(.doc-site:not(.abey--dark))::-webkit-scrollbar-track,
+html:has(.doc-site:not(.abey--dark)) body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+html:has(.doc-site:not(.abey--dark))::-webkit-scrollbar-thumb:hover,
+html:has(.doc-site:not(.abey--dark)) body::-webkit-scrollbar-thumb:hover {
+  background: var(--doc-scrollbar-light-thumb-hover);
+}
+
+html:has(.doc-site:not(.abey--dark))::-webkit-scrollbar-corner,
+html:has(.doc-site:not(.abey--dark)) body::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+html:has(.doc-site:not(.abey--dark))::-webkit-scrollbar-button,
+html:has(.doc-site:not(.abey--dark)) body::-webkit-scrollbar-button {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.doc-site.abey-shell-app.abey--dark {
+  --doc-divider: rgba(148, 163, 184, 0.18);
+}
+
+.doc-site.abey-shell-app.abey--dark .abey-appbar--dashboard {
+  background: color-mix(in srgb, var(--abey-surface, #111827) 72%, transparent);
+  backdrop-filter: saturate(155%) blur(14px);
+  -webkit-backdrop-filter: saturate(155%) blur(14px);
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--abey-accent) 18%, transparent);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.04) inset,
+    0 14px 40px rgba(0, 0, 0, 0.35);
+}
+
+/*
+ * Sidebar / compact: placa de marca; halo suave desde `--abey-accent` y violeta marca.
+ */
+.doc-site.abey-shell-app.abey--dark .abey-appbar__mark {
+  background:
+    radial-gradient(
+      118% 100% at 10% -8%,
+      color-mix(in srgb, var(--abey-accent, #2e7dff) 16%, transparent) 0%,
+      transparent 55%
+    ),
+    linear-gradient(154deg, #000000 0%, #07070e 42%, #0b0c12 72%, #050508 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.35),
+    0 0 0 1px color-mix(in srgb, var(--abey-accent, #2e7dff) 14%, transparent),
+    0 10px 28px rgba(0, 0, 0, 0.45);
+}
+
+/* Contorno tenue sobre el tramo degradé — ayuda donde el vínculo tema/fondo siga siendo cercano. */
+.doc-site.abey-shell-app.abey--dark
+  .abey-appbar__mark
+  .abey-appbar__mark-title--tail {
+  filter: drop-shadow(0 0.06em 0.14em rgba(2, 6, 23, 0.85));
+}
+
+/* Modo lite · sidebar: placa un poco más profunda + halos claros para que „Abey“ / „JS“ no se fundan. */
+.doc-site.abey-shell-app:not(.abey--dark)
+  .abey-appbar--dashboard
+  .abey-appbar__mark {
+  background:
+    radial-gradient(
+      132% 120% at 50% -20%,
+      rgba(255, 255, 255, 0.28) 0%,
+      transparent 48%
+    ),
+    linear-gradient(128deg, #4c1d95 0%, #5b21b6 34%, #4338ca 68%, #553c9a 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.18),
+    0 0 0 1px rgba(255, 255, 255, 0.14);
+}
+
+.doc-site.abey-shell-app:not(.abey--dark)
+  .abey-appbar--dashboard
+  .abey-appbar__mark-title--lead {
+  color: var(--abey-brand-mark-lead, #ffffff);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.doc-site.abey-shell-app:not(.abey--dark)
+  .abey-appbar--dashboard
+  .abey-appbar__mark
+  .abey-appbar__mark-title--tail {
+  filter: drop-shadow(0 0.05em 0.12em rgba(0, 0, 0, 0.55));
+}
+
+.doc-site.abey-shell-app:not(.abey--dark)
+  .abey-appbar--dashboard
+  .abey-appbar__mark-sub {
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Marca más grande en docs (**Abey / JS**, „docs”) — sidebar, compact y el resto de modos por defecto Omega. */
+.doc-site.abey-shell-app
+  .abey-appbar--dashboard
+  .abey-appbar__mark-heading
+  .abey-appbar__mark-title,
+.doc-site.abey-shell-app
+  .abey-appbar--dashboard
+  .abey-appbar__mark-text
+  > .abey-appbar__mark-title:only-child {
+  font-size: clamp(1.22rem, 1.06rem + 0.95vw, 1.55rem);
+  font-weight: 800;
+  letter-spacing: -0.034em;
+  line-height: 1.12;
+}
+
+.doc-site.abey-shell-app .abey-appbar--dashboard .abey-appbar__mark-sub {
+  font-size: clamp(0.74rem, 0.67rem + 0.35vw, 0.8125rem);
+  font-weight: 600;
+  letter-spacing: 0.038em;
+}
+
+/*
+ * Horizontal: Omega pone rejilla jewel (::before) + título/subtítulo → sensación “escalón” y doble badge.
+ * En docs queremos sólo texto alineado (AbeyJs + docs).
+ */
+.doc-site.abey-shell-app
+  .abey-shell[data-abey-nav-mode="horizontal"].abey-shell--dashboard
+  .abey-appbar__mark {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.65rem;
+  min-width: 0;
+  width: auto;
+  max-width: none;
+  padding: 0.2rem 0.85rem 0.2rem 0;
+  margin: 0;
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0;
+  text-align: left;
+}
+
+.doc-site.abey-shell-app
+  .abey-shell[data-abey-nav-mode="horizontal"].abey-shell--dashboard
+  .abey-appbar__mark::before {
+  content: none;
+  display: none;
+}
+
+.doc-site.abey-shell-app
+  .abey-shell[data-abey-nav-mode="horizontal"].abey-shell--dashboard
+  .abey-appbar__mark-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0.06rem;
+  min-width: 0;
+}
+
+.doc-site.abey-shell-app
+  .abey-shell[data-abey-nav-mode="horizontal"].abey-shell--dashboard
+  .abey-appbar__mark-text
+  > .abey-appbar__mark-title:only-child {
+  font-weight: 800;
+  font-size: clamp(1.1rem, 1rem + 0.72vw, 1.42rem);
+  letter-spacing: -0.032em;
+  line-height: 1.14;
+  color: var(--abey-text);
+}
+
+.doc-site.abey-shell-app
+  .abey-shell[data-abey-nav-mode="horizontal"].abey-shell--dashboard
+  .abey-appbar__mark-heading
+  .abey-appbar__mark-title {
+  font-weight: 800;
+  font-size: clamp(1.12rem, 1.02rem + 0.78vw, 1.48rem);
+  letter-spacing: -0.032em;
+  line-height: 1.14;
+}
+
+.doc-site.abey-shell-app.abey--dark
+  .abey-shell[data-abey-nav-mode="horizontal"].abey-shell--dashboard
+  .abey-appbar__mark-title--lead {
+  color: var(--abey-brand-mark-lead, #f8fafc);
+}
+
+.doc-site.abey-shell-app.abey--dark
+  .abey-shell[data-abey-nav-mode="horizontal"].abey-shell--dashboard
+  .abey-appbar__mark-title--tail {
+  filter: drop-shadow(0 0.05em 0.1em rgba(2, 6, 23, 0.55));
+}
+
+.doc-site.abey-shell-app
+  .abey-shell[data-abey-nav-mode="horizontal"].abey-shell--dashboard
+  .abey-appbar__mark-sub {
+  margin-top: 0;
+  font-size: clamp(0.73rem, 0.67rem + 0.28vw, 0.8125rem);
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0.036em;
+  color: var(--abey-text-muted);
+}
+
+.doc-site.abey-shell-app.abey--dark .abey-appbar__action {
+  border-color: color-mix(in srgb, var(--abey-accent) 16%, var(--abey-border));
+  background: color-mix(in srgb, var(--abey-surface-elev) 88%, transparent);
+}
+
+.doc-site.abey-shell-app.abey--dark .abey-appbar__action:hover,
+.doc-site.abey-shell-app.abey--dark .abey-appbar__action:focus {
+  border-color: color-mix(in srgb, var(--abey-accent) 42%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--abey-accent) 16%, transparent);
+}
+
+.doc-site.abey-shell-app.abey--dark
+  .abey-shell--dashboard
+  .abey-sidebar--dashboard {
+  background:
+    linear-gradient(
+      178deg,
+      color-mix(in srgb, var(--abey-surface) 65%, #020617) 0%,
+      var(--abey-surface, #111827) 22%
+    ),
+    var(--abey-surface);
+  border-right: 1px solid
+    color-mix(in srgb, var(--abey-accent) 12%, var(--abey-border));
+  box-shadow:
+    12px 0 48px rgba(0, 0, 0, 0.38),
+    inset -1px 0 0 rgba(255, 255, 255, 0.05);
+}
+
+.doc-site.abey-shell-app.abey--dark main.abey-outlet.abey-outlet--dashboard {
+  background:
+    radial-gradient(
+      ellipse 70% 45% at 50% -8%,
+      color-mix(in srgb, var(--abey-accent, #2e7dff) 12%, transparent),
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse 55% 35% at 94% 6%,
+      color-mix(in srgb, var(--doc-brand-purple, #9d2cff) 14%, transparent),
+      transparent 50%
+    ),
+    linear-gradient(180deg, #000000 0%, #09090f 46%, #040408 100%);
+}
+
+.doc-site.abey-shell-app.abey--dark
+  .abey-shell--dashboard
+  .abey-sidebar__inner::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--abey-accent) 38%, rgba(148, 163, 184, 0.28)),
+    color-mix(in srgb, var(--doc-brand-hue-2) 22%, transparent)
+  );
+}
+
+.doc-site.abey-shell-app.abey--dark .abey-nav-tree__summary:hover,
+.doc-site.abey-shell-app.abey--dark .abey-nav-tree__summary:focus {
+  background: color-mix(in srgb, var(--abey-accent) 12%, transparent);
+}
+
+.doc-site.abey-shell-app.abey--dark .abey-nav-tree__summary-ic {
+  background: color-mix(in srgb, var(--abey-accent) 14%, transparent);
+  color: var(--abey-text);
+}
+
+.doc-site.abey-shell-app.abey--dark
+  .abey-nav-link--sidebar:hover:not([aria-current="page"]):not(
+    .abey-nav-link--active
+  ),
+.doc-site.abey-shell-app.abey--dark
+  .abey-nav-link--sidebar:focus-visible:not([aria-current="page"]):not(
+    .abey-nav-link--active
+  ) {
+  box-shadow: 0 4px 18px color-mix(in srgb, var(--abey-accent) 11%, transparent);
+}
+
+.doc-site.abey-shell-app.abey--dark
+  .abey-shell--dashboard
+  .abey-sidebar
+  .abey-nav-link[aria-current="page"].abey-nav-link--sidebar,
+.doc-site.abey-shell-app.abey--dark
+  .abey-shell--dashboard
+  .abey-sidebar
+  .abey-nav-link--active.abey-nav-link--sidebar {
+  border-color: transparent;
+  background:
+    radial-gradient(
+      130% 260% at 6% 50%,
+      color-mix(in srgb, var(--doc-brand-hue-2) 12%, transparent) 0%,
+      transparent 70%
+    ),
+    radial-gradient(
+      130% 240% at 4% 50%,
+      color-mix(in srgb, var(--abey-accent) 24%, transparent) 0%,
+      transparent 74%
+    ),
+    linear-gradient(
+      96deg,
+      color-mix(in srgb, var(--abey-accent) 14%, transparent) 0%,
+      color-mix(in srgb, var(--doc-brand-hue-2) 8%, transparent) 88%
+    );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    0 0 0 1px color-mix(in srgb, var(--abey-accent) 14%, transparent),
+    0 10px 32px rgba(0, 0, 0, 0.24),
+    0 0 56px color-mix(in srgb, var(--abey-accent) 8%, transparent);
+}
+
+.doc-site.abey-shell-app.abey--dark
+  .abey-shell--dashboard
+  .abey-sidebar
+  .abey-nav-link[aria-current="page"].abey-nav-link--sidebar::before,
+.doc-site.abey-shell-app.abey--dark
+  .abey-shell--dashboard
+  .abey-sidebar
+  .abey-nav-link--active.abey-nav-link--sidebar::before {
+  left: 5px;
+  width: 2.5px;
+  background: linear-gradient(
+    180deg,
+    var(--abey-accent) 0%,
+    color-mix(
+        in srgb,
+        var(--doc-brand-hue-2) 52%,
+        var(--doc-brand-purple, #9d2cff)
+      )
+      100%
+  );
+  box-shadow:
+    0 0 12px color-mix(in srgb, var(--abey-accent) 48%, transparent),
+    0 0 20px color-mix(in srgb, var(--abey-accent) 18%, transparent);
+}
+
+.doc-site.abey-shell-app.abey--dark .abey-nav-link__ic {
+  background: color-mix(in srgb, var(--abey-accent) 15%, transparent);
+}
+
+.doc-site.abey-shell-app.abey--dark .abey-nav-link--active .abey-nav-link__ic,
+.doc-site.abey-shell-app.abey--dark
+  .abey-nav-link[aria-current="page"]
+  .abey-nav-link__ic {
+  background: linear-gradient(
+    160deg,
+    color-mix(in srgb, var(--abey-accent) 30%, transparent),
+    color-mix(in srgb, var(--doc-brand-hue-2) 12%, transparent)
+  );
+  color: color-mix(in srgb, var(--abey-accent) 78%, white);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Modo claro: doc con un poco de “glass” sobre Omega (persistencia tema claro sigue igual) */
+
+.doc-site.abey-shell-app:not(.abey--dark)
+  main.abey-outlet.abey-outlet--dashboard {
+  background:
+    radial-gradient(
+      ellipse 72% 40% at 48% -6%,
+      color-mix(in srgb, var(--abey-accent, #3182ce) 8%, transparent),
+      transparent 52%
+    ),
+    radial-gradient(
+      ellipse 50% 32% at 100% 0%,
+      color-mix(in srgb, var(--doc-brand-purple, #805ad5) 7%, transparent),
+      transparent 48%
+    ),
+    var(--abey-bg, #f7fafc);
+}
+
+/* Scrollbar fina en el outlet (modo lite): igual idea que oscuro, sin flechas sobredimensionadas. */
+.doc-site.abey-shell-app:not(.abey--dark) .abey-shell--dashboard .abey-outlet {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(
+      in srgb,
+      var(--abey-accent, #3182ce) 22%,
+      rgba(100, 116, 139, 0.28)
+    )
+    transparent;
+}
+
+.doc-site.abey-shell-app:not(.abey--dark)
+  .abey-shell--dashboard
+  .abey-outlet::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.doc-site.abey-shell-app:not(.abey--dark)
+  .abey-shell--dashboard
+  .abey-outlet::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+.doc-site.abey-shell-app:not(.abey--dark)
+  .abey-shell--dashboard
+  .abey-outlet::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.doc-site.abey-shell-app:not(.abey--dark)
+  .abey-shell--dashboard
+  .abey-outlet::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: color-mix(
+    in srgb,
+    var(--abey-accent, #3182ce) 28%,
+    rgba(100, 116, 139, 0.25)
+  );
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.doc-site.abey-shell-app:not(.abey--dark)
+  .abey-shell--dashboard
+  .abey-outlet::-webkit-scrollbar-thumb:hover {
+  background: color-mix(
+    in srgb,
+    var(--abey-accent, #3182ce) 40%,
+    rgba(71, 85, 105, 0.32)
+  );
+}
+
+.doc-site.abey-shell-app:not(.abey--dark)
+  .abey-shell--dashboard
+  .abey-sidebar__inner {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(
+      in srgb,
+      var(--abey-accent, #3182ce) 18%,
+      rgba(100, 116, 139, 0.25)
+    )
+    transparent;
+}
+
+.doc-site.abey-shell-app:not(.abey--dark)
+  .abey-shell--dashboard
+  .abey-sidebar__inner::-webkit-scrollbar {
+  width: 8px;
+}
+
+.doc-site.abey-shell-app:not(.abey--dark)
+  .abey-shell--dashboard
+  .abey-sidebar__inner::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+.doc-site.abey-shell-app:not(.abey--dark)
+  .abey-shell--dashboard
+  .abey-sidebar__inner::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: color-mix(
+    in srgb,
+    var(--abey-accent, #3182ce) 22%,
+    rgba(100, 116, 139, 0.22)
+  );
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+/* Ítem activo sidebar: halo “sky” legible sobre blanco (~`#ebf8ff`). */
+.doc-site.abey-shell-app:not(.abey--dark)
+  .abey-shell--dashboard
+  .abey-sidebar
+  .abey-nav-link[aria-current="page"].abey-nav-link--sidebar,
+.doc-site.abey-shell-app:not(.abey--dark)
+  .abey-shell--dashboard
+  .abey-sidebar
+  .abey-nav-link--active.abey-nav-link--sidebar {
+  background: linear-gradient(
+    96deg,
+    #ebf8ff 0%,
+    color-mix(in srgb, var(--abey-accent) 7%, #ffffff) 100%
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    0 0 0 1px color-mix(in srgb, var(--abey-accent) 14%, transparent),
+    0 4px 14px color-mix(in srgb, var(--abey-accent) 12%, transparent);
+}
+
+.doc-site.abey-shell-app:not(.abey--dark) .abey-appbar--dashboard {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--abey-surface) 92%, #fff),
+    var(--abey-surface)
+  );
+  border-bottom-color: color-mix(
+    in srgb,
+    var(--abey-accent) 14%,
+    var(--abey-border)
+  );
+}
+
+/* ─── Sidebar layout fino sobre omega-default (densidad docs) ─── */
+
+.doc-site.abey-shell-app .abey-sidebar__inner {
+  padding-left: max(0.35rem, var(--abey-space-2, 8px));
+}
+
+.doc-site.abey-shell-app .abey-nav-stack {
+  gap: 0.12rem;
+}
+
+.doc-site.abey-shell-app .abey-nav-tree__subs {
+  border-left-style: dashed;
+}
+
+/* pageRoute (`/guides`, `/omega`, 404): ancho completo del main; omega-default metía ~40rem si ganaba en cascada */
+.doc-site.abey-shell-app main.abey-outlet .abey-page-hero {
+  width: 100%;
+  max-width: none;
+  margin-inline: 0;
+  margin-bottom: 1.25rem;
+  padding: clamp(1.2rem, 2.5vw, 1.75rem) clamp(1rem, 2.75vw, 2rem);
+  border-radius: var(--doc-radius);
+  border: 1px solid var(--doc-divider);
+  background:
+    radial-gradient(
+      100% 120% at 100% -10%,
+      color-mix(in srgb, var(--abey-accent, #2157f3) 14%, transparent),
+      transparent 45%
+    ),
+    var(--abey-surface-elev, #fff);
+  box-shadow:
+    0 1px 0 rgba(15, 23, 42, 0.04),
+    0 12px 38px rgba(15, 23, 42, 0.08),
+    0 0 0 1px rgba(148, 163, 184, 0.1);
+  box-sizing: border-box;
+}
+
+.doc-site.abey-shell-app.abey--dark main.abey-outlet .abey-page-hero {
+  border-color: color-mix(in srgb, var(--abey-accent) 28%, var(--doc-divider));
+  background:
+    radial-gradient(
+      110% 130% at 90% -12%,
+      color-mix(in srgb, var(--abey-accent) 22%, transparent),
+      transparent 52%
+    ),
+    radial-gradient(
+      75% 80% at 6% 102%,
+      color-mix(in srgb, var(--doc-brand-purple, #9d2cff) 16%, transparent),
+      transparent 52%
+    ),
+    rgba(8, 8, 14, 0.78);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.05) inset,
+    0 18px 48px rgba(0, 0, 0, 0.36),
+    0 0 0 1px
+      color-mix(in srgb, var(--abey-accent) 14%, rgba(148, 163, 184, 0.12)),
+    0 0 min(80px, 14vw)
+      color-mix(in srgb, var(--doc-brand-purple, #9d2cff) 8%, transparent);
+}
+
+.doc-site.abey-shell-app main.abey-outlet .abey-page-hero h1 {
+  font-size: clamp(1.45rem, 1.8vw + 0.95rem, 1.82rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+}
+
+.doc-site.abey-shell-app main.abey-outlet .abey-page-hero > p:first-of-type {
+  font-size: 1.02rem;
+  line-height: 1.65;
+  margin-top: 0.35rem;
+}
+
+/* omega-default limita `.abey-outlet p`; en hero declarativo queremos párrafos de ancho completo */
+.doc-site.abey-shell-app main.abey-outlet .abey-page-hero p {
+  max-width: none;
+}
+
+.doc-site.abey-shell-app main.abey-outlet .abey-starter-card {
+  margin-top: 1.35rem;
+  max-width: none;
+  width: 100%;
+  margin-inline: 0;
+  padding: 1.1rem clamp(1.1rem, 2.5vw, 1.6rem);
+  border-radius: var(--doc-radius-sm);
+  border-color: color-mix(
+    in srgb,
+    var(--abey-border, rgba(226, 232, 240, 0.9)) 92%,
+    transparent
+  );
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--abey-accent, #6366f1) 6%, transparent),
+    var(--abey-surface, #fff)
+  );
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.06) inset,
+    0 10px 28px rgba(15, 23, 42, 0.07);
+}
+
+.doc-site.abey-shell-app.abey--dark main.abey-outlet .abey-starter-card {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--abey-accent, #2e7dff) 12%, transparent),
+    rgba(15, 23, 42, 0.35)
+  );
+}
+
+.doc-site.abey-shell-app main.abey-outlet .abey-starter-card ul {
+  font-size: 0.935rem;
+  line-height: 1.58;
+}
+
+.doc-site.abey-shell-app main.abey-outlet .abey-starter-card li {
+  margin-bottom: 0.45rem;
+  padding-left: 0.05rem;
+}
+
+.doc-site.abey-shell-app main.abey-outlet .abey-starter-card li::marker {
+  color: color-mix(in srgb, var(--abey-accent, #6366f1) 75%, gray);
+}
+
+@media (min-width: 1000px) {
+  .doc-site.abey-shell-app main.abey-outlet .abey-starter-card ul {
+    column-count: 2;
+    column-gap: clamp(1.75rem, 4vw, 3rem);
+  }
+
+  .doc-site.abey-shell-app main.abey-outlet .abey-starter-card li {
+    break-inside: avoid;
+  }
+}
+
+@media (min-width: 1440px) {
+  .doc-site.abey-shell-app main.abey-outlet .abey-starter-card ul {
+    column-count: 3;
+    column-gap: clamp(1.5rem, 3vw, 2.5rem);
+  }
+}
+
+/*
+ * Pantallas anchas: dos columnas (título + lead | bloque lista) y altura mínima del panel
+ * para que el contenido no quede “pegado arriba” en monitores grandes.
+ */
+@media (min-width: 1280px) {
+  .doc-site.abey-shell-app
+    main.abey-outlet
+    .abey-page-hero:has(.abey-starter-card) {
+    display: grid;
+    grid-template-columns: minmax(0, min(38ch, 42%)) minmax(0, 1fr);
+    column-gap: clamp(1.75rem, 3.2vw, 2.75rem);
+    row-gap: 0.75rem;
+    align-items: start;
+    min-height: min(76vh, calc(100vh - var(--abey-appbar-h, 3.5rem) - 2.5rem));
+  }
+
+  .doc-site.abey-shell-app
+    main.abey-outlet
+    .abey-page-hero:has(.abey-starter-card)
+    h1 {
+    grid-column: 1;
+    grid-row: 1;
+    margin-bottom: 0;
+  }
+
+  .doc-site.abey-shell-app
+    main.abey-outlet
+    .abey-page-hero:has(.abey-starter-card)
+    > p:not(.abey-starter-footnote) {
+    grid-column: 1;
+    grid-row: 2;
+    margin-top: 0;
+    align-self: start;
+  }
+
+  .doc-site.abey-shell-app
+    main.abey-outlet
+    .abey-page-hero:has(.abey-starter-card)
+    .abey-starter-card {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    margin-top: 0;
+    align-self: stretch;
+    min-height: 100%;
+  }
+
+  .doc-site.abey-shell-app
+    main.abey-outlet
+    .abey-page-hero:has(.abey-starter-card)
+    .abey-starter-footnote {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    margin-top: 0.75rem;
+  }
+
+  /* Rutas sólo texto (sin card): un poco de aire vertical igual */
+  .doc-site.abey-shell-app
+    main.abey-outlet
+    .abey-page-hero:not(:has(.abey-starter-card)) {
+    min-height: min(52vh, calc(100vh - var(--abey-appbar-h, 3.5rem) - 2.5rem));
+  }
+}
+
+.doc-site.abey-shell-app main.abey-outlet .abey-starter-footnote {
+  max-width: none;
+  width: 100%;
+  margin-inline: 0;
+  margin-top: 1.15rem;
+  padding: 0.65rem 0.85rem;
+  border-radius: var(--doc-radius-sm);
+  background: color-mix(
+    in srgb,
+    var(--abey-text-muted, #64748b) 8%,
+    transparent
+  );
+  font-size: 0.84rem;
+  line-height: 1.5;
+}

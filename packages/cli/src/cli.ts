@@ -1,8 +1,11 @@
 #!/usr/bin/env node
 /** AbeyJs CLI — project scaffolding, OpenAPI wiring, view/ecosystem generators. */
+import { execFileSync, spawn } from "node:child_process";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { cp, mkdir, readFile, writeFile } from "node:fs/promises";
+import os from "node:os";
 import { fileURLToPath } from "node:url";
-import { isAbsolute, join, resolve } from "node:path";
+import { dirname, isAbsolute, join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { createInterface } from "node:readline/promises";
 import { stdin as input, stdout as output } from "node:process";
@@ -15,40 +18,310 @@ import {
   runGenerateEcosystem,
 } from "./generate-ecosystem.js";
 
-const usage = `abeyjs — AbeyJs helper CLI
+/** `package.json` next to this file (`dist/` → package root). */
+function getCliVersion(): string {
+  try {
+    const pkgDir = fileURLToPath(new URL("..", import.meta.url));
+    const raw = readFileSync(join(pkgDir, "package.json"), "utf-8");
+    const pkg = JSON.parse(raw) as { version?: string };
+    return typeof pkg.version === "string" ? pkg.version : "0.0.0";
+  } catch {
+    return "0.0.0";
+  }
+}
 
-  abeyjs new <folder> [--template admin|abeyjs|empty|minimal] [--shell dashboard|appbar]
-  abeyjs create <folder> [options]   (alias)
-  abeyjs init <folder> [options]     (same as \`new\`: copy template in one step)
-      Scaffolds Vite+TS+AbeyJs. Templates \`abeyjs\` / \`empty\` (same starter; disk: \`templates/empty\`) and \`admin\` ship a runnable app;
-      \`minimal\` is a tiny workspace skeleton with only @abeyjs/core.
-      \`--shell\` applies only to \`--template admin\`: \`dashboard\` = top bar + side nav + <main> (default);
-      \`appbar\` = compact app bar + sidebar.
-      Does not run npm install.
-  abeyjs add openapi <folder> [--proxy <https://host:port>] [--openapi-path <path relative to proxy>]
-      In an existing Vite+AbeyJs project: adds @abeyjs/openapi, @abeyjs/http, patches vite (proxies /api + /swagger),
-      .env.example, omegaSetup helpers (initOpenApi + getOpenApi), CRUD route + view (mountOpenApiCrudView).
-      Then: copy .env and npm i.
-      Defaults: --proxy https://127.0.0.1:7019 and --openapi-path /swagger/v1/swagger.json
-  abeyjs connect <swagger-url> [--target <folder>]
-      Detects CRUD-ish entities from OpenAPI and writes .abeyjs/connect.json.
-      Also writes abeyjs.connect.yml for widget/combo tuning.
-      Use --insecure to trust self-signed HTTPS certs (dev only).
-  abeyjs generate views [--target <folder>] [--scaffold minimal|full] [--full-scaffold]
-      Generates CRUD views per entity (ts/html/css) and registers routes/sidebar.
-      Requires a prior \`abeyjs connect\`.
-      Default layout: \`src/routes.ts\`, \`src/views\`, \`src/flows\`, \`src/services/http.ts\`.
-      \`--scaffold full\` (or \`--full-scaffold\`) adds extra layers (\`src/app\`, \`src/ui\`, \`src/infra\`, use-cases).
-  abeyjs generate ecosystem <Name> [--feature-root <path>] [--target <folder>]
-  abeyjs g ecosystem <Name> [--feature-root <path>] [--target <folder>]   (alias)
-      Creates \`ui/\` (html, css, ts) and \`omega/\` (semantics, behavior, agent, flow, register) under the feature path.
-      Without \`--feature-root\`, drops a \`./<kebab-name>/\` folder relative to \`--target\`.
-      Best-effort patches \`src/omegaSetup.ts\` and \`src/routes.ts\` when present.
-  abeyjs codegen <openapi.json|yaml> -o, --out <dir>
-      Generate api-types.ts and omegaSetup.generated.ts stub.
-  abeyjs help
-      Show this text
-`;
+function npmExecutable(): string {
+  return process.platform === "win32" ? "npm.cmd" : "npm";
+}
+
+function tryNpmVersion(): string {
+  const ua = process.env.npm_config_user_agent ?? "";
+  const fromUa = ua.match(/\bnpm\/([^\s]+)/);
+  if (fromUa) {
+    return fromUa[1]!;
+  }
+  const cmd = npmExecutable();
+  try {
+    return execFileSync(cmd, ["-v"], { encoding: "utf-8", stdio: ["ignore", "pipe", "ignore"] }).trim();
+  } catch {
+    try {
+      return execFileSync("npm", ["-v"], { encoding: "utf-8", stdio: ["ignore", "pipe", "ignore"] }).trim();
+    } catch {
+      return "n/a";
+    }
+  }
+}
+
+function envSkipsScaffoldInstall(): boolean {
+  const v = process.env.SKIP_ABEYJS_SCAFFOLD_INSTALL?.trim().toLowerCase();
+  return v === "1" || v === "true" || v === "yes";
+}
+
+/** Runs `npm install` in `projectDir` (stdio inherited). */
+async function runNpmInstall(projectDir: string): Promise<void> {
+  // Windows: spawning `npm.cmd` with `shell: false` often fails with EINVAL; use the shell so PATH resolves npm.
+  const win = process.platform === "win32";
+  await new Promise<void>((resolve, reject) => {
+    const child = spawn("npm", ["install", "--no-fund", "--no-audit"], {
+      cwd: projectDir,
+      stdio: "inherit",
+      env: process.env,
+      shell: win,
+    });
+    child.on("error", reject);
+    child.on("close", (code) => {
+      if (code === 0) {
+        resolve();
+      } else {
+        reject(new Error(`npm install exited with code ${code ?? "unknown"}`));
+      }
+    });
+  });
+}
+
+async function maybeRunPostScaffoldInstall(projectDir: string, cliSkip: boolean): Promise<void> {
+  if (cliSkip || envSkipsScaffoldInstall()) {
+    // eslint-disable-next-line no-console
+    console.log("Skipping npm install (--skip-install or SKIP_ABEYJS_SCAFFOLD_INSTALL=1).");
+    return;
+  }
+  // eslint-disable-next-line no-console
+  console.log("Installing dependencies (npm install)…");
+  await runNpmInstall(projectDir);
+  // eslint-disable-next-line no-console
+  console.log("npm install finished.");
+}
+
+function findNearestPackageJson(startDir: string): { path: string; root: string } | null {
+  let dir = resolve(startDir);
+  for (let i = 0; i < 14; i += 1) {
+    const p = join(dir, "package.json");
+    if (existsSync(p)) {
+      return { path: p, root: dir };
+    }
+    const parent = dirname(dir);
+    if (parent === dir) {
+      break;
+    }
+    dir = parent;
+  }
+  return null;
+}
+
+function mergeDepBlocks(pkg: Record<string, unknown>): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const key of ["dependencies", "devDependencies", "optionalDependencies"] as const) {
+    const block = pkg[key];
+    if (block && typeof block === "object") {
+      for (const [k, v] of Object.entries(block as Record<string, unknown>)) {
+        if (typeof v === "string") {
+          out[k] = v;
+        }
+      }
+    }
+  }
+  return out;
+}
+
+/** Walk parents from `startDir` looking for `node_modules/@abeyjs/<name>/package.json`. */
+function installedAbeyVersion(startDir: string, packageName: string): string | null {
+  const short = packageName.replace(/^@abeyjs\//, "");
+  let dir = resolve(startDir);
+  for (let i = 0; i < 16; i += 1) {
+    const manifest = join(dir, "node_modules", "@abeyjs", short, "package.json");
+    if (existsSync(manifest)) {
+      try {
+        const j = JSON.parse(readFileSync(manifest, "utf-8")) as { version?: string };
+        if (typeof j.version === "string") {
+          return j.version;
+        }
+      } catch {
+        /* ignore */
+      }
+    }
+    const parent = dirname(dir);
+    if (parent === dir) {
+      break;
+    }
+    dir = parent;
+  }
+  return null;
+}
+
+/** When package.json has no @abeyjs deps (e.g. npm workspaces root), list `node_modules/@abeyjs/*`. */
+function installedAbeyPackagesFromNodeModules(root: string): { pkg: string; ver: string }[] {
+  const base = join(resolve(root), "node_modules", "@abeyjs");
+  if (!existsSync(base)) {
+    return [];
+  }
+  const out: { pkg: string; ver: string }[] = [];
+  for (const name of readdirSync(base)) {
+    if (name === "." || name === ".." || name.startsWith(".")) {
+      continue;
+    }
+    const manifest = join(base, name, "package.json");
+    if (!existsSync(manifest)) {
+      continue;
+    }
+    try {
+      const j = JSON.parse(readFileSync(manifest, "utf-8")) as { version?: string };
+      if (typeof j.version === "string") {
+        out.push({ pkg: `@abeyjs/${name}`, ver: j.version });
+      }
+    } catch {
+      /* ignore */
+    }
+  }
+  out.sort((a, b) => a.pkg.localeCompare(b.pkg));
+  return out;
+}
+
+/** `ng version`-style block: environment + optional workspace table. */
+function buildVersionReport(): string {
+  const labelW = 22;
+  const lab = (s: string) => s.padEnd(labelW);
+  const lines: string[] = [""];
+
+  lines.push(`${lab("AbeyJs CLI:")}${getCliVersion()}`);
+  lines.push(`${lab("Node:")}${process.version}`);
+  lines.push(`${lab("Package Manager:")}npm ${tryNpmVersion()}`);
+  lines.push(`${lab("OS:")}${os.platform()} ${os.arch()}`);
+  lines.push("");
+
+  const hit = findNearestPackageJson(process.cwd());
+  if (!hit) {
+    lines.push(`${lab("Workspace:")}(no package.json in this folder or parents)`);
+    lines.push("");
+    lines.push("Package".padEnd(36) + "Version");
+    lines.push("-".repeat(56));
+    lines.push("@abeyjs/cli".padEnd(36) + getCliVersion() + "  (this executable)");
+    lines.push("");
+    return lines.join("\n");
+  }
+
+  let pkgRaw: Record<string, unknown> = {};
+  try {
+    pkgRaw = JSON.parse(readFileSync(hit.path, "utf-8")) as Record<string, unknown>;
+  } catch {
+    /* */
+  }
+  const wsName = typeof pkgRaw.name === "string" ? pkgRaw.name : "(unnamed)";
+  lines.push(`${lab("Workspace:")}${wsName}`);
+  lines.push(`${lab("Path:")}${hit.root}`);
+
+  const deps = mergeDepBlocks(pkgRaw);
+  const abeyKeys = Object.keys(deps).filter((k) => k.startsWith("@abeyjs/")).sort();
+  const rt = installedAbeyVersion(hit.root, "@abeyjs/runtime");
+  const cr = installedAbeyVersion(hit.root, "@abeyjs/core");
+  lines.push(`${lab("@abeyjs/runtime:")}${rt ?? "—"}`);
+  lines.push(`${lab("@abeyjs/core:")}${cr ?? "—"}`);
+  const fromNm = installedAbeyPackagesFromNodeModules(hit.root);
+  if (abeyKeys.length === 0 && fromNm.length === 0) {
+    lines.push(`${lab("Declared @abeyjs/*:")}(none in package.json)`);
+  } else if (abeyKeys.length === 0 && fromNm.length > 0) {
+    lines.push(`${lab("Declared @abeyjs/*:")}(none — listing linked node_modules/@abeyjs/*)`);
+  }
+  lines.push("");
+
+  const rows: { pkg: string; ver: string }[] = [{ pkg: "@abeyjs/cli", ver: `${getCliVersion()}  (this executable)` }];
+  const seen = new Set<string>(["@abeyjs/cli"]);
+  for (const k of abeyKeys) {
+    if (seen.has(k)) {
+      continue;
+    }
+    seen.add(k);
+    const installed = installedAbeyVersion(hit.root, k);
+    const ver = installed ?? deps[k] ?? "?";
+    rows.push({ pkg: k, ver });
+  }
+  if (abeyKeys.length === 0) {
+    for (const { pkg, ver } of fromNm) {
+      if (seen.has(pkg)) {
+        continue;
+      }
+      seen.add(pkg);
+      rows.push({ pkg, ver });
+    }
+  }
+
+  const colW = Math.max(28, ...rows.map((r) => r.pkg.length), "Package".length) + 2;
+  lines.push("Package".padEnd(colW) + "Version");
+  lines.push("-".repeat(Math.min(72, colW + 24)));
+  for (const r of rows) {
+    lines.push(r.pkg.padEnd(colW) + r.ver);
+  }
+  lines.push("");
+  return lines.join("\n");
+}
+
+/** Richer help on terminals; plain text if NO_COLOR or not a TTY. */
+function buildHelp(): string {
+  const tty = process.stdout.isTTY && !process.env.NO_COLOR;
+  const b = (s: string) => (tty ? `\x1b[1m${s}\x1b[0m` : s);
+  const d = (s: string) => (tty ? `\x1b[2m${s}\x1b[0m` : s);
+  const c = (s: string) => (tty ? `\x1b[36m${s}\x1b[0m` : s);
+  const nl = "\n";
+
+  const lines: string[] = [
+    "",
+    `${b("AbeyJs CLI")}  ${d("scaffold · OpenAPI · codegen")}`,
+    "",
+    `${d("Usage")}`,
+    `  ${c("abeyjs")} <command> [options]`,
+    "",
+    `${b("Projects")}  ${d("new, init, create — same behavior")}`,
+    `  ${c("abeyjs init")} <folder> [options]`,
+    `  ${c("abeyjs new")}   <folder> [options]     ${d("alias")}`,
+    `  ${c("abeyjs create")} <folder> [options]    ${d("alias")}`,
+    "",
+    `    ${d("Options")}`,
+    `      --template ${c("admin")} | ${c("abeyjs")} | ${c("empty")} | ${c("minimal")}`,
+    `        ${d("abeyjs")} and ${d("empty")} are the same Vite + OM starter (${d("templates/empty")}).`,
+    `        ${d("admin")} is the dashboard shell; ${d("minimal")} is a tiny workspace (${d("@abeyjs/core")} only).`,
+    `      --shell ${c("dashboard")} | ${c("appbar")}     ${d("only with --template admin")}`,
+    `      ${c("--skip-install")}     ${d("Skip automatic npm install after scaffold.")}`,
+    "",
+    `    ${d("Runs")} ${c("npm install")} ${d("in the new project unless")} ${c("--skip-install")} ${d("or")} SKIP_ABEYJS_SCAFFOLD_INSTALL=1.`,
+    "",
+    `${b("OpenAPI in an existing app")}`,
+    `  ${c("abeyjs add openapi")} <folder>`,
+    `      [--proxy <url>]  [--openapi-path <path>]  [--skip-install]`,
+    "",
+    `    ${d("Adds")} @abeyjs/openapi, @abeyjs/http, Vite proxies, .env.example, omegaSetup stubs, sample CRUD route.`,
+    `    ${d("Runs")} ${c("npm install")} ${d("after patching unless")} ${c("--skip-install")} ${d("or")} SKIP_ABEYJS_SCAFFOLD_INSTALL=1.`,
+    `    ${d("Defaults")}  --proxy https://127.0.0.1:7019   --openapi-path /swagger/v1/swagger.json`,
+    "",
+    `${b("OpenAPI contract → repo")}`,
+    `  ${c("abeyjs connect")} <swagger-url> [--target <folder>]`,
+    "",
+    `    ${d("Writes")} .abeyjs/connect.json ${d("and")} abeyjs.connect.yml.  ${d("Use")} --insecure ${d("for dev TLS.")}`,
+    "",
+    `${b("Generate CRUD UI")}  ${d("after connect")}`,
+    `  ${c("abeyjs generate views")} [--target <folder>]`,
+    `      [--scaffold minimal|full]  [--full-scaffold]`,
+    "",
+    `    ${d("Requires")} abeyjs connect ${d("first.")}  ${d("full")} adds src/app, src/ui, src/infra layers.`,
+    "",
+    `${b("Feature slice (ecosystem)")}`,
+    `  ${c("abeyjs generate ecosystem")} <Name> [--feature-root <path>] [--target <folder>]`,
+    `      [--show-nav] | [--no-show-nav]   ${d("sidebar entry; default ask in TTY, else visible")}`,
+    `  ${c("abeyjs g ecosystem")} <Name> ...                    ${d("alias")}`,
+    "",
+    `    ${d("Creates")} ui/ + omega/ ${d("under the feature; may patch")} omegaSetup.ts ${d("and")} routes.ts.`,
+    "",
+    `${b("Codegen only")}`,
+    `  ${c("abeyjs codegen")} <openapi.json|yaml>  -o|--out <dir>`,
+    "",
+    `    ${d("Writes")} api-types.ts ${d("and")} omegaSetup.generated.ts ${d("stub.")}`,
+    "",
+    `${b("Help")}`,
+    `  ${c("abeyjs help")}   ${d("or")}   abeyjs --help   ${d("or")}   abeyjs -h`,
+    `  ${c("abeyjs version")}           ${d("full report (env + workspace @abeyjs/*)")}`,
+    `  ${c("abeyjs --version")} | -v   ${d("semver only (good for scripts)")}`,
+    "",
+  ];
+  return lines.join(nl);
+}
 
 type Spec = { paths?: Record<string, unknown>; openapi?: string; swagger?: string; info?: { title?: string } };
 
@@ -105,20 +378,32 @@ async function patchPackageJsonName(targetDir: string, nameHint: string): Promis
 
 type ParseResult =
   | { kind: "help" }
+  | { kind: "version"; mode: "short" | "long" }
   | { kind: "codegen"; openapi: string; out: string }
-  | { kind: "init"; target?: string; template: InitTemplate; shell: InitShell }
-  | { kind: "addOpenapi"; target: string; proxy: string; openApiPath: string }
+  | { kind: "init"; target?: string; template: InitTemplate; shell: InitShell; skipInstall: boolean }
+  | { kind: "addOpenapi"; target: string; proxy: string; openApiPath: string; skipInstall: boolean }
   | { kind: "connect"; swaggerUrl: string; target: string; insecure: boolean }
   | { kind: "generateViews"; target: string; scaffold: ScaffoldMode }
-  | { kind: "generateEcosystem"; name: string; featureRoot?: string; target: string }
+  | { kind: "generateEcosystem"; name: string; featureRoot?: string; target: string; showInNav?: boolean }
   | { kind: "err" };
 
-function parseInitTemplate(a: string[]): { template: InitTemplate; shell: InitShell; rest: string[]; target?: string } {
+function parseInitTemplate(a: string[]): {
+  template: InitTemplate;
+  shell: InitShell;
+  rest: string[];
+  target?: string;
+  skipInstall: boolean;
+} {
   const rest: string[] = [];
   let template: InitTemplate = "abeyjs";
   let shell: InitShell = "dashboard";
   let target: string | undefined;
+  let skipInstall = false;
   for (let i = 0; i < a.length; i += 1) {
+    if (a[i] === "--skip-install") {
+      skipInstall = true;
+      continue;
+    }
     if (a[i] === "--template" && a[i + 1]) {
       const t = a[i + 1]! as string;
       if (t === "admin" || t === "abeyjs" || t === "minimal" || t === "empty") {
@@ -146,26 +431,37 @@ function parseInitTemplate(a: string[]): { template: InitTemplate; shell: InitSh
     }
     rest.push(a[i]!);
   }
-  return { template, shell, rest, target };
+  return { template, shell, rest, target, skipInstall };
 }
 
 function parseArgs(argv: string[]): ParseResult {
   const a = argv.slice(2);
+  if (a[0] === "--version" || a[0] === "-v" || a[0] === "-V") {
+    return { kind: "version", mode: "short" };
+  }
+  if (a[0] === "version") {
+    return { kind: "version", mode: "long" };
+  }
   if (a.length === 0 || a[0] === "help" || a[0] === "--help" || a[0] === "-h") {
     return { kind: "help" };
   }
   if (a[0] === "init" || a[0] === "new" || a[0] === "create") {
-    const { rest, template, shell, target } = parseInitTemplate(a.slice(1));
+    const { rest, template, shell, target, skipInstall } = parseInitTemplate(a.slice(1));
     const fromArg = target ?? rest[0];
     const fromNpmConfig = process.env.npm_config_target;
-    return { kind: "init", target: fromArg ?? fromNpmConfig, template, shell };
+    return { kind: "init", target: fromArg ?? fromNpmConfig, template, shell, skipInstall };
   }
   if (a[0] === "add" && a[1] === "openapi") {
     const fromPositional = a[2] && !a[2].startsWith("--") ? a[2] : undefined;
     const target = fromPositional ?? process.env.npm_config_target ?? ".";
     let proxy = process.env.npm_config_proxy ?? "https://127.0.0.1:7019";
     let openApiPath = process.env.npm_config_openapi_path ?? "/swagger/v1/swagger.json";
+    let skipInstall = false;
     for (let k = fromPositional ? 3 : 2; k < a.length; k += 1) {
+      if (a[k] === "--skip-install") {
+        skipInstall = true;
+        continue;
+      }
       if (a[k] === "--proxy" && a[k + 1]) {
         proxy = a[k + 1]!;
         k += 1;
@@ -177,7 +473,7 @@ function parseArgs(argv: string[]): ParseResult {
         continue;
       }
     }
-    return { kind: "addOpenapi", target, proxy, openApiPath: normalizeOpenApiPath(openApiPath) };
+    return { kind: "addOpenapi", target, proxy, openApiPath: normalizeOpenApiPath(openApiPath), skipInstall };
   }
   if (a[0] === "codegen") {
     const openapi = a[1]!;
@@ -226,6 +522,7 @@ function parseArgs(argv: string[]): ParseResult {
     let target = process.env.npm_config_target ?? ".";
     let featureRoot: string | undefined;
     let name: string | undefined;
+    let showInNav: boolean | undefined;
     for (let i = 0; i < tokens.length; i += 1) {
       const t = tokens[i]!;
       if (t === "--target" && tokens[i + 1]) {
@@ -246,12 +543,20 @@ function parseArgs(argv: string[]): ParseResult {
         featureRoot = t.slice("--feature-root=".length);
         continue;
       }
+      if (t === "--show-nav") {
+        showInNav = true;
+        continue;
+      }
+      if (t === "--no-show-nav" || t === "--hide-nav") {
+        showInNav = false;
+        continue;
+      }
       if (!t.startsWith("--") && name == null) {
         name = t;
       }
     }
     if (name) {
-      return { kind: "generateEcosystem", name, featureRoot, target };
+      return { kind: "generateEcosystem", name, featureRoot, target, showInNav };
     }
     return { kind: "err" };
   }
@@ -333,6 +638,35 @@ async function askProjectName(): Promise<string> {
   }
 }
 
+/**
+ * Whether the ecosystem **`componentRoute`** should appear in the admin sidebar (**`showInNav`**).
+ * Non-TTY: defaults to **`true`** (pass **`--no-show-nav`** in scripts to hide).
+ */
+async function askEcosystemShowInNav(): Promise<boolean> {
+  if (!input.isTTY || !output.isTTY) {
+    // eslint-disable-next-line no-console
+    console.log("Non-interactive: sidebar entry enabled (showInNav). Use --no-show-nav to hide from nav.");
+    return true;
+  }
+  const rl = createInterface({ input, output });
+  try {
+    const ans = (
+      await rl.question("¿Mostrar esta ruta en el menú lateral del admin (showInNav)? [Y/n] ")
+    )
+      .trim()
+      .toLowerCase();
+    if (ans === "" || ans === "y" || ans === "yes" || ans === "s" || ans === "si") {
+      return true;
+    }
+    if (ans === "n" || ans === "no") {
+      return false;
+    }
+    return true;
+  } finally {
+    rl.close();
+  }
+}
+
 async function askGenerateEntities(candidates: string[]): Promise<string[] | null> {
   if (!input.isTTY || !output.isTTY) {
     return null;
@@ -381,19 +715,30 @@ async function run() {
     ) {
       // eslint-disable-next-line no-console
       console.error(
-        "Usage: abeyjs generate ecosystem <Name> [--feature-root <path>] [--target <folder>]\n" +
+        "Usage: abeyjs generate ecosystem <Name> [--feature-root <path>] [--target <folder>] [--show-nav|--no-show-nav]\n" +
           "Example (cwd): abeyjs generate ecosystem Auth\n" +
-          "Example (paths): abeyjs generate ecosystem Auth --feature-root src/auth --target .",
+          "Example (paths): abeyjs generate ecosystem Auth --feature-root src/auth --target .\n" +
+          "Hide from sidebar: abeyjs generate ecosystem Reports --no-show-nav",
       );
       process.exit(1);
     }
     // eslint-disable-next-line no-console
-    console.error(usage);
+    console.error(buildHelp());
     process.exit(1);
   }
   if (p.kind === "help") {
     // eslint-disable-next-line no-console
-    console.log(usage);
+    console.log(buildHelp());
+    return;
+  }
+  if (p.kind === "version") {
+    if (p.mode === "short") {
+      // eslint-disable-next-line no-console
+      console.log(getCliVersion());
+    } else {
+      // eslint-disable-next-line no-console
+      console.log(buildVersionReport());
+    }
     return;
   }
   if (p.kind === "addOpenapi") {
@@ -406,8 +751,9 @@ async function run() {
     } catch {
       // Skip if .env already exists.
     }
+    await maybeRunPostScaffoldInstall(targetDir, p.skipInstall);
     // eslint-disable-next-line no-console
-    console.log("OpenAPI/CRUD wiring applied. Next: `npm i` and tune `.env` / proxy if needed.");
+    console.log("OpenAPI/CRUD wiring applied. Next: tune `.env` / proxy if needed.");
     // eslint-disable-next-line no-console
     console.log(`Path: ${targetDir}`);
     return;
@@ -434,11 +780,13 @@ async function run() {
     const targetDir = resolveFromInvocationDir(p.target);
     // npm scripts run with cwd at package root; INIT_CWD preserves where the user invoked it.
     const invocationDir = resolve(process.env.INIT_CWD?.trim() || process.cwd());
+    const showInNav = p.showInNav ?? (await askEcosystemShowInNav());
     const r = await runGenerateEcosystem({
       projectRoot: targetDir,
       featureRoot: p.featureRoot,
       rawName: p.name,
       invocationDir,
+      showInNav,
     });
     for (const line of buildEcosystemWireInstructions(targetDir, r)) {
       // eslint-disable-next-line no-console
@@ -496,13 +844,13 @@ async function run() {
             : "";
       const readMeLine3 =
         p.template === "admin"
-          ? "3. Routes: src/routes.ts · home: src/home/home.ts (+ home.html/home.css) · intents/runtime: src/omegaSetup.ts · flows: src/flows · HTTP: src/services/http.ts (optional: --shell appbar)"
+          ? "3. Routes: src/routes.ts · home: src/views/home/ (app.home.view.html / .ts / .css, @AbeyComponent + lazy load) · intents/runtime: src/omegaSetup.ts · HTTP: src/common/http.ts · session: src/common/session.ts (optional: --shell appbar)"
           : "3. Routes: src/routes.ts · home: src/views/home/ (app.home.view.html / .ts / .css) · intents/runtime: src/omegaSetup.ts · environments: src/environment.ts · assets: public/";
       await writeFile(
         join(dir, "README.txt"),
         [
           "Generated app (blank starter or admin shell).",
-          `1. cd "${dir}" y npm i`,
+          `1. cd "${dir}"`,
           "2. npm run dev",
           readMeLine3,
           "4. Baseline: `src/flows/*` (helpers + intent/channel glue) + `src/services/http.ts` + `runtime.onIntent(...)` / `runtime.channel` in `src/omegaSetup.ts`.",
@@ -510,6 +858,7 @@ async function run() {
         ].join("\n"),
         "utf-8",
       );
+      await maybeRunPostScaffoldInstall(dir, p.skipInstall);
       // eslint-disable-next-line no-console
       console.log(
         `Project created with template "${p.template}"` +
@@ -533,10 +882,9 @@ async function run() {
     await writeFile(
       join(dir, "README.txt"),
       [
-        "1. npm i",
-        "2. abeyjs codegen ./openapi.json -o ./src/generated",
-        "3. Implement src/omegaSetup.ts (register agents + intents).",
-        "4. Wire @abeyjs/view and @abeyjs/http in your bundler (Vite, etc.) or run: abeyjs init otherFolder --template admin",
+        "1. abeyjs codegen ./openapi.json -o ./src/generated",
+        "2. Implement src/omegaSetup.ts (register agents + intents).",
+        "3. Wire @abeyjs/view and @abeyjs/http in your bundler (Vite, etc.) or run: abeyjs init otherFolder --template admin",
       ].join("\n"),
       "utf-8",
     );
@@ -560,6 +908,7 @@ export function createOmega() {
 `,
       "utf-8",
     );
+    await maybeRunPostScaffoldInstall(dir, p.skipInstall);
     // eslint-disable-next-line no-console
     console.log("Created at: " + dir);
     return;

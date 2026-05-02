@@ -6,7 +6,7 @@ export type MountLifecycle = {
 };
 
 /**
- * Small lifecycle helper (Angular-like): `onInit` runs now; `onDestroy` runs on `abey-dispose`.
+ * Small lifecycle helper: `onInit` runs now; `onDestroy` runs on `abey-dispose`.
  *
  * `mountRoutedApp` calls route `mount(outlet)`; your view can call `mountLifecycle(outlet, ...)`
  * to keep init/teardown in one place.

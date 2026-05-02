@@ -1,4 +1,4 @@
-import type { AppRoute } from "./shell/app-routes.js";
+import type { AppRoute, AppRouteNavChild } from "./shell/app-routes.js";
 
 /**
  * Declarative “hero” / info screen: built with **`textContent`** / safe DOM APIs — **no** implicit **`innerHTML`**.
@@ -89,12 +89,21 @@ export function buildPageView(spec: PageViewSpec): (outlet: HTMLElement) => void
   };
 }
 
-type PageNav = { label: string; title: string; showInNav?: boolean; navIcon?: string; navIconFa?: string };
+/** Nav metadata passed to **`pageRoute`** (mirrors **`AppRoute`** fields except **`path`** / **`mount`**). */
+export type PageRouteNav = {
+  label: string;
+  title: string;
+  showInNav?: boolean;
+  navIcon?: string;
+  navIconFa?: string;
+  /** Mismo contrato que en **`AppRoute`**: solo sidebar admin; cada hoja debe tener su propia entrada en **`getRoutes()`**. */
+  navChildren?: AppRouteNavChild[];
+};
 
 /**
  * **`AppRoute` factory**: nav metadata + **`buildPageView(spec)`** mount. Prefer raw **`mount`** when wiring custom compositions (**`mountListViewSync`**, …).
  */
-export function pageRoute(path: string, nav: PageNav, spec: PageViewSpec): AppRoute {
+export function pageRoute(path: string, nav: PageRouteNav, spec: PageViewSpec): AppRoute {
   const r: AppRoute = {
     path,
     label: nav.label,
@@ -109,6 +118,9 @@ export function pageRoute(path: string, nav: PageNav, spec: PageViewSpec): AppRo
   }
   if (nav.navIconFa !== undefined) {
     r.navIconFa = nav.navIconFa;
+  }
+  if (nav.navChildren !== undefined) {
+    r.navChildren = nav.navChildren;
   }
   return r;
 }

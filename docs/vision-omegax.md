@@ -1,87 +1,95 @@
-# Visión AbeyJs: núcleo, brechas y soporte HTML/CSS
+# AbeyJs vision — product contract
 
-Este documento fija el contrato de producto frente al monorepo: qué ya existe, qué queda acotado y cómo usar HTML y CSS con seguridad y convención.
-
----
-
-## 0. Diferenciación: CRUD “real” sin repetir el teatro
-
-En el enfoque habitual (lib de UI, SPA genérica, o a mano), **tú** vuelves a implementar, por entidad, la misma trama: tabla con columnas, formulario, botones, validación en cliente, estados de carga y error, y encaje con el contrato de la API. Cada capa añade líneas, **código repetitivo** y superficie de **error** (drift con el backend, acciones rotas, columnas desalineadas con el DTO).
-
-**AbeyJs apunta a otro criterio de producto:** a partir de un **OpenAPI** (contrato fidedigno y, hoy, descubrimiento y registro con `@abeyjs/openapi`), el runtime **genera o ensambla** el circuito de **listar / crear / (según el spec) leer, actualizar y borrar** —intents, agente, vistas reactivas— de modo que no reescribas cientos de formularios y acciones a la antigua. Sigue existiendo híbrido: montes lo que quieras a mano, pero el **diferenciador** que persigue el proyecto es **crud productivo con menos ruido y una sola fuente de verdad: el spec**.
-
-Código de referencia: [register.ts](../packages/openapi/src/register.ts) · [discover-crud](../packages/openapi/src/discover-crud.ts) · ejemplo [examples/crud-app](../examples/crud-app). Lista de características deseadas (1–15) y estado: [crud-automatico-abeyjs](crud-automatico-abeyjs.md).
+Baseline for **what we want AbeyJs to be** vs code already in the monorepo: where you can rely safely and where you still assemble yourself. Not marketing—the map we use to prioritize issues and releases.
 
 ---
 
-## 1. Matriz requisito / código (paquetes)
+## 0. Why AbeyJs vs repetitive CRUD
 
-| Requisito (visión) | Cobertura | Ubicación / notas |
+Classic flow: per entity you rebuild table, form, validation, async state, DTO wiring—each line risks **drift** with the backend.
+
+**Project bet:** if the backend ships reliable **OpenAPI**, the client can **discover** collection/item pairs and mount **list + form + intents** on a reactive agent (`@abeyjs/openapi`). “Manual mode” still exists: ignore it and hand-build DOM; the **differentiator** is productive work with **one source of truth: the spec**.
+
+Keep these files handy when discussing with the team:
+
+- `packages/openapi/src/register.ts` — agent + intent registration.
+- `packages/openapi/src/discover-crud.ts` — path heuristics.
+- End-to-end example: `examples/crud-app` folder.
+
+Feature checklist (table 1–15) and status **in code today**: **`/guides/crud-auto`** (same as `docs/crud-automatico-omegax.md` in the repo).
+
+---
+
+## 1. Requirement ↔ implementation matrix
+
+| Requirement | Coverage today | Where to look |
 | --- | --- | --- |
-| Modelo reactivo (UI desde datos) | Sí (celda observable) | `StateCell` en `@abeyjs/core` |
-| Sin manejo manual de estado a nivel de app (opcional) | Parcial: agentes y vistas se suscriben a celdas | Aplicación decide cuánta lógica queda en vistas |
-| Reactividad granular, render parcial | Sí (tablas) | `mountListViewSync` actualiza celdas `Text` y filas por clave, con batch por `requestAnimationFrame` |
-| CRUD automático (OpenAPI) | **Parcial → completo** | `@abeyjs/openapi`: registro con listado (GET) y alta (POST); filas bajo `/{id}` añaden lectura, PUT/PATCH, DELETE y intents `…/Update`, `…/Delete` según el spec. Ver [discover-crud](../packages/openapi/src/discover-crud.ts) y [register](../packages/openapi/src/register.ts) |
-| Generación desde OpenAPI (tipos) | Sí | `abeyjs codegen` en `@abeyjs/cli` → `api-types.ts` y stub de setup |
-| Validación en cliente alineable con Zod | Sí | `@abeyjs/validation` + esquemas generados o inferidos del JSON Schema |
-| Validación backend | Fuera de AbeyJs | Reutilizar el mismo `zod` o contrato OpenAPI; el servicio valida con su stack (.NET, etc.) |
-| Conexión HTTP REST (incl. .NET) | Sí (HTTP genérico) | `createOmegaHttp` en `@abeyjs/http`: mismo contrato con cualquier origen CORS+JSON |
-| Carga y errores en listas/formularios de agente | Sí | Slices `loading` / `error` en vista del agente OpenAPI |
-| Modo “automático” (poca UI a mano) | Parcial | `PageViewSpec`, `pageRoute`, `mountFormView` / `mountListView*`, agente OpenAPI |
-| Modo híbrido (DOM propio + binding) | Sí | Cualquier `mount` en rutas; `StateCell` + `mount*View` en fragmentos del DOM |
-| Modo avanzado (control total) | Sí | DOM API o HTML estático; sin obligación de componentes de AbeyJs |
-| Extensión / plugins | Sí (API mínima) | `OmegaRuntime.registerPlugin` en `@abeyjs/core` (instalación + teardown) |
-| Motor interno: tracking por clave, batch | Sí en listas | `rowKey` + `mergeListRowsByKey` + reconciliación por fila |
-| Seguridad (XSS) | Sí (por diseño) | `textContent` y APIs declarativas; [política completa](security-abeyjs.md) con `escapeHtml`, `bindText` (`{{}}` seguro), `AbeyJs.sanitize` / `setSanitizedHtml` (`abey-html`) |
-| Escala (CRM/ERP) | Producto/ops | Requiere carga paginada, caché, etc. — no todo está en el núcleo |
+| Reactive model (UI from data) | Yes — observable cells | `@abeyjs/core` (`StateCell` and related). |
+| Optional global “no manual state” | Partial — you decide view vs agent split | App architecture. |
+| Granular table reactivity | Yes — RAF batching, per-row merge | `mountListViewSync`, `packages/view/src/dom/mount-list-sync.ts`. |
+| Automatic CRUD from OpenAPI | Partial → grows with spec | `@abeyjs/openapi`; collection routes + `/{id}` typically. |
+| Types from OpenAPI | Yes — `abeyjs codegen` | `@abeyjs/cli`. |
+| Client validation (Zod) | Yes | `@abeyjs/validation`; inferred/generated schemas. |
+| Server validation | Outside framework | Your stack (.NET, Node, etc.). |
+| Generic REST | Yes — `OmegaHttp` | `@abeyjs/http`, `createOmegaHttp`. |
+| List/form agent loading/error | Yes — OpenAPI agent view slices | Registered agent code. |
+| “Low boilerplate UI” mode | Partial | `mount*View` helpers; single public zero-line CRUD screen TBD if we want it. |
+| Manual DOM + defs hybrids | Yes — custom `mount` + partial `mountListView*` | `AppRoute.mount`. |
+| Full DOM control | Yes — primitives optional | Any HTML/TS. |
+| Runtime plugins | Yes — explicit teardown | `OmegaRuntime.registerPlugin` (`@abeyjs/core`). |
+| Keyed table engine | Yes | `rowKey`, `mergeListRowsByKey`. |
+| XSS-safe defaults | Yes — see **`/guides/security`**. |
+| CRM/ERP operational scale | Product/ops | Pagination, caching, etc.—not all in core. |
 
-**Brecha histórica (documentada y cerrada vía spec):** la primera versión de descubrimiento exigía GET+POST al mismo path sin `/{id}`. El descubrimiento ahora acepta el par ruta de **colección** y ruta de **ítem** (`…/{id}`) cuando el OpenAPI lo define, y el registro en bloque (multi-entidad) itera múltiples pares de rutas en el spec.
-
----
-
-## 2. Política de HTML: DOM por defecto, riesgo explícito con cadenas
-
-- **Resumen de reglas:** [Seguridad AbeyJs](security-abeyjs.md) (texto por defecto, `{{}}` con escape, sin `innerHTML` automático, `abey-html` + `AbeyJs.sanitize()` / `setSanitizedHtml` para lo dinámico, validación también en backend).
-- **Recomendado (AbeyJs “por defecto”):** `document.createElement` + `textContent`; las APIs declarativas de `@abeyjs/view` no inyectan HTML crudo.
-- **HTML estático** en `index.html` (Vite) y montar en contenedores es seguro; el riesgo entra solo con scripts o con datos reinyectados sin tratar.
-- **HTML dinámico (híbrido/rico):** pasar por `setSanitizedHtml` o, manualmente, por `AbeyJs.sanitize` / `escapeHtml` antes de tocar el DOM. Para allowlist de etiquetas, `configureSanitize` con p. ej. DOMPurify. En modo avanzado, el DOM es tuyo y el riesgo explícito.
+**Discovery gap we closed:** discovery used to be rigid without `/{id}` on items; specs can define item paths and get/put/patch/delete so the agent completes update/delete when appropriate.
 
 ---
 
-## 3. Guía de CSS: tema `omega`, estilos propios y temas
+## 2. HTML: safe by default, explicit risk
 
-- **Tema incluido:** `import "@abeyjs/view/theme/omega-default.css"`. Aporta variables de espaciado, color, tipografía y clases BEM bajo el prefijo `abey-` (shell, listas, formularios, botones, etc.).
-- **Convivencia con tu CSS:** añade otras hojas en Vite, CSS modules, preprocesadores, Tailwind, u otros; el runtime no fija un bundler más allá de respetar la importación del CSS. Las clases `abey-*` y las tuyas componen por el orden y la especificidad.
-- **Personalización progresiva:** 1) Variables CSS redefinidas bajo contenedor (p. ej. `class="abey abey--tema"`), 2) Override de clases puntuales con más especificidad, 3) Reemplazar bloques de layout reutilizando solo primitivos (`abey-app`, contenedores).
-- **Tema claro/oscuro:** hoy se puede activar añadiendo a la raíz (p. ej. `abey` + `abey--dark` si aplica) y asegurando que las variables `--abey-bg`, `--abey-text` y bordes estén redefinidas. La plantilla mínima es: una clase conmutada en el `<html>` o `<body>` y las variables del tema; consulta los bloques bajo ` .abey.abey--dark` en `omega-default.css`.
+Full normative rules: **`/guides/security`**. Operational summary:
 
----
-
-## 4. `registerOpenApiCrud` y multi-entidad
-
-- **`registerOpenApiCrud`:** un agente bajo un par de rutas descubiertas: colección (GET+POST) y, si el spec añade `…/{param}` (un solo segmento) con al menos un método entre get/put/patch/delete, se rellenan `itemPathTemplate`, `itemPathParamName`, `updateMethod` y `hasItemDelete` en [DiscoveredCrud](../packages/openapi/src/discover-crud.ts). Intents: `…/List`, `…/Create` y, si aplica, `…/Update`, `…/Delete`.
-- **`registerWithDiscovered`:** registro cuando ya tienes un `DiscoveredCrud` (p. ej. de `discoverAllCrud` filtrado a mano).
-- **`registerOpenApiAllCrud`:** itera [discoverAllCrud](../packages/openapi/src/discover-crud.ts) y devuelve `items: OpenApiRegisterOk[]` (un agente por ruta de colección). Cada `entityPascal` se deriva de **todos** los segmentos del path (p. ej. `/api/products` → `ApiProducts`) para reducir colisiones de nombres de intent.
-- **HTTP:** `putJson`, `patchJson`, `deletePath` en [client.ts](../packages/http/src/client.ts) alineados con el agente.
+- Happy path: `textContent`, escaped `{{ }}` bindings, no magic `innerHTML` from data.
+- Rich HTML: `setSanitizedHtml` + policy (`configureSanitize`, e.g. DOMPurify).
+- Advanced: your `innerHTML` → **100% your responsibility**.
 
 ---
 
-## 5. Plugins (extensiones al runtime)
+## 3. CSS: Omega theme coexistence
 
-- API: [OmegaPlugin](../packages/runtime/src/runtime.ts) y `runtime.registerPlugin({ id, install: (r) => teardown? })` / `unregisterPlugin(id)`.
-- `install` puede apoyarse en `runtime.onIntent` o en `channel` sin forzar un árbol de componentes. `disposeAll()` del runtime también intenta bajar los teardown de plugins registrados.
+- Standard entry: `import "@abeyjs/view/theme/omega-default.css"` — `--abey-*` vars, BEM `abey-` prefix.
+- Your CSS (Tailwind, modules, …) lives by import order and specificity.
+- Customize: container tokens → targeted overrides → replace layout blocks keeping primitives.
+- Light/dark: admin shell integrates toggle + persistence; you can force initial appearance and `themeVars*` from JS (see **`/guides/bootstrap-shell`**).
 
 ---
 
-## 6. Referencia rápida a paquetes
+## 4. OpenAPI registration — APIs we rely on
 
-| Paquete | Rol |
+- **`registerOpenApiCrud`:** one discovery → one agent; `…/List`, `…/Create` and, when spec allows, `…/Update`, `…/Delete`.
+- **`registerWithDiscovered`:** after you filtered a `DiscoveredCrud`.
+- **`registerOpenApiAllCrud`:** multi-entity sweep; `entityPascal` composes path segments to reduce collisions (e.g. `/api/products` → `ApiProducts`).
+- HTTP alignment: `putJson`, `patchJson`, `deletePath` in `packages/http/src/client.ts`.
+
+---
+
+## 5. Plugins
+
+`runtime.registerPlugin({ id, install })` — `install` returns optional teardown; runtime `disposeAll` runs them. No component tree required—hook `channel` or `onIntent` alone.
+
+---
+
+## 6. Packages (summary)
+
+| Package | Role |
 | --- | --- |
-| `@abeyjs/core` | Runtime, intención, canales, agente base, `StateCell` |
-| `@abeyjs/view` | Vistas de datos, shell de rutas, listas reactivas, formularios |
-| `@abeyjs/http` | `fetch` trazable |
-| `@abeyjs/validation` | `zod` y helpers de errores por campo |
-| `@abeyjs/openapi` | Descubrimiento OpenAPI, agente CRUD, registro |
-| `@abeyjs/cli` | `codegen` e `init` de proyectos |
+| `@abeyjs/core` | Intents, runtime base, `StateCell`, plugins. |
+| `@abeyjs/view` | Shell, routes, lists/forms, OM host. |
+| `@abeyjs/http` | Traceable client. |
+| `@abeyjs/validation` | Zod + per-field errors. |
+| `@abeyjs/openapi` | Discovery + CRUD agent. |
+| `@abeyjs/cli` | Init, connect, codegen, generators. |
 
-Para más detalle de uso: README en la raíz del monorepo y bajo [examples/](../examples/).
+Ready examples: monorepo `examples/` folder.
+
+Next on the web: **`/guides/abey-templates`** or **`/guides/crud-auto`** depending on OM syntax vs OpenAPI pipeline.

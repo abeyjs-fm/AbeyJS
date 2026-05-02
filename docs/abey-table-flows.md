@@ -1,27 +1,29 @@
-# `abey-table` con Flows
+# `abey-table` with flows
 
-Este documento describe el modo “flow-aware” de `abey-table`.
+When the table must **talk to Omega** (columns and actions arrive on the channel; user actions return as intents), enable flow mode. Pattern used in demos where an agent publishes `tableColumns` / `tableItems` and the grid fires `intentload` on pagination without every screen calling `fetch` directly.
 
-## Modo Flow (`flow="true"`)
+This doc covers **only** DOM contract / attributes / expected payloads; flow logic lives in your `omega/` modules.
 
-`flow="true"` activa el modo:
+## Flow mode (`flow="true"`)
 
-- escucha eventos del runtime y aplica **columns / actions / items**
-- emite intents al runtime al paginar/seleccionar/acciones
+`flow="true"` turns on:
 
-### Atributos
+- listen for runtime events and apply **columns / actions / items**
+- emit intents on pagination / selection / actions
+
+### Attributes
 
 - **`flow="true"`**
-- **`runtimepath="__abeyRuntime"`** *(opcional; default `globalThis.__abeyRuntime`)*
+- **`runtimepath="__abeyRuntime"`** *(optional; default `globalThis.__abeyRuntime`)*
 - **`intentload="Music/TableLoad"`**
-- **`intentselection="Music/TableSelection"` *(opcional)*
-- **`intentaction="Music/TableAction"` *(opcional)*
+- **`intentselection="Music/TableSelection"` *(optional)*
+- **`intentaction="Music/TableAction"` *(optional)*
 - **`eventcolumns="omega/.../tableColumns"`**
-- **`eventactions="omega/.../tableActions"` *(opcional)*
+- **`eventactions="omega/.../tableActions"` *(optional)*
 - **`eventitems="omega/.../tableItems"`**
-- **`loadnetwork="true"`** (para que la tabla dispare `intentload` al cambiar `page/pageSize`)
+- **`loadnetwork="true"`** (table fires `intentload` when `page` / `pageSize` change)
 
-### Payloads (Flow → UI)
+### Payloads (flow → UI)
 
 `eventcolumns` payload:
 
@@ -56,13 +58,12 @@ Este documento describe el modo “flow-aware” de `abey-table`.
 }
 ```
 
-## `abey.json` (estilos globales)
+## `abey.json` (global styles)
 
-Si existe `abey.json` en la raíz del proyecto Vite (donde está `vite.config.ts`), `abeyVitePlugin()` inyecta automáticamente los `styles`:
+If `abey.json` exists at the Vite project root (next to `vite.config.ts`), `abeyVitePlugin()` injects `styles`:
 
 ```json
 {
   "styles": ["@abeyjs/uikit/styles/abey-table.css"]
 }
 ```
-

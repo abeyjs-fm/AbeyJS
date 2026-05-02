@@ -1,0 +1,66 @@
+<section data-role="doc-guide-root">
+  <article data-doc="markdown">
+<p>Use this web component for a <strong>dense grid</strong> product-console style (row selection, action menu, pagination) <strong>without</strong> full <code>mountListViewSync</code> for a mock or live catalog. Plays with the rest of AbeyJs: drive from plain TS state or wire the runtime in <strong>flow</strong> mode (see <strong><code>/guides/table-flows</code></strong>).</p>
+<p>Register the class once at startup (<code>AbeyTableElement.define(&quot;abey-table&quot;)</code>)—the kit does not assume the custom element already exists.</p>
+<h2>What you get out of the box</h2>
+<p>Table web component with:</p>
+<ul>
+<li>selection (<code>checkbox</code>)</li>
+<li>per-row actions (menu)</li>
+<li>pagination (<code>page</code>, <code>pageSize</code>, <code>pageSizes</code>)</li>
+<li>left/right <strong>frozen</strong> columns (<code>frozen</code>)</li>
+</ul>
+<h2>Basic usage (no flows)</h2>
+<pre><code class="language-html">&lt;abey-table selectable pagesizes=&quot;10,20,30&quot; pagesize=&quot;10&quot; page=&quot;1&quot;&gt;&lt;/abey-table&gt;
+</code></pre>
+<p>Then in TS:</p>
+<pre><code class="language-ts">import { AbeyTableElement } from &quot;@abeyjs/uikit&quot;;
+AbeyTableElement.define(&quot;abey-table&quot;);
+
+const table = document.querySelector(&quot;abey-table&quot;) as AbeyTableElement&lt;any&gt;;
+table.config = {
+  rows: [],
+  columns: [],
+  actions: [],
+  selectable: true,
+  getRowId: (r) =&gt; String(r.id),
+};
+</code></pre>
+<h2>Props / config (TS)</h2>
+<p><code>table.config</code>:</p>
+<ul>
+<li><strong>rows</strong>: <code>Row[]</code></li>
+<li><strong>columns</strong>: <code>Array&lt;{ key, header, width?, align?, frozen?, render?, value? }&gt;</code><ul>
+<li><strong>frozen</strong>: <code>&quot;left&quot; | &quot;right&quot;</code></li>
+<li><strong>width</strong> in <code>px</code> recommended with <code>frozen</code> (offset math)</li>
+</ul>
+</li>
+<li><strong>actions</strong>: <code>Array&lt;{ id, label, eventName?, onSelect? }&gt;</code></li>
+<li><strong>selectable</strong>: <code>boolean</code></li>
+<li><strong>getRowId</strong>: <code>(row) =&gt; string</code></li>
+</ul>
+<p>Renderers:</p>
+<ul>
+<li><strong><code>table.renderers</code></strong>: registry by key.<br>Example: column <code>render: &quot;submitter&quot;</code> resolves via <code>table.renderers.submitter</code>.</li>
+</ul>
+<h2>HTML attributes</h2>
+<p>Pagination:</p>
+<ul>
+<li><strong><code>page</code></strong>: number (1-based)</li>
+<li><strong><code>pagesize</code></strong>: number</li>
+<li><strong><code>pagesizes</code></strong>: <code>&quot;10,20,30&quot;</code> (CSV)</li>
+<li><strong><code>totalitems</code></strong>: number (optional)</li>
+</ul>
+<p>Flags:</p>
+<ul>
+<li><strong><code>selectable</code></strong></li>
+<li><strong><code>dense</code></strong></li>
+</ul>
+<h2>DOM events</h2>
+<ul>
+<li><strong><code>selectionchange</code></strong>: <code>detail = { selectedIds: Set&lt;string&gt;, selectedItems: Row[] }</code></li>
+<li><strong><code>actionClick</code></strong>: <code>detail = { actionId, rowId, row }</code> (cancelable)</li>
+<li><strong><code>loadNetwork</code></strong>: <code>detail = { page, pageSize }</code> <em>(only if <code>loadnetwork=&quot;true&quot;</code>)</em></li>
+</ul>
+  </article>
+</section>

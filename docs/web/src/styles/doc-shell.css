@@ -1,0 +1,54 @@
+/*
+ * Docs site template: content tokens (prose, radii, dividers) and outlet layout.
+ * Shell chrome, branding, halos, and `pageRoute` routes: doc-site-appearance.css.
+ * OM views: local `app.*.view.css`; guide prose in guides/shared/doc-guide.view.css (`data-role` / `data-doc`).
+ */
+
+:root {
+  --doc-prose-max: 52rem;
+  --doc-muted: rgba(148, 163, 184, 0.95);
+  --doc-divider: rgba(148, 163, 184, 0.22);
+  --doc-code-bg-light: rgba(15, 23, 42, 0.06);
+  --doc-code-bg-dark: rgba(254, 228, 128, 0.08);
+  --doc-radius: 11px;
+  --doc-radius-sm: 7px;
+}
+
+@media (min-width: 1024px) {
+  .doc-site.abey-shell-app {
+    --doc-prose-max: min(
+      96rem,
+      calc(100vw - var(--abey-sidebar-w, 15.5rem) - 3.5rem)
+    );
+  }
+}
+
+.doc-site.abey-shell-app main.abey-outlet.abey-outlet--dashboard {
+  min-height: calc(100vh - var(--abey-appbar-h, 3.5rem));
+  box-sizing: border-box;
+}
+
+/* Route transition (read by the shell). */
+.doc-site.abey-shell-app main.abey-outlet {
+  --abey-route-dur-out: 92ms;
+  --abey-route-dur-in: 128ms;
+  --abey-route-ease: cubic-bezier(0.28, 0.82, 0.22, 1);
+}
+
+/* Landing at / (mountPublic branch): no sidebar or app bar. */
+.docs-welcome-entry {
+  min-height: 100vh;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/*
+ * Omega: `.abey-app:not(.abey-shell-app) > * { max-width: 960px }` — on welcome the only child is the OM root;
+ * unless we override it, the marketing layout looks crushed / “styles not loading”.
+ */
+.docs-welcome-entry.abey.abey-app:not(.abey-shell-app) > * {
+  max-width: none;
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+}

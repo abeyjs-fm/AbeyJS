@@ -1,0 +1,68 @@
+<section data-role="doc-guide-root">
+  <article data-doc="markdown">
+<p>This chapter documents <strong><code>@abeyjs/view</code></strong> mounting UI <strong>without</strong> hand-iterating table rows when you already have a <strong><code>ListViewDef</code></strong>, <strong><code>FormViewDef</code></strong>, or reactive signals. Actual DOM inputs also live in <strong><code>@abeyjs/uikit</code></strong> when using <strong><code>abey-*</code></strong> primitives.</p>
+<p>These mounts <strong>consume coherent defs</strong> (<code>ViewField</code> + metadata), typically produced by:</p>
+<ul>
+<li>OpenAPI codegen (<strong><code>discover-crud</code></strong> + agent),</li>
+<li>CLI program generators,</li>
+<li>decorated model classes (<strong><code>classToAbeyFormConfig</code></strong>; see <strong><code>/guides/entities-forms</code></strong>).</li>
+</ul>
+<h3>First: <strong><code>registerAbeyJsUi()</code></strong></h3>
+<p>Run it <strong>once</strong> in <strong><code>main.ts</code></strong> before routes that load <strong><code>abey-form</code></strong>. Missing <strong><code>customElements.define</code></strong> ⇒ incomplete screen.</p>
+<hr>
+<h2>Public mount APIs (quick reference)</h2>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Typical production role</th>
+<th>Ops notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong><code>mountListView</code></strong></td>
+<td>First paint async when metadata arrives after fetch</td>
+<td>Use when defs may land after initial microtasks.</td>
+</tr>
+<tr>
+<td><strong><code>mountListViewSync</code></strong></td>
+<td><strong>High-frequency reactive table</strong> (streaming updates, OpenAPI list intents)</td>
+<td>RAF batching + merge by <strong><code>rowKey</code></strong>; inspect <strong><code>mergeListRowsByKey</code></strong> if perf misses.</td>
+</tr>
+<tr>
+<td><strong><code>mountFormView</code></strong> · <strong><code>createOmegaFormSurface</code></strong></td>
+<td>Heavy model editing screens</td>
+<td><strong><code>createOmegaFormSurface</code></strong> avoids tearing the whole shadow root when layout needs it.</td>
+</tr>
+<tr>
+<td><strong><code>mountSignalList</code></strong></td>
+<td>Fast experiments with project <strong>signals</strong></td>
+<td>When defs are not stable yet. Fewer guarantees than official OpenAPI cell path.</td>
+</tr>
+<tr>
+<td><strong><code>bindActions</code></strong>, <strong><code>bindAbeyTemplate</code></strong></td>
+<td>Declarative partials + click delegation</td>
+<td>When mixing static HTML with dynamic slots.</td>
+</tr>
+<tr>
+<td><strong><code>blocks-screen</code></strong> (internal TS helpers)</td>
+<td>Multi-pane dashboards</td>
+<td>Large internal UI; API still stabilizing—check exported typings if you rely on it.</td>
+</tr>
+</tbody></table>
+<h3>Peer <strong><code>zod</code></strong></h3>
+<p>Declared <strong>peerDependency</strong> so field validation lines up with <strong><code>@abeyjs/validation</code></strong>. Install explicitly when bundlers prune dev deps.</p>
+<hr>
+<h2><strong><code>DynamicCrudAgent</code></strong> integration pattern</h2>
+<p>Typical shape: agent registers <strong><code>Entity/List</code></strong> intents, state exposes <strong><code>listView</code> / <code>formView</code></strong> defs. Your route runs <strong><code>mountListViewSync(outlet, { … })</code></strong> with the overrides your version expects (<strong>good TS autocomplete</strong> pays off when the API evolves). Broken typings vs runtime ⇒ treat as bug.</p>
+<hr>
+<h2>Manual fallback</h2>
+<p>When defs are not enough (<strong>complex custom column renderers</strong>):</p>
+<ol>
+<li><code>mountListView*</code> for the base grid.</li>
+<li>Subscribe to <strong><code>channel</code></strong> / agent cell and patch DOM selectively.</li>
+</ol>
+<p>This stack supports hybrid usage because row updates are idempotent with keys.</p>
+<p>Next: <strong><code>/guides/omega</code></strong>.</p>
+  </article>
+</section>

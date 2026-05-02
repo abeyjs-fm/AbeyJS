@@ -1,60 +1,64 @@
-# Seguridad AbeyJs: reglas de producto
+# AbeyJs security — product rules
 
-Política en una frase: **la seguridad es el comportamiento por defecto; el riesgo solo es explícito** (tú o el código lo declaran).
+Designed in `@abeyjs/view`: **secure by default**, and dynamic HTML must **scream** risk (`abey-html`, explicit sanitization). PRs inserting `innerHTML` from API data without `setSanitizedHtml` or `textContent` are **bugs**, not features.
 
----
+One-liner policy: **safety is the default; risk is only explicit** (you or code declare it).
 
-## Reglas (normativas)
-
-1. **Todo dato se renderiza como texto por defecto**  
-   Listas, formularios y páginas declarativas usan `textContent` o nodos de texto, no cadenas HTML crudas.
-
-2. **El binding `{{ clave }}` (si lo usas) es siempre seguro (escapado)**  
-   La utilidad `bindText` de `@abeyjs/view` sustituye `{{ clave }}` con `escapeHtml` del valor. No existe interpretación de plantillas con HTML crudo en el motor por defecto.
-
-3. **Nunca se usa `innerHTML` automáticamente**  
-   Ninguna API de modo automático o data-driven asigna `innerHTML` a partir de datos de negocio sin pasar por la capa explícita de abajo.
-
-4. **El modo automático no ejecuta HTML dinámico**  
-   `PageViewSpec`, `buildPageView`, `createPageViewElement` y listas/formularios omega no inyectan HTML interpretado desde strings de datos.
-
-5. **El HTML dinámico debe declararse explícitamente: `abey-html` / `data-abey-html`**  
-   Al usar `setSanitizedHtml`, el contenedor recibe la clase `abey-html` y el atributo `data-abey-html="1"` para dejar trazada la intención (auditoría, estilos, revisiones de código).
-
-6. **Todo HTML dinámico debe pasar por sanitización**  
-   - Por defecto: `sanitize()` y `AbeyJs.sanitize()` equivalen a **escapar** a entidades: no quedan etiquetas activas, no se ejecutan scripts.  
-   - Con contenido rico, configura un sanitizer con `configureSanitize` (p. ej. DOMPurify) y consciente de allowlist. No confíes en cadenas “limpias a ojo”.
-
-7. **Modo híbrido: HTML con buenas prácticas**  
-   Combinas DOM propio y AbeyJs; para fragmentos con HTML, usa `setSanitizedHtml` o `textContent` + `escapeHtml` en nodos. Si necesitas DOMPurify, centralízalo y documenta el motivo.
-
-8. **Modo avanzado: control total, responsabilidad tuya**  
-   Puedes asignar `innerHTML` o `document.write` tú mismo; el framework no lo impide. El riesgo es 100% explícito a nivel de aplicación.
-
-9. **No confiar en datos de usuario: el input es inseguro**  
-   Toda API, formulario o query debe validarse; el cliente nunca es la única defensa.
-
-10. **Validación en backend (obligatoria en el sistema de negocio)**  
-   AbeyJs puede reutilizar el mismo criterio Zod en cliente; el **servidor** obliga su contrato y vuelve a validar.
-
-11. **AbeyJs no ejecuta scripts inyectados por defecto**  
-   No hay `eval`, no se insertan `<script>`, y el HTML por omisión se escapa o pasa por `sanitize`.
-
-12. **Resumen**  
-   Seguridad = ruta por defecto (texto, escape, sin innerHTML “mágico”). Riesgo = usas tú `setSanitizedHtml`, `configureSanitize`, o DOM manual consciente.
+Linked to **`/guides/vision`** (HTML/CSS narrative); **here** hard rules + APIs.
 
 ---
 
-## API (referencia)
+## Rules (normative)
 
-| Símbolo | Paquete | Uso |
+1. **All values render as text by default**  
+   Lists, forms, and declarative pages use `textContent` or text nodes, not raw HTML strings.
+
+2. **`{{ key }}` binding is always safe (escaped)**  
+   `@abeyjs/view` `bindText` replaces `{{ key }}` with `escapeHtml` of the value. No raw-HTML template mode in core.
+
+3. **Never assign `innerHTML` automatically**  
+   No automatic or data-driven API assigns `innerHTML` from domain data without the explicit layer below.
+
+4. **Automatic mode does not execute dynamic HTML**  
+   `PageViewSpec`, `buildPageView`, `createPageViewElement`, and Omega lists/forms do not interpret HTML from data strings.
+
+5. **Dynamic HTML must be explicit: `abey-html` / `data-abey-html`**  
+   With `setSanitizedHtml`, the host gets class `abey-html` and `data-abey-html="1"` for audit/traceability.
+
+6. **Dynamic HTML goes through sanitization**  
+   - Default: `sanitize()` / `AbeyJs.sanitize()` **escape** to entities—no active tags, no scripts.  
+   - Rich content: configure with `configureSanitize` (e.g. DOMPurify) and an allowlist. Do not trust “looks clean” strings.
+
+7. **Hybrid DOM + AbeyJs**  
+   For HTML fragments use `setSanitizedHtml` or `textContent` + `escapeHtml`. If you centralize DOMPurify, document why.
+
+8. **Advanced: full control, your responsibility**  
+   Assigning `innerHTML` yourself is allowed; framework does not stop you—risk is fully application-level.
+
+9. **Never trust user input**  
+   Every API, form, or query must validate; client is never the only defense.
+
+10. **Server validation (required in domain)**  
+    AbeyJs can reuse Zod on the client; the **server** enforces contract and validates again.
+
+11. **AbeyJs does not run injected scripts by default**  
+    No `eval`, no injected `<script>`, HTML defaults escape or go through `sanitize`.
+
+12. **Summary**  
+    Safety = default path (text, escape, no magic `innerHTML`). Explicit risk = `setSanitizedHtml`, `configureSanitize`, or conscious manual DOM.
+
+---
+
+## API reference
+
+| Symbol | Package | Use |
 | --- | --- | --- |
-| `escapeHtml` | `@abeyjs/view` | Un valor arbitrario a cadena segura. |
-| `bindText` | `@abeyjs/view` | Plantilla con `{{ id }}` solo con valores escapados. |
-| `sanitize` / `AbeyJs.sanitize` | `@abeyjs/view` | Misma política base; reemplazable vía `configureSanitize`. |
-| `setSanitizedHtml` | `@abeyjs/view` | Único “punto de entrada” recomendado para poner HTML en un `HTMLElement` desde datos. |
-| `clearSanitizedHtmlHost` | `@abeyjs/view` | Quitar marcas y vaciar el nodo. |
-| `registerAbeyJsView` / `<abeyjs-view>` | `@abeyjs/view` | Vistas con HTML: `{{a.b}}` (escape), `abeyjs-for`, `abeyjs-html` → `setSanitizedHtml`. Sin `innerHTML` directo a datos. |
-| `getByPath` | `@abeyjs/view` | Navegación de rutas en el modelo; usado con binding seguro. |
+| `escapeHtml` | `@abeyjs/view` | Arbitrary value → safe string. |
+| `bindText` | `@abeyjs/view` | Templates with `{{ id }}`, values escaped only. |
+| `sanitize` / `AbeyJs.sanitize` | `@abeyjs/view` | Base policy; replaceable via `configureSanitize`. |
+| `setSanitizedHtml` | `@abeyjs/view` | Recommended entry for HTML in an `HTMLElement` from data. |
+| `clearSanitizedHtmlHost` | `@abeyjs/view` | Clear marks and empty node. |
+| `registerAbeyJsView` / `<abeyjs-view>` | `@abeyjs/view` | Views: `{{a.b}}` (escape), `abeyjs-for`, `abeyjs-html` → `setSanitizedHtml`. |
+| `getByPath` | `@abeyjs/view` | Model path navigation with safe binding. |
 
-Más contexto: [Visión y HTML/CSS](./vision-abeyjs.md) (sección 2) y código en [safe-html.ts](../packages/view/src/safe-html.ts).
+Implementation: `packages/view/src/safe-html.ts`. Product + HTML: **`/guides/vision`**.

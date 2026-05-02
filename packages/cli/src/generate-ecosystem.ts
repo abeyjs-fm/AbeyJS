@@ -3,11 +3,11 @@
  *
  * Creates a **vertical slice** under `src/.../<kebab>/` with:
  * - `omega/` — `semantics.ts`, `behavior.ts`, `agent.ts`, `flow.ts`, `register.ts` (`install{Pascal}Omega`).
- * - `ui/` — `app-<kebab>.ts` (@AbeyComponent), `app-<kebab>.view.html`, `<kebab>.css` (`?raw` / `?url` imports).
+ * - `ui/` — `app.<kebab>.view.ts` / `.view.html` / `.view.css` (misma convención que **views/home** en la plantilla admin: OM + **`stylesText`** + **`?inline`**).
  * - `model/`, `data/` — empty placeholders for DTOs and repositories.
  *
  * When `src/omegaSetup.ts` and `src/routes.ts` exist, best-effort patches add the installer import/call
- * and a `componentRoute` entry before the 404 handler.
+ * and a `componentRoute` entry before the 404 handler. **`showInNav`** is chosen interactively (TTY) or via **`--show-nav` / `--no-show-nav`**.
  */
 
 import { access, mkdir, readFile, writeFile } from "node:fs/promises";
@@ -103,6 +103,10 @@ async function resolveAppRoot(maybeRoot: string): Promise<string> {
 
 export interface GenerateEcosystemOptions {
   /**
+   * When **`true`** (default), the generated **`componentRoute`** nav metadata includes the slice in the admin sidebar (**`showInNav`** omitted = visible). When **`false`**, **`showInNav: false`** is emitted so the dev must enlazar la URL por **`navChildren`** o navegación manual.
+   */
+  showInNav?: boolean;
+  /**
    * Path passed as `--target` (usually `.`). Resolved to the app root that contains `src/` (same logic as internal `resolveAppRoot`).
    */
   projectRoot: string;
@@ -134,6 +138,8 @@ export interface GenerateEcosystemResult {
   installFn: string;
   /** Absolute path to the new ecosystem root (contains `omega/`, `ui/`, etc.). */
   featureAbs: string;
+  /** Copied from options when wiring **`routes.ts`** (`showInNav` en **`ComponentRouteNav`**). */
+  showInNav: boolean;
 }
 
 function semanticsTs(pascal: string, kebab: string): string {
@@ -305,9 +311,11 @@ function uiHtml(pascal: string, kebab: string): string {
 
 function uiCss(kebab: string): string {
   return `.abey-${kebab} {
+  box-sizing: border-box;
   padding: 1rem 1.25rem;
+  margin-inline: auto;
+  width: min(100%, var(--abey-slice-max-width, 80%));
   max-width: none;
-  width: 100%;
 }
 .abey-${kebab}__header h1 {
   margin: 0 0 0.35rem;
@@ -342,50 +350,48 @@ function uiCss(kebab: string): string {
 
 function uiTs(pascal: string, kebab: string, importSemanticsRelative: string): string {
   const selector = `app-${kebab}`;
-  const cssFile = `${kebab}.css`;
-  const viewFile = `${selector}.view.html`;
-  const cssVar = `${pascal}CssUrl`;
+  const viewBase = `app.${kebab}.view`;
+  const sliceCss = "sliceCss";
   return `import { intentOf } from "@abeyjs/core";
 import { DOM_CHANNEL_FACTORY, DOM_CHANNEL_TOKEN, AbeyComponent, AbeyComponentElement } from "@abeyjs/view";
-import template from "./${viewFile}?raw";
-import ${cssVar} from "./${cssFile}?url";
+import { template } from "./${viewBase}.html";
+import ${sliceCss} from "./${viewBase}.css?inline";
 import { ${pascal}Ecosystem } from "${importSemanticsRelative}";
 
 @AbeyComponent({
   selector: "${selector}",
   template,
-  stylesHrefs: [${cssVar}],
+  stylesText: [${sliceCss}],
   providers: [{ token: DOM_CHANNEL_TOKEN, useFactory: DOM_CHANNEL_FACTORY }],
 } as any)
 export class App${pascal}Element extends AbeyComponentElement {
-  constructor() {
-    super();
+  connectedCallback(): void {
+    const host = this;
     this.state = {
       banner: "—",
-      tick: () => this.tick(),
+      tick: () => {
+        host.#tick();
+      },
     };
+    super.connectedCallback();
+    queueMicrotask(() => {
+      if (!host.isConnected) return;
+      host.#wire();
+    });
   }
 
-  private tick(): void {
+  #tick(): void {
     const runtime = this.runtime;
     if (!runtime) return;
     void runtime.dispatch(intentOf(${pascal}Ecosystem.intentTick, { at: Date.now() }), { source: "${kebab}-ui" });
-  }
-
-  connectedCallback(): void {
-    super.connectedCallback();
-    queueMicrotask(() => {
-      if (!this.isConnected) return;
-      this.#wire();
-    });
   }
 
   #wire(): void {
     const channel = (this as any).channel?.() as any;
     if (!channel?.on) return;
     this.onDestroy(
-      channel.on(${pascal}Ecosystem.eventTicked, (data: any) => {
-        (this.state.banner as any) = \`ticked: \${JSON.stringify(data)}\`;
+      channel.on(${pascal}Ecosystem.eventTicked, (data: unknown) => {
+        this.state = { ...this.state, banner: \`ticked: \${JSON.stringify(data)}\` };
       }),
     );
   }
@@ -406,7 +412,7 @@ This folder holds the vertical slice for **${pascal}**.
   - \`*-agent.ts\` / \`*-behavior.ts\` — agent + rules.
   - \`*-flow.ts\` — \`onIntent\` / \`onEvent\` orchestration → channel events + UI expressions.
   - \`register.ts\` — runtime install (intent wiring + flow activation).
-- **ui/** — Templates, styles, components. Emits intents and listens for channel traffic.
+- **ui/** — AbeyComponent + OM (import con template desde .view.html), CSS con ?inline y stylesText; misma convención que la plantilla **admin** con abeyVitePlugin.
 
 ## Flow convention
 - UI → **intent** (\`${pascal}/TableLoad\`, etc.)
@@ -424,7 +430,7 @@ This folder holds the vertical slice for **${pascal}**.
  * 3. Refuse overwrite if the computed feature directory already exists.
  * 4. Emit omega + UI sources (sample tick intent / agent / flow).
  *
- * Generated UI uses **`?raw`** for the `.view.html` string (classic Abey component), not the Vite OM compiler plugin.
+ * Generated UI uses **`abeyVitePlugin`** OM imports (**`{ template }` from \`.view.html\`**) and **`stylesText`** + **\`?inline\`** CSS (aligned with the admin template).
  */
 export async function runGenerateEcosystem(opts: GenerateEcosystemOptions): Promise<GenerateEcosystemResult> {
   const projectRoot = await resolveAppRoot(opts.projectRoot);
@@ -473,15 +479,18 @@ export async function runGenerateEcosystem(opts: GenerateEcosystemOptions): Prom
   await writeFile(join(omegaDir, `flow.ts`), flowTs(pascal), "utf-8");
   await writeFile(join(omegaDir, `register.ts`), registerTs(pascal, kebab), "utf-8");
 
-  await writeFile(join(uiDir, `app-${kebab}.view.html`), uiHtml(pascal, kebab), "utf-8");
-  await writeFile(join(uiDir, `${kebab}.css`), uiCss(kebab), "utf-8");
-  await writeFile(join(uiDir, `app-${kebab}.ts`), uiTs(pascal, kebab, semanticsImport), "utf-8");
+  await writeFile(join(uiDir, `app.${kebab}.view.html`), uiHtml(pascal, kebab), "utf-8");
+  await writeFile(join(uiDir, `app.${kebab}.view.css`), uiCss(kebab), "utf-8");
+  await writeFile(join(uiDir, `app.${kebab}.view.ts`), uiTs(pascal, kebab, semanticsImport), "utf-8");
+
+  const showInNav = opts.showInNav ?? true;
 
   const result: GenerateEcosystemResult = {
     pascal,
     kebab,
     installFn: `install${pascal}Omega`,
     featureAbs,
+    showInNav,
   };
 
   await tryWireProjectFiles(projectRoot, result);
@@ -567,18 +576,21 @@ async function wireOmegaSetup(omegaSetupPath: string, result: GenerateEcosystemR
 }
 
 /**
- * Adds `componentRoute('/<kebab>', …, { selector: 'app-<kebab>', load: () => import('…/ui/app-<kebab>.js') })` before the
+ * Adds `componentRoute('/<kebab>', …, { selector: 'app-<kebab>', load: () => import('…/ui/app.<kebab>.view.js') })` before the
  * first `pageRoute(` (404 catch-all). Ensures `componentRoute` is imported from `@abeyjs/view`. Skips if `/kebab` already exists.
  */
 async function wireRoutes(routesPath: string, result: GenerateEcosystemResult): Promise<void> {
   const before = await readFile(routesPath, "utf-8");
-  const uiTsPath = join(result.featureAbs, "ui", `app-${result.kebab}.ts`);
+  const uiTsPath = join(result.featureAbs, "ui", `app.${result.kebab}.view.ts`);
   const importMount = tsImportPath(routesPath, uiTsPath);
   const selector = `app-${result.kebab}`;
+  const navInner = result.showInNav
+    ? `label: "${result.pascal}", title: "${result.pascal}", navIconFa: "fa-solid fa-cube"`
+    : `label: "${result.pascal}", title: "${result.pascal}", showInNav: false, navIconFa: "fa-solid fa-cube"`;
   const routeSnippet =
     `    componentRoute(\n` +
     `      "/${result.kebab}",\n` +
-    `      { label: "${result.pascal}", title: "${result.pascal}", navIconFa: "fa-solid fa-cube" },\n` +
+    `      { ${navInner} },\n` +
     `      { selector: "${selector}", load: () => import("${importMount}") },\n` +
     `    ),\n`;
 
@@ -647,7 +659,7 @@ export function buildEcosystemWireInstructions(_projectRoot: string, result: Gen
     "",
     "Manual wiring checklist (if not auto-patched):",
     `  - omega/register.ts exports ${result.installFn} → import + call inside createOmega()/omegaSetup.`,
-    `  - routes.ts: add componentRoute for /${result.kebab} → lazy-load ui/app-${result.kebab}.ts (see generated snippet pattern).`,
+    `  - routes.ts: add componentRoute for /${result.kebab} → lazy-load ui/app.${result.kebab}.view.ts (showInNav: ${result.showInNav}).`,
     "",
     `Generated tree: ${result.featureAbs}`,
   ];

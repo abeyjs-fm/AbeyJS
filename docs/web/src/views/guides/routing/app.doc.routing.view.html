@@ -1,0 +1,120 @@
+<section data-role="doc-guide-root">
+  <article data-doc="markdown">
+<p>The <strong><code>@abeyjs/view</code></strong> router is not a nested magic routes file: we use <strong><code>AppRoute[]</code> flat</strong> plus <strong><code>matchAppRoute(path, routes)</code></strong>, hitting <strong><code>path</code></strong> normalized exactly or <strong><code>path: &#39;*&#39;</code></strong> after scanning more specific routes.</p>
+<p>That model stays trivially debuggable, serializable, and mergeable with remote menus. If you wanted React Router nesting, different bet—here you control order with the array literal.</p>
+<hr>
+<h2>Row contract (<code>AppRoute</code>)</h2>
+<p>Authoritative fields live in <strong><code>packages/view/src/shell/app-routes.ts</code></strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Member</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>path</code></td>
+<td>Route (<strong>no</strong> hashes). Use <strong><code>&quot;/&quot;</code></strong> for home. <strong><code>&quot;*&quot;</code></strong> = catch-all (usually last row → 404).</td>
+</tr>
+<tr>
+<td><code>label</code></td>
+<td>Sidebar short label. <strong><code>&quot;&quot;</code></strong> + <strong><code>showInNav: false</code></strong> for URL-only screens.</td>
+</tr>
+<tr>
+<td><code>title</code></td>
+<td>Browser title + shell metadata.</td>
+</tr>
+<tr>
+<td><code>showInNav?</code></td>
+<td>Default true. <strong>false</strong> skips first sidebar column despite <strong><code>label</code></strong> (child-only pages inside <strong><code>navChildren</code></strong>).</td>
+</tr>
+<tr>
+<td><code>navChildren?</code></td>
+<td>Sidebar tree/groups (<strong><code>&lt;details&gt;</code></strong> in admin). Leaves are paths but <strong>mountable implementations</strong> must be <strong>another row</strong> in the same array.</td>
+</tr>
+<tr>
+<td><code>mount(outlet)</code></td>
+<td>Imperative: replace outlet (<strong><code>HTMLElement</code></strong>) when route wins.<strong>May return <code>dispose</code></strong> (runs before next mount). Without dispose we still clean the outlet—avoid leaks if timers/subs heavy.</td>
+</tr>
+<tr>
+<td><code>navIcon?</code> · <code>navIconFa?</code></td>
+<td>Tiny text icon legacy vs Font Awesome class (<strong>bring FA CSS</strong> when using FA).</td>
+</tr>
+</tbody></table>
+<p><strong>Rules not spelled out only in typings:</strong></p>
+<ul>
+<li>Duplicate <code>path</code> rows ⇒ last wins if merge duplicates accidentally—treat paths as unique keys.</li>
+<li>Paths without leading <code>/</code> normalize with <strong><code>/</code></strong>.</li>
+<li><strong><code>firstNavPath(routes)</code></strong> gives default “first click” when building deep links from backend.</li>
+</ul>
+<hr>
+<h2>Exported helpers</h2>
+<table>
+<thead>
+<tr>
+<th>Helper</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong><code>componentRoute(path, nav, spec)</code></strong></td>
+<td>Builds <strong><code>AppRoute</code></strong> whose <strong><code>mount</code></strong> creates/teardown <strong><code>custom element</code></strong> (<strong><code>selector</code></strong>) after optional <strong><code>load()</code></strong> (<code>import</code>). Free route-level code split. <strong><code>selector</code></strong> must match OM class (<strong><code>@AbeyComponent({ selector })</code></strong>).</td>
+</tr>
+<tr>
+<td><strong><code>pageRoute(path, nav, spec)</code></strong></td>
+<td>Declarative text page via <strong><code>buildPageView</code></strong>: no raw user HTML.<strong><code>PageViewSpec</code></strong>: safe headings/leads.<strong>Good for docs/CMS you control</strong>.</td>
+</tr>
+</tbody></table>
+<p>For declarative list/form mounts, <strong><code>mount</code></strong> calls <strong><code>mountListViewSync</code></strong>, <strong><code>mountFormView</code></strong>, etc. (see <strong><code>/guides/data-views</code></strong>).</p>
+<table>
+<thead>
+<tr>
+<th>Pattern</th>
+<th>When</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong><code>mount</code> imperative</strong></td>
+<td>Full DOM control.<strong>Special CRUD</strong>, canvas, third-party libs.</td>
+</tr>
+<tr>
+<td><strong><code>componentRoute</code></strong></td>
+<td>Standard product screen (<strong>most admin time</strong>).</td>
+</tr>
+</tbody></table>
+<hr>
+<h2><strong><code>navChildren</code></strong> example</h2>
+<p>Concept:</p>
+<pre><code class="language-ts">pageRoute(
+  &quot;/sales&quot;,
+  {
+    label: &quot;Sales&quot;,
+    title: &quot;Sales&quot;,
+    navChildren: [
+      { path: &quot;/sales/orders&quot;, label: &quot;Orders&quot; },
+      { path: &quot;/sales/clients&quot;, label: &quot;Clients&quot;, navIconFa: &quot;fa-solid fa-users&quot; },
+    ],
+  },
+  { heading: &quot;Sales&quot;, lead: &quot;Pick a submenu.&quot; },
+),
+
+componentRoute(&quot;/sales/orders&quot;, { label: &quot;&quot;, title: &quot;Orders&quot;, showInNav: false }, {
+  selector: &quot;app-sales-orders&quot;,
+  load: () =&gt; import(&quot;./views/sales/app.sales-orders.view.js&quot;),
+}),
+componentRoute(&quot;/sales/clients&quot;, { label: &quot;&quot;, title: &quot;Clients&quot;, showInNav: false }, {
+  selector: &quot;app-sales-clients&quot;,
+  load: () =&gt; import(&quot;./views/sales/app.sales-clients.view.js&quot;),
+}),
+</code></pre>
+<p><code>/sales/orders</code> <strong>must</strong> exist as its own <strong><code>AppRoute</code></strong> row if users can type that URL—<strong>navChildren</strong> alone does not create mounts.<strong>The <code>/sales</code> group</strong> can be index page only or redirect—your call via <code>pageRoute</code> index or <code>fallbackPath</code>.</p>
+<hr>
+<h2>Remote menu</h2>
+<p>See <strong><code>fetchSidebarNav</code> + buildRoutesFromApi<code>** in **</code>/guides/bootstrap-shell`</strong>. The server <strong>reorders and relabels known client routes</strong> only—never invents screens without code.</p>
+<hr>
+<h2>Related utils (<strong><code>normalizePathname</code></strong>, <strong><code>createPathRouter</code></strong>)</h2>
+<p>Runtime intents that navigate programmatically (<strong><code>router.navigate(path)</code></strong>) use the same string normalization before dispatch. External deep links should treat <strong><code>normalizePathname</code></strong> as the contract <strong><code>matchAppRoute</code></strong> uses.</p>
+<p>For manual tests inspect <strong><code>PathRouter</code></strong> in <strong><code>packages/view/src/router/path-router.ts</code></strong>.</p>
+<p>Next: <strong><code>/guides/abey-component</code></strong>.</p>
+  </article>
+</section>

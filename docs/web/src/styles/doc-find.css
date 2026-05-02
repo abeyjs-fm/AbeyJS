@@ -1,0 +1,221 @@
+/*
+ * Docs search (landing shadow + **`appBarInset`** app bar). Shared **`doc-find__*`** classes.
+ */
+
+.doc-find {
+  --doc-find-text: var(--ab-w-text, var(--abey-text, #e8eaed));
+  --doc-find-muted: var(--ab-w-muted, var(--abey-text-muted, #9aa3b2));
+}
+
+.doc-find--shell {
+  width: 100%;
+  max-width: min(380px, 36vw);
+}
+
+@media (max-width: 900px) {
+  .doc-find--shell {
+    max-width: min(280px, 52vw);
+  }
+}
+
+@media (max-width: 640px) {
+  .doc-find--shell {
+    max-width: min(240px, 46vw);
+  }
+
+  .doc-find--shell .doc-find__kbd {
+    display: none;
+  }
+}
+
+.doc-find__wrap {
+  position: relative;
+  width: min(420px, 100%);
+}
+
+.doc-find--shell .doc-find__wrap {
+  width: 100%;
+  max-width: none;
+}
+
+.doc-find__form {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  width: 100%;
+  margin: 0;
+  padding: 0.45rem 0.85rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  background: rgba(15, 23, 42, 0.45);
+}
+
+.doc-find__submit {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0 0.08rem;
+  border: none;
+  background: transparent;
+  color: var(--doc-find-muted);
+  font-size: 0.88rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.doc-find__submit:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--doc-brand-purple, #9d2cff) 65%, transparent);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+.doc-find__input {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: none;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--doc-find-text);
+  font-family: inherit;
+  font-size: 0.84rem;
+  outline: none;
+}
+
+.doc-find__input::placeholder {
+  color: rgba(148, 163, 184, 0.62);
+}
+
+.doc-find__kbd {
+  display: inline-flex;
+  gap: 0.2rem;
+  padding: 0.12rem 0.45rem;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 0.68rem;
+  color: rgba(226, 232, 240, 0.7);
+  background: rgba(2, 6, 23, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.doc-find__kbd span + span {
+  margin-left: 0.15rem;
+}
+
+.doc-find__panel {
+  position: absolute;
+  z-index: 240;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  max-height: min(360px, 58vh);
+  overflow: auto;
+  border-radius: 12px;
+  border: 1px solid rgba(99, 102, 241, 0.35);
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.98), rgba(4, 8, 22, 0.99));
+  box-shadow:
+    0 22px 52px rgba(0, 0, 0, 0.52),
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+}
+
+.doc-find__hitlist {
+  list-style: none;
+  padding: 0.32rem;
+  margin: 0;
+}
+
+.doc-find__hit + .doc-find__hit {
+  margin-top: 0.28rem;
+}
+
+.doc-find__hit-main {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.2rem;
+  width: 100%;
+  margin: 0;
+  padding: 0.52rem 0.68rem;
+  text-align: left;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+  background: rgba(2, 6, 23, 0.46);
+  transition:
+    background 0.12s ease,
+    border-color 0.12s ease,
+    transform 0.1s ease;
+}
+
+.doc-find__hit-main:hover {
+  border-color: rgba(139, 92, 246, 0.32);
+  background: rgba(99, 102, 241, 0.14);
+  transform: translateY(-1px);
+}
+
+.doc-find__hit-main:focus-visible {
+  outline: none;
+  border-color: rgba(56, 189, 248, 0.65);
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+}
+
+.doc-find__hit-title {
+  font-size: 0.84rem;
+  font-weight: 800;
+  line-height: 1.35;
+  color: rgba(248, 250, 252, 0.98);
+}
+
+.doc-find__hit-hint {
+  font-size: 0.745rem;
+  font-weight: 600;
+  color: rgba(226, 232, 240, 0.76);
+}
+
+.doc-find__hit-meta {
+  font-size: 0.68rem;
+  font-family: var(--abey-font-mono, ui-monospace, monospace);
+  color: rgba(148, 163, 184, 0.88);
+  word-break: break-all;
+}
+
+.doc-find__msg {
+  padding: 0.75rem 1rem 0.85rem;
+  margin: 0;
+  font-size: 0.83rem;
+  line-height: 1.5;
+  color: rgba(148, 163, 184, 0.92);
+}
+
+.doc-find__msg a {
+  color: rgba(147, 197, 253, 0.98);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.doc-find__msg a:hover {
+  text-decoration: underline;
+}
+
+/* Light mode (welcome :host-context + shell `#app`) */
+:host-context(.doc-site.abey-shell-app:not(.abey--dark)) .doc-find__form,
+.abey-shell-app.doc-site:not(.abey--dark) .doc-find__form {
+  background: rgba(248, 250, 252, 0.92);
+  border-color: rgba(148, 163, 184, 0.45);
+}
+
+:host-context(.doc-site.abey-shell-app:not(.abey--dark)) .doc-find__input,
+.abey-shell-app.doc-site:not(.abey--dark) .doc-find__input {
+  color: var(--abey-text, #1e293b);
+}
+
+:host-context(.doc-site.abey-shell-app:not(.abey--dark)) .doc-find__kbd,
+.abey-shell-app.doc-site:not(.abey--dark) .doc-find__kbd {
+  color: rgba(71, 85, 105, 0.85);
+  background: rgba(241, 245, 249, 0.95);
+  border-color: rgba(148, 163, 184, 0.35);
+}

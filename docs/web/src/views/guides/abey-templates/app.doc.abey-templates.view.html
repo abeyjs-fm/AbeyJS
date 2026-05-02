@@ -1,0 +1,78 @@
+<section data-role="doc-guide-root">
+  <article data-doc="markdown">
+<p>Summary of <strong>what the compiler understands today</strong> and how to wire Vite. Detailed passes and edge cases: <strong><code>packages/compiler/README.md</code></strong>—if this guide disagrees, <strong>the README wins</strong> until we align.</p>
+<h2>What problem it solves</h2>
+<p><strong><code>.view.html</code></strong> and <strong><code>.abey</code></strong> are not static HTML from a server: Vite compiles them to <strong>TypeScript modules</strong> exporting <code>template</code>, <code>compiledTemplate</code>, <code>mount</code>, and sometimes an <code>AbeyComponentElement</code> class from frontmatter <code>@Component</code>. The bundler gets tree-shaking, code splitting, and normal <code>.ts</code> typecheck.</p>
+<h2>Vite plugin</h2>
+<pre><code class="language-ts">import { defineConfig } from &quot;vite&quot;;
+import { abeyVitePlugin } from &quot;@abeyjs/compiler&quot;;
+
+export default defineConfig({
+  plugins: [abeyVitePlugin()],
+});
+</code></pre>
+<ul>
+<li>Runs <strong><code>enforce: &quot;pre&quot;</code></strong> so markup transforms first.</li>
+<li>Template hot reload usually <strong>full dev-server reload</strong> today; fine-grained HMR is still work in progress.</li>
+</ul>
+<h2><code>abey.json</code> (optional, next to Vite root)</h2>
+<pre><code class="language-json">{
+  &quot;styles&quot;: [&quot;./src/styles/global.css&quot;, &quot;@abeyjs/uikit/styles/abey-table.css&quot;]
+}
+</code></pre>
+<p>The plugin emits <strong><code>/abey-styles.js</code></strong>—import it <strong>once</strong> in <code>main.ts</code>. If you skip it, <strong>production</strong> has no <code>index.html</code> magic: blank apps or 404 scripts.</p>
+<h2>Syntax surface (current)</h2>
+<p><strong>Structural:</strong> <code>@if</code> / <code>@else</code>, <code>@for (x of xs)</code>, <code>@switch</code> (lowers to <code>@if</code> ladder).</p>
+<p><strong>Sugar:</strong> <code>*if</code>, <code>*for</code> on nodes.</p>
+<p><strong>Text:</strong> <code>{{ expr }}</code> and <code>{expr}</code> in text nodes.</p>
+<p><strong>Attrs:</strong> <code>[prop]</code>, <code>(event)=&quot;handler($event)&quot;</code>, <code>[(model)]</code>, <code>attr=&quot;{{ expr }}&quot;</code>, mixes like <code>href=&quot;/u/{{ id }}&quot;</code>, <code>&lt;select [items]&gt;</code>.</p>
+<p><strong>Optional YAML frontmatter</strong> <code>---</code> … <code>---</code> with <code>@Component({ selector, styles, state?, aot? })</code>. Default <code>aot</code> <strong>true</strong> with qualifying HTML tries AOT <code>createElement</code>; otherwise falls back to <code>compiledTemplate</code> parse.</p>
+<p><strong>Hard limit:</strong> expressions are <strong>opaque strings</strong> to the compiler—<strong>no</strong> template typecheck yet.</p>
+<h2>Compiled module exports</h2>
+<table>
+<thead>
+<tr>
+<th>Symbol</th>
+<th>Use</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>template</code></td>
+<td>Original markup; feed <code>@AbeyComponent({ template })</code> for “live” binder.</td>
+</tr>
+<tr>
+<td><code>compiledTemplate</code></td>
+<td>HTML with <code>data-abey-*</code> for classic <code>mount()</code>.</td>
+</tr>
+<tr>
+<td><code>mount(outlet, ctx)</code></td>
+<td>Returns <code>{ render, dispose }</code> for imperative binding.</td>
+</tr>
+<tr>
+<td>Custom element class</td>
+<td>If frontmatter defines <code>@Component</code>.</td>
+</tr>
+</tbody></table>
+<h2>TypeScript project typings</h2>
+<p>In <code>src/vite-env.d.ts</code> (or similar):</p>
+<pre><code class="language-ts">declare module &quot;*.view.html&quot; {
+  export const template: string;
+  export const compiledTemplate: string;
+  export function mount(outlet: HTMLElement, ctx: Record&lt;string, unknown&gt;): {
+    render: () =&gt; void;
+    dispose: () =&gt; void;
+  };
+}
+</code></pre>
+<p>Tighten <code>ctx</code> if your app uses a stricter contract.</p>
+<h2><code>.abey</code> “old Astro-style” files</h2>
+<p>Legacy drafts mentioned embedded TS <code>{ctx}</code> blocks; <strong>current pipeline</strong> is <code>compileAbeyToTs</code> aligned with OM above. External docs that contradict this are obsolete—prefer <strong><code>.view.html</code></strong>.</p>
+<h2>Starters</h2>
+<ul>
+<li><strong><code>empty</code> / <code>abeyjs</code></strong> template: <code>src/views/home/app.home.view.*</code>.</li>
+<li><strong><code>admin</code></strong>: denser product conventions.</li>
+</ul>
+<p>Template differences: <code>packages/cli/templates/README.md</code>.</p>
+<p>Next: <strong><code>/guides/abey-component</code></strong> to add TS from the compiler, or <strong><code>/guides/monorepo</code></strong> if you develop the compiler itself.</p>
+  </article>
+</section>

@@ -1,0 +1,86 @@
+<section data-role="doc-guide-root">
+  <article data-doc="markdown">
+<p>Designed in <code>@abeyjs/view</code>: <strong>secure by default</strong>, and dynamic HTML must <strong>scream</strong> risk (<code>abey-html</code>, explicit sanitization). PRs inserting <code>innerHTML</code> from API data without <code>setSanitizedHtml</code> or <code>textContent</code> are <strong>bugs</strong>, not features.</p>
+<p>One-liner policy: <strong>safety is the default; risk is only explicit</strong> (you or code declare it).</p>
+<p>Linked to <strong><code>/guides/vision</code></strong> (HTML/CSS narrative); <strong>here</strong> hard rules + APIs.</p>
+<hr>
+<h2>Rules (normative)</h2>
+<ol>
+<li><p><strong>All values render as text by default</strong><br>Lists, forms, and declarative pages use <code>textContent</code> or text nodes, not raw HTML strings.</p>
+</li>
+<li><p><strong><code>{{ key }}</code> binding is always safe (escaped)</strong><br><code>@abeyjs/view</code> <code>bindText</code> replaces <code>{{ key }}</code> with <code>escapeHtml</code> of the value. No raw-HTML template mode in core.</p>
+</li>
+<li><p><strong>Never assign <code>innerHTML</code> automatically</strong><br>No automatic or data-driven API assigns <code>innerHTML</code> from domain data without the explicit layer below.</p>
+</li>
+<li><p><strong>Automatic mode does not execute dynamic HTML</strong><br><code>PageViewSpec</code>, <code>buildPageView</code>, <code>createPageViewElement</code>, and Omega lists/forms do not interpret HTML from data strings.</p>
+</li>
+<li><p><strong>Dynamic HTML must be explicit: <code>abey-html</code> / <code>data-abey-html</code></strong><br>With <code>setSanitizedHtml</code>, the host gets class <code>abey-html</code> and <code>data-abey-html=&quot;1&quot;</code> for audit/traceability.</p>
+</li>
+<li><p><strong>Dynamic HTML goes through sanitization</strong>  </p>
+<ul>
+<li>Default: <code>sanitize()</code> / <code>AbeyJs.sanitize()</code> <strong>escape</strong> to entities—no active tags, no scripts.  </li>
+<li>Rich content: configure with <code>configureSanitize</code> (e.g. DOMPurify) and an allowlist. Do not trust “looks clean” strings.</li>
+</ul>
+</li>
+<li><p><strong>Hybrid DOM + AbeyJs</strong><br>For HTML fragments use <code>setSanitizedHtml</code> or <code>textContent</code> + <code>escapeHtml</code>. If you centralize DOMPurify, document why.</p>
+</li>
+<li><p><strong>Advanced: full control, your responsibility</strong><br>Assigning <code>innerHTML</code> yourself is allowed; framework does not stop you—risk is fully application-level.</p>
+</li>
+<li><p><strong>Never trust user input</strong><br>Every API, form, or query must validate; client is never the only defense.</p>
+</li>
+<li><p><strong>Server validation (required in domain)</strong><br>AbeyJs can reuse Zod on the client; the <strong>server</strong> enforces contract and validates again.</p>
+</li>
+<li><p><strong>AbeyJs does not run injected scripts by default</strong><br>No <code>eval</code>, no injected <code>&lt;script&gt;</code>, HTML defaults escape or go through <code>sanitize</code>.</p>
+</li>
+<li><p><strong>Summary</strong><br>Safety = default path (text, escape, no magic <code>innerHTML</code>). Explicit risk = <code>setSanitizedHtml</code>, <code>configureSanitize</code>, or conscious manual DOM.</p>
+</li>
+</ol>
+<hr>
+<h2>API reference</h2>
+<table>
+<thead>
+<tr>
+<th>Symbol</th>
+<th>Package</th>
+<th>Use</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>escapeHtml</code></td>
+<td><code>@abeyjs/view</code></td>
+<td>Arbitrary value → safe string.</td>
+</tr>
+<tr>
+<td><code>bindText</code></td>
+<td><code>@abeyjs/view</code></td>
+<td>Templates with <code>{{ id }}</code>, values escaped only.</td>
+</tr>
+<tr>
+<td><code>sanitize</code> / <code>AbeyJs.sanitize</code></td>
+<td><code>@abeyjs/view</code></td>
+<td>Base policy; replaceable via <code>configureSanitize</code>.</td>
+</tr>
+<tr>
+<td><code>setSanitizedHtml</code></td>
+<td><code>@abeyjs/view</code></td>
+<td>Recommended entry for HTML in an <code>HTMLElement</code> from data.</td>
+</tr>
+<tr>
+<td><code>clearSanitizedHtmlHost</code></td>
+<td><code>@abeyjs/view</code></td>
+<td>Clear marks and empty node.</td>
+</tr>
+<tr>
+<td><code>registerAbeyJsView</code> / <code>&lt;abeyjs-view&gt;</code></td>
+<td><code>@abeyjs/view</code></td>
+<td>Views: <code>{{a.b}}</code> (escape), <code>abeyjs-for</code>, <code>abeyjs-html</code> → <code>setSanitizedHtml</code>.</td>
+</tr>
+<tr>
+<td><code>getByPath</code></td>
+<td><code>@abeyjs/view</code></td>
+<td>Model path navigation with safe binding.</td>
+</tr>
+</tbody></table>
+<p>Implementation: <code>packages/view/src/safe-html.ts</code>. Product + HTML: <strong><code>/guides/vision</code></strong>.</p>
+  </article>
+</section>

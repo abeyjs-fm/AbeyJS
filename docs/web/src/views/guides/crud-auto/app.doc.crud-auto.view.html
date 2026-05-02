@@ -1,0 +1,129 @@
+<section data-role="doc-guide-root">
+  <article data-doc="markdown">
+<p>This table avoids promising on the web what the binary cannot deliver yet. “Automatic CRUD” in product talk means <strong>one source of truth</strong> (today <strong>OpenAPI</strong>) feeding agent, intents, list/form defs, and reactive mounts—not magic that guesses your domain without a spec.</p>
+<p>Short positioning vs manual work: <strong><code>/guides/vision</code></strong>.<br><strong>Important:</strong> the example DSL at the end (<code>model Cliente</code> …) <strong>does not</strong> exist as compiled syntax—<strong>direction only</strong>. The real path is OpenAPI + <code>@abeyjs/openapi</code> + <code>@abeyjs/view</code> views.</p>
+<p><strong>Documented exception:</strong> invoice-style docs (header + lines + payments) in <code>examples/MyMiusic</code> follow their own meta (<code>InvoiceDocumentFormMeta</code>), not this generic CRUD pipeline—read that ecosystem README before copying.</p>
+<hr>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Feature</th>
+<th>Status</th>
+<th>Notes (repo)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>Declarative “model-first” model separate from HTTP</td>
+<td><strong>Partial</strong></td>
+<td>Today’s source: <strong>OpenAPI / JSON Schema</strong> → <code>ListViewDef</code> + <code>FormViewDef</code> + Zod via <code>packages/openapi/src/discover-crud.ts</code>. No proprietary entity language outside the spec.</td>
+</tr>
+<tr>
+<td>2</td>
+<td>REST wiring without hand-<code>fetch</code> per endpoint</td>
+<td><strong>Partial</strong></td>
+<td><code>DynamicCrudAgent</code> + <code>createOmegaHttp</code>; you bring spec, baseUrl, proxy/CORS.</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Table+form UI “without every pixel”</td>
+<td><strong>Partial</strong></td>
+<td><code>mountListViewSync</code> / <code>mountFormView</code> read agent state; <code>examples/crud-app</code> still shows imperative assembly. Single public full-screen CRUD mount TBD if we close it as API.</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Granular list reactivity</td>
+<td><strong>Yes</strong></td>
+<td><code>rowKey</code>, <code>mergeListRowsByKey</code>, RAF batching — <code>packages/view/src/dom/mount-list-sync.ts</code>.</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Generic automatic named store</td>
+<td><strong>Partial</strong></td>
+<td><code>StateCell</code> + OpenAPI agent view state—pattern exists, no branded “Redux”.</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Unified client validation</td>
+<td><strong>Partial</strong></td>
+<td>Zod inferred/generated; server still validates (required in domain).</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Actions via intents (not stray handlers only)</td>
+<td><strong>Partial</strong></td>
+<td><code>…/List</code>, <code>Create</code>, <code>Update</code>, <code>Delete</code> intents from spec; buttons still wired with helpers like <code>mountIntentButton</code> where needed.</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Rich field types (date, badge, etc.)</td>
+<td><strong>Partial</strong></td>
+<td>Basemap <code>text</code> / <code>number</code> / <code>email</code> / <code>readonly</code>; extend manually in <code>ViewField</code>.</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Strong convention without spec</td>
+<td><strong>No</strong></td>
+<td>Convention <strong>requires</strong> faithful OpenAPI with collection + optional <code>/{id}</code>.</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Progressive auto → manual customization</td>
+<td><strong>Yes (direction)</strong></td>
+<td>Documented <strong><code>/guides/vision</code></strong> + <strong><code>/guides/security</code></strong>.</td>
+</tr>
+<tr>
+<td>11</td>
+<td>XSS-safe defaults</td>
+<td><strong>Yes</strong></td>
+<td><strong><code>/guides/security</code></strong>.</td>
+</tr>
+<tr>
+<td>12</td>
+<td>Omega theme styles</td>
+<td><strong>Yes</strong></td>
+<td><code>@abeyjs/view/theme/omega-default.css</code>, <code>--abey-*</code>.</td>
+</tr>
+<tr>
+<td>13</td>
+<td>Sync after mutation without full reload</td>
+<td><strong>Partial</strong></td>
+<td>Agent state updates lists/forms; “always server-identical” may need refresh.</td>
+</tr>
+<tr>
+<td>14</td>
+<td>Optimization (app-level cache)</td>
+<td><strong>Partial</strong></td>
+<td>List batching yes; declarative app cache not core focus.</td>
+</tr>
+<tr>
+<td>15</td>
+<td>Entity/intent feel</td>
+<td><strong>Partial</strong></td>
+<td>Names from paths (<code>entityPascal</code>); you still see <code>mount*</code> in routes.</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Wire app to local backend (workshop recipe)</h2>
+<p>With CLI built in the monorepo:</p>
+<pre><code class="language-bash">node packages/cli/dist/cli.js add openapi &lt;project-folder&gt; \
+  [--proxy &lt;https://127.0.0.1:7019&gt;] \
+  [--openapi-path /swagger/v1/swagger.json]
+</code></pre>
+<p>Defaults target typical .NET + Kestrel; adjust proxy and path. Then: <code>npm i</code>, <code>.env</code> from <code>.env.example</code>, start API, try your demo route (e.g. <strong><code>/crud-api</code></strong> depending on scaffolding).</p>
+<h2>Summary</h2>
+<ul>
+<li><strong>Solid:</strong> discovery + agent + keyed reactive list + HTML safety policy + theme.</li>
+<li><strong>Aspirational:</strong> less <code>examples/crud-app</code>-style boilerplate, richer field maps, possible DSL or single-screen generator.</li>
+</ul>
+<h3>Dream syntax (not implemented)</h3>
+<pre><code class="language-text">model Cliente
+connect Cliente &quot;/api/clientes&quot;
+view Clientes auto
+</code></pre>
+<p>Practical analogue today: <strong>OpenAPI</strong> + <code>registerOpenApiCrud</code> or <code>registerOpenApiAllCrud</code> + routes that mount views.</p>
+<p>Revalidate this table vs <code>packages/openapi</code> and <code>packages/view</code> on each release.</p>
+<p>Next web guide: <strong><code>/guides/security</code></strong>.</p>
+  </article>
+</section>

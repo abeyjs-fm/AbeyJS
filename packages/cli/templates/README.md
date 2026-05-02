@@ -10,11 +10,13 @@ AbeyJs-first **Vite + TypeScript** starter (OM home view under `src/views/home/`
 
 | Area | Paths / notes |
 |------|----------------|
-| Routes | **`src/routes.ts`** (`componentRoute`, `lazyViewMount`, …). |
-| Home screen | **`src/views/home/`** — **`app.home.view.html`** (OM/compiler), **`app.home.view.ts`** (`@AbeyComponent`), **`app.home.view.css`**. |
+| Routes | **`src/routes.ts`** — **`componentRoute`** / **`pageRoute`**, nav + spec con **`satisfies`**, home lazy con **`load()`** (sin placeholder «Cargando…» por defecto). |
+| Home screen | **`src/views/home/`** — **`app.home.view.html`**, **`app.home.view.ts`** (`@AbeyComponent`, **`stylesText`** + CSS **`?inline`**, Shadow DOM), **`app.home.view.css`**. |
 | Runtime | **`src/omegaSetup.ts`** (`createOmega`, inspector bridge guard, optional OpenAPI **`init`** hook). |
-| Env | **`src/environment.ts`**, **`.env.*`**, **`abey.json`** (global styles for OM plugin). |
-| Entry | **`src/main.ts`**, **`index.html`**. |
+| Env | **`src/environment.ts`**, **`.env.*`**, **`abey.json`** → lista **`styles`** (p. ej. **`./src/om-global.css`**). |
+| Entry | **`src/main.ts`** — **`import "/abey-styles.js"`**, **`__abeyRuntime`** / **`__abeyDi.channel`** para DOM-DI; **`index.html`** + favicon **`public/icon.png`**. |
+| Assets | **`public/logo.png`** (hero), **`public/icon.png`** (favicon). |
+| Dev | **`scripts/clean-vite.mjs`** — **`npm run dev:clean`** borra **`node_modules/.vite`**. |
 
 Good default when you want **`.view.html` + `@abeyjs/compiler`** in the repo from day one.
 
@@ -26,8 +28,8 @@ Dashboard-style **AbeyJs shell** (same stack family, different defaults):
 
 | Area | Paths / notes |
 |------|----------------|
-| Shell | **`mountRoutedApp`** / **`bootstrapOmegaApp`** wiring in **`src/main.ts`**; **`dashboardLayout`** patched by **`--shell`**. |
-| Home | **`src/home/`** (`home.ts`, **`home.html`**, **`home.css`**) instead of **`views/`** subtree. |
+| Shell | **`bootstrapOmegaApp`** in **`src/main.ts`**; **`dashboardLayout`** patched by **`--shell`**. |
+| Home | **`src/views/home/`** — **`app.home.view.html`**, **`app.home.view.ts`** (`@AbeyComponent`, **`stylesText`** + **`?inline`**, Shadow DOM), **`routes.ts`** + **`componentRoute`** + lazy **`load()`** (igual patrón que **`empty/`**). |
 | Shared | **`src/common/http.ts`**, **`session.ts`**, **`environment.ts`** — patterns for REST + guards. |
 
 **`--shell`**
@@ -54,7 +56,7 @@ Use when you want a **workspace name + core** without Vite/UI pre-wired (`abeyjs
 ## After copy
 
 - **`patchPackageJsonName`** — **`package.json` `name`** becomes workspace-safe from folder name (avoids clashes).
-- Root **`README.txt`** — Spanish/English hybrid quickstart (**`npm i`**, **`npm run dev`**, OpenAPI **`connect`/`generate views`** reminders).
+- Root **`README.txt`** — quickstart (**`npm run dev`**, OpenAPI **`connect`/`generate views`** reminders); **`abeyjs init`** runs **`npm install`** in the new folder unless **`--skip-install`** / **`SKIP_ABEYJS_SCAFFOLD_INSTALL=1`**.
 
 Patches are **never** committed back into **`templates/`**; edit templates here only when shipping new defaults.
 

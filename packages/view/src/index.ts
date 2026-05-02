@@ -19,12 +19,27 @@ export type {
 } from "./view-types.js";
 export { applyViewTheme, ABEYJS_VIEW_BASE_CLASS, type ViewTheme } from "./view-theme.js";
 export { createPathRouter, normalizePathname, type PathRouter } from "./router/path-router.js";
-export { firstNavPath, matchAppRoute, type AppRoute } from "./shell/app-routes.js";
+export { firstNavPath, matchAppRoute, type AppRoute, type AppRouteNavChild } from "./shell/app-routes.js";
+export {
+  fetchSidebarNav,
+  buildRoutesFromApi,
+  type ApiNavItem,
+  type FetchSidebarNavOptions,
+} from "./shell/nav-from-api.js";
 export {
   mountAppShell,
   mountRoutedApp,
+  defaultShellAppBarActions,
+  ABEY_SHELL_APPEARANCE_STORAGE_KEY,
+  getResolvedAdminAppearance,
+  type MountAppShellAppearanceToggle,
   type MountRoutedAppConfig,
   type NavItem,
+  type ShellAppBarAction,
+  type ShellAppBarDropdownItem,
+  type ShellAppearanceMode,
+  type ShellThemeVars,
+  type ShellSidebarMenuMode,
   type ShellVariant,
 } from "./shell/mount-routed-app.js";
 export {
@@ -77,7 +92,13 @@ export { mountTracePanel, type TracePanelOptions } from "./dom/trace-panel.js";
 export { mountModuleStyles, type ModuleStylesHandle } from "./dom/mount-module-styles.js";
 export { defineAbeyUxView, type AbeyUxViewInitCtx, type AbeyUxViewMeta } from "./dom/define-abey-ux-view.js";
 export { withModuleStyles } from "./dom/with-module-styles.js";
-export { buildPageView, createPageViewElement, pageRoute, type PageViewSpec } from "./declarative-page.js";
+export {
+  buildPageView,
+  createPageViewElement,
+  pageRoute,
+  type PageRouteNav,
+  type PageViewSpec,
+} from "./declarative-page.js";
 export {
   signal,
   readonlySignal,

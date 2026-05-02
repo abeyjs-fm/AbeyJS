@@ -1,0 +1,83 @@
+<section data-role="doc-guide-root">
+  <article data-doc="markdown">
+<p><strong><code>@AbeyComponent</code></strong> decorates subclasses of <strong><code>AbeyComponentElement</code></strong> (<strong><code>@abeyjs/view</code></strong>). Generated or handwritten: compiler wires <strong><code>template</code></strong> / <strong><code>compiledTemplate</code></strong>; decorator connects <strong>open Shadow DOM</strong>, styles, reactive binder, CE lifecycle (<strong><code>connectedCallback</code></strong> / teardown).</p>
+<p>Typical screen component: <strong><code>template</code></strong> import from <strong><code>.view.html</code></strong>, optional <strong><code>stylesText</code></strong> (<strong><code>*.css?inline</code></strong>), <strong><code>state</code></strong> initialized before <strong><code>super.connectedCallback()</code></strong> so first paint has values.</p>
+<hr>
+<h2>Canonical minimal example</h2>
+<pre><code class="language-ts">import { AbeyComponent, AbeyComponentElement } from &quot;@abeyjs/view&quot;;
+import { DOM_CHANNEL_FACTORY, DOM_CHANNEL_TOKEN } from &quot;@abeyjs/view&quot;;
+import { template } from &quot;./app.dashboard.view.html&quot;;
+import styles from &quot;./app.dashboard.view.css?inline&quot;;
+
+@AbeyComponent({
+  selector: &quot;app-dashboard&quot;,
+  template,
+  stylesText: [styles],
+  providers: [{ token: DOM_CHANNEL_TOKEN, useFactory: DOM_CHANNEL_FACTORY }],
+})
+export class AppDashboard extends AbeyComponentElement {
+  connectedCallback(): void {
+    const channel = typeof window !== &quot;undefined&quot; ? window.__abeyDi?.channel?.() : undefined;
+    this.state = {
+      title: &quot;Dashboard&quot;,
+      openPreferences() {
+        channel?.publish?.(/* … */);
+      },
+    };
+    super.connectedCallback();
+  }
+}
+</code></pre>
+<h3>Why <code>DOM_CHANNEL_*</code></h3>
+<p>Binder code consults <strong><code>DOM_CHANNEL_TOKEN</code></strong> to publish intents without importing global <strong><code>OmegaRuntime</code></strong>. Omit provider ⇒ advanced bindings fail. <strong>Admin</strong> templates include default—keep until you inject <strong><code>runtime.channel</code></strong> via custom factory.</p>
+<hr>
+<h2><code>state</code> vs class fields</h2>
+<p>Prefer <strong><code>state</code> flat bag</strong> flagged in template:</p>
+<ul>
+<li><strong><code>{{ prop }}</code></strong> has stable reference.</li>
+<li>Binder batches microtask updates.<strong>Deep nesting</strong> OK via path watchers.</li>
+</ul>
+<p>Common mistakes:</p>
+<table>
+<thead>
+<tr>
+<th>Mistake</th>
+<th>Symptom</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Skip <strong><code>super.connectedCallback()</code></strong> after state</td>
+<td>Blank / bindings skip.</td>
+</tr>
+<tr>
+<td>Mutate unrelated clone reference</td>
+<td>Incomplete updates.</td>
+</tr>
+<tr>
+<td>Template imports without <strong><code>abeyVitePlugin</code></strong> order</td>
+<td>Broken chunk.<strong>Plugin order matters.</strong></td>
+</tr>
+</tbody></table>
+<hr>
+<h2><strong><code>componentRoute</code></strong></h2>
+<p><strong><code>selector</code> must match exactly</strong>:</p>
+<pre><code class="language-ts">componentRoute(&quot;/panel&quot;, {
+  label: &quot;Dashboard&quot;,
+  title: &quot;Dashboard&quot;,
+}, {
+  selector: &quot;app-dashboard&quot;,
+  load: () =&gt; import(&quot;./views/dashboard/app.dashboard.view.js&quot;),
+}),
+</code></pre>
+<p>No <strong><code>load</code></strong> ⇒ static import when bundled elsewhere.</p>
+<p>Lazy import: <strong><code> .js</code></strong> suffix in specifier despite TS source—Vite resolves ESM output.</p>
+<hr>
+<h2>File naming convention</h2>
+<p>Recommended: <strong><code>app.&lt;area&gt;.&lt;feature&gt;.view.ts</code></strong>, paired <strong><code>.view.html</code></strong> / <strong><code>.view.css</code></strong>. Matches <strong><code>abeyjs generate ecosystem</code></strong> for readable PRs.</p>
+<p>Many features ⇒ <code>./views/users/</code>, <code>./views/config/</code> folders.</p>
+<hr>
+<h2>Frontmatter <strong><code>@Component</code></strong></h2>
+<p>YAML frontmatter <strong><code>---</code></strong> in <strong><code>.view.html</code></strong> can hoist meta (<code>selector</code>, styles) (<strong><code>packages/compiler/README.md</code></strong>): compiler can emit <strong><code>AbeyComponentElement</code></strong>. We still document explicit TS for breakpoint clarity.</p>
+<p>Next: <strong><code>/guides/data-views</code></strong> (list / form).</p>
+  </article>
+</section>

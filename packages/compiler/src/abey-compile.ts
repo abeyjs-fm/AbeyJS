@@ -859,23 +859,177 @@ function extractSelectItemsDirectives(
   return { html: out, directives };
 }
 
+/** Span (half-open **[start,end)**) dentro del template fuente. */
+type TemplateSpan = { start: number; end: number };
+
+/** Primer `<pre` desde `from` (-1 si no hay). */
+function findNextPreOpen(html: string, from: number): number {
+  const re = /<pre\b/gi;
+  re.lastIndex = Math.max(0, from);
+  const m = re.exec(html);
+  return m?.index ?? -1;
+}
+
+/** Primer `</pre>` desde `from` (-1 si no hay). Índice al `<`. */
+function findNextPreClose(html: string, from: number): number {
+  const re = /<\/pre\s*>/gi;
+  re.lastIndex = Math.max(0, from);
+  const m = re.exec(html);
+  return m?.index ?? -1;
+}
+
+/**
+ * Todo `<pre>...</pre>` con **anidamiento** (`<pre` dentro del bloque aumenta depth).
+ * Evita cerrar antes de tiempo cuando el ejemplo contiene el texto `</pre>`.
+ */
+function spansPreSections(html: string): TemplateSpan[] {
+  const spans: TemplateSpan[] = [];
+  let outer = 0;
+  while (outer < html.length) {
+    const openIdx = findNextPreOpen(html, outer);
+    if (openIdx < 0) break;
+    const gt = html.indexOf(">", openIdx);
+    if (gt < 0) break;
+    let cursor = gt + 1;
+    let depth = 1;
+    while (cursor < html.length && depth > 0) {
+      const nextOpen = findNextPreOpen(html, cursor);
+      const nextClose = findNextPreClose(html, cursor);
+      if (nextClose < 0) {
+        depth = -1;
+        break;
+      }
+      if (nextOpen >= 0 && nextOpen < nextClose) {
+        const innerGt = html.indexOf(">", nextOpen);
+        if (innerGt < 0) {
+          depth = -1;
+          break;
+        }
+        depth++;
+        cursor = innerGt + 1;
+      } else {
+        const slice = html.slice(nextClose);
+        const closeTag = /<\/pre\s*>/i.exec(slice);
+        const len = closeTag?.[0].length ?? 0;
+        cursor = nextClose + len;
+        depth--;
+        if (depth === 0) {
+          spans.push({ start: openIdx, end: cursor });
+          outer = cursor;
+          break;
+        }
+      }
+    }
+    if (depth !== 0) {
+      outer = openIdx + 1;
+    }
+  }
+  return spans;
+}
+
+function spanContained(span: TemplateSpan, by: TemplateSpan[]): boolean {
+  for (const s of by) {
+    if (span.start >= s.start && span.end <= s.end) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/** `<code>...</code>` que no está contenido dentro de ningún `<pre>...</pre>` (Markdown inline). */
+function spansCodeOutsidePre(html: string, pres: TemplateSpan[]): TemplateSpan[] {
+  const spans: TemplateSpan[] = [];
+  const re = /<code\b[^>]*>[\s\S]*?<\/code>/gi;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(html)) !== null) {
+    const span = { start: m.index, end: m.index + m[0].length };
+    if (!spanContained(span, pres)) {
+      spans.push(span);
+    }
+  }
+  return spans;
+}
+
+/**
+ * TEXTO dentro de estos spans se copia tal cual para **extractHoles** (no `{}`/`{{ }}` sintácticos).
+ * Ej.: bloques de código en documentación donde hay `{ ... }`, `{{ estado }}`, etc.
+ */
+function literalHoleSkipSpans(html: string): TemplateSpan[] {
+  const pres = spansPreSections(html);
+  return pres.concat(spansCodeOutsidePre(html, pres));
+}
+
+function cursorInSpans(i: number, spans: TemplateSpan[]): boolean {
+  for (const s of spans) {
+    if (i >= s.start && i < s.end) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function markerShield(idx: number): string {
+  return `\uE000ABEYSHLD${idx}\uE001`;
+}
+
+/**
+ * Sustituye regiones literales (`<pre>`/`<code>`) por marcadores para que **todas** las pasadas OM
+ * (`[prop]`, `(click)`, `{}`, `{{}}`, etc.) no vean el fragmento real.
+ */
+function shieldLiteralRegions(html: string): { masked: string; parts: string[] } {
+  const spans = literalHoleSkipSpans(html);
+  if (spans.length === 0) {
+    return { masked: html, parts: [] };
+  }
+  spans.sort((a, b) => a.start - b.start);
+  const parts: string[] = [];
+  let masked = "";
+  let last = 0;
+  for (let i = 0; i < spans.length; i++) {
+    const s = spans[i]!;
+    masked += html.slice(last, s.start) + markerShield(i);
+    parts.push(html.slice(s.start, s.end));
+    last = s.end;
+  }
+  masked += html.slice(last);
+  return { masked, parts };
+}
+
+function unshieldMasked(html: string, parts: string[]): string {
+  let out = html;
+  for (let i = 0; i < parts.length; i++) {
+    const ph = markerShield(i);
+    while (out.includes(ph)) {
+      out = out.replace(ph, parts[i] ?? "");
+    }
+  }
+  return out;
+}
+
 /**
  * Replace `{...}` in template text with placeholder elements `<span data-abey-hole="IDX"></span>`.
  *
  * MVP limitations:
  * - Expressions are supported only in text/child positions (not inside tags/attributes).
  * - Braces inside strings are not supported (simple scanner).
+ * - TEXTO dentro de `<pre>...</pre>` o `<code>...</code>` fuera de `<pre>` no se procesa aquí (`{}`, `{{ }}` literales; útil en docs/ejemplos).
  */
 function extractHoles(template: string, counters: Counters): { html: string; holes: ExprHole[] } {
   const holes: ExprHole[] = [];
   let out = "";
   let i = 0;
+  const litSpans = literalHoleSkipSpans(template);
   // Only support holes in text/child positions (outside tags).
   // So we skip scanning when we're inside `<...>` or inside quoted attribute values.
   let inTag = false;
   let quote: "'" | '"' | null = null;
   while (i < template.length) {
     const ch = template[i]!;
+    if (cursorInSpans(i, litSpans)) {
+      out += ch;
+      i++;
+      continue;
+    }
     if (inTag) {
       out += ch;
       if (quote) {
@@ -1283,7 +1437,9 @@ export function compileAbeyToTs(source: string, id: string): CompileAbeyResult {
   const componentMeta = parseComponentMeta(frontmatter);
   const frontmatterOut = componentMeta ? componentMeta.frontmatterRest : frontmatter;
   const counters: Counters = { forIndex: 0, ifIndex: 0, holeIndex: 0 };
-  const sugar = preprocessSugar(rawTemplate);
+  const shields = shieldLiteralRegions(rawTemplate);
+  const maskedTemplate = shields.masked;
+  const sugar = preprocessSugar(maskedTemplate);
   const attrMixExtracted = extractAttrMixedInterpolation(sugar, counters);
   const attrExtracted = extractAttrHoles(attrMixExtracted.html, counters);
   // IMPORTANT: extract `<select [items] [value] [name]>` before generic `[prop]` extraction,
@@ -1293,7 +1449,8 @@ export function compileAbeyToTs(source: string, id: string): CompileAbeyResult {
   const ifExtracted = extractIfBlocks(bracketExtracted.html, counters);
   const forExtracted = extractForBlocks(ifExtracted.html, counters);
   const { html, holes } = extractHoles(forExtracted.html, counters);
-  const safeHtml = escapeForTemplateLiteral(html);
+  const htmlRestored = unshieldMasked(html, shields.parts);
+  const safeHtml = escapeForTemplateLiteral(htmlRestored);
   const safeRawTemplate = escapeForTemplateLiteral(rawTemplate);
   const allIfBlocks = [...ifExtracted.ifBlocks, ...forExtracted.ifBlocks];
   /** `@for` loops nested under `@if/@else` land in `ifExtracted.forBlocks`, not the flat post-`@if` HTML. */
@@ -1304,7 +1461,7 @@ export function compileAbeyToTs(source: string, id: string): CompileAbeyResult {
   const ifBlocksSorted = [...allIfBlocks].sort((a, b) => b.index - a.index);
   const forBlocksSorted = [...allForBlocks].sort((a, b) => b.index - a.index);
   const compiledAttrHoles = [...bracketExtracted.attrHoles];
-  const aotBuild = componentMeta?.aot ? buildAotFactory(html) : null;
+  const aotBuild = componentMeta?.aot ? buildAotFactory(htmlRestored) : null;
 
   const componentBlock = (() => {
     if (!componentMeta) return "";
@@ -1650,7 +1807,8 @@ ${forBlocksSorted
 ${bracketExtracted.eventHoles
   .map((h) => {
     const handlerSafe = escapeForTemplateLiteral(h.handlerExpr);
-    return `  {\n    const a = onEls.get(${h.index});\n    if (a && !onDisposers.has(${h.index})) {\n      const fn = (ev: any) => {\n        const $event = ev;\n        try {\n          return (${handlerSafe}) as any;\n        } finally {\n          // Event handlers may mutate ctx/state; re-render after the handler.\n          render();\n        }\n      };\n      a.el.addEventListener(a.ev, fn as any);\n      onDisposers.set(${h.index}, () => a.el.removeEventListener(a.ev, fn as any));\n    }\n  }`;
+    // Run handler as a statement block — `return (a; b; c)` is invalid when the source uses multiple statements.
+    return `  {\n    const a = onEls.get(${h.index});\n    if (a && !onDisposers.has(${h.index})) {\n      const fn = (ev: any) => {\n        const $event = ev;\n        try {\n          ${handlerSafe};\n        } finally {\n          // Event handlers may mutate ctx/state; re-render after the handler.\n          render();\n        }\n      };\n      a.el.addEventListener(a.ev, fn as any);\n      onDisposers.set(${h.index}, () => a.el.removeEventListener(a.ev, fn as any));\n    }\n  }`;
   })
   .join("\n")}
 

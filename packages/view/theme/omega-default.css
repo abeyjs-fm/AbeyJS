@@ -93,7 +93,7 @@ body {
   --abey-radius-sm: 6px;
 }
 
-.abey-app:not(.abey-shell-app) > * {
+.abey-app:not(.abey-shell-app)>* {
   max-width: 960px;
   margin-left: auto;
   margin-right: auto;
@@ -134,7 +134,7 @@ body {
   box-shadow: var(--abey-shadow, none);
 }
 
-.abey-app > hr,
+.abey-app>hr,
 .abey hr,
 hr.abey-divider {
   border: none;
@@ -177,7 +177,7 @@ abey-form.abey-form:has(.abey-form.abey-form--full) {
   margin-right: 0 !important;
 }
 
-abey-form.abey-form > section.abey-form {
+abey-form.abey-form>section.abey-form {
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
@@ -317,6 +317,7 @@ th.abey-list__th-actions {
   text-align: end;
   white-space: normal;
 }
+
 td.abey-list__actions .abey-btn--sm {
   margin: 0.1rem 0.15rem;
   vertical-align: middle;
@@ -391,20 +392,20 @@ td.abey-list__status[role="alert"] {
     align-items: start;
   }
 
-  .abey-form:not(.abey-form--stacked) form > .abey-form__message,
-  .abey-form:not(.abey-form--stacked) form > .abey-form__actions {
+  .abey-form:not(.abey-form--stacked) form>.abey-form__message,
+  .abey-form:not(.abey-form--stacked) form>.abey-form__actions {
     grid-column: 1 / -1;
   }
 
-  .abey-form:not(.abey-form--stacked) form > .abey-form__radio-group {
+  .abey-form:not(.abey-form--stacked) form>.abey-form__radio-group {
     grid-column: 1 / -1;
   }
 
-  .abey-form:not(.abey-form--stacked) form > .abey-field:only-child {
+  .abey-form:not(.abey-form--stacked) form>.abey-field:only-child {
     grid-column: 1 / -1;
   }
 
-  .abey-form:not(.abey-form--stacked) form > .abey-field:last-child:nth-child(odd):not(:has(> abey-radio)) {
+  .abey-form:not(.abey-form--stacked) form>.abey-field:last-child:nth-child(odd):not(:has(> abey-radio)) {
     grid-column: 1 / -1;
   }
 }
@@ -417,7 +418,7 @@ td.abey-list__status[role="alert"] {
   }
 }
 
-.abey-form form > .abey-form__actions {
+.abey-form form>.abey-form__actions {
   display: flex;
   flex-wrap: wrap;
   gap: var(--abey-space-3);
@@ -435,15 +436,16 @@ td.abey-list__status[role="alert"] {
   gap: 1.25rem;
 }
 
-.abey-form .abey-form__actions.abey-form__actions--in-tabshell > * + * {
-  margin-left: 0.25rem; /* fallback si el gap no aplica por algún motivo */
+.abey-form .abey-form__actions.abey-form__actions--in-tabshell>*+* {
+  margin-left: 0.25rem;
+  /* fallback si el gap no aplica por algún motivo */
 }
 
 .abey-form .abey-form__actions.abey-form__actions--in-tabshell .abey-btn--primary {
   margin-left: auto;
 }
 
-.abey-form form > .abey-form__actions .abey-btn--primary {
+.abey-form form>.abey-form__actions .abey-btn--primary {
   justify-self: start;
   min-width: 9rem;
   padding-inline: 1.35rem;
@@ -466,7 +468,7 @@ td.abey-list__status[role="alert"] {
   gap: var(--abey-space-4);
 }
 
-.abey-form--stacked form > .abey-form__main {
+.abey-form--stacked form>.abey-form__main {
   display: flex;
   flex-direction: column;
   gap: var(--abey-space-4);
@@ -576,11 +578,11 @@ td.abey-list__status[role="alert"] {
   width: 100%;
 }
 
-.abey-form__field-grid > .abey-field {
+.abey-form__field-grid>.abey-field {
   min-width: 0;
 }
 
-.abey-form__field-grid > .abey-form__radio-group {
+.abey-form__field-grid>.abey-form__radio-group {
   display: flex;
   flex-direction: column;
   gap: var(--abey-space-2);
@@ -588,7 +590,7 @@ td.abey-list__status[role="alert"] {
   width: 100%;
 }
 
-.abey-form__field-grid > .abey-form__radio-group > .abey-field {
+.abey-form__field-grid>.abey-form__radio-group>.abey-field {
   width: 100%;
   max-width: none;
   min-width: 0;
@@ -624,12 +626,12 @@ td.abey-list__status[role="alert"] {
   }
 
   /** Grupo de radios solo (sin `.abey-form__field-aside`): sigue ocupando toda la fila del grid principal. */
-  .abey-form__field-grid > .abey-form__radio-group {
+  .abey-form__field-grid>.abey-form__radio-group {
     grid-column: 1 / -1;
   }
 
   /** Radios a la izquierda, select/checkbox siguientes a la derecha */
-  .abey-form__field-grid > .abey-form__field-split {
+  .abey-form__field-grid>.abey-form__field-split {
     grid-column: 1 / -1;
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -637,12 +639,12 @@ td.abey-list__status[role="alert"] {
     align-items: start;
   }
 
-  .abey-form__field-grid > .abey-field:only-child {
+  .abey-form__field-grid>.abey-field:only-child {
     grid-column: 1 / -1;
   }
 
   /** Último hijo impar: quedó solo en la última fila (p. ej. checkbox final) */
-  .abey-form__field-grid > .abey-field:last-child:nth-child(odd):not(:has(> abey-radio)) {
+  .abey-form__field-grid>.abey-field:last-child:nth-child(odd):not(:has(> abey-radio)) {
     grid-column: 1 / -1;
   }
 
@@ -650,8 +652,8 @@ td.abey-list__status[role="alert"] {
    * Campo antes de radios o antes del bloque split (radios + lateral): fila completa
    * (p. ej. bio antes de rol + nivel).
    */
-  .abey-form__field-grid > .abey-field:has(+ .abey-form__radio-group),
-  .abey-form__field-grid > .abey-field:has(+ .abey-form__field-split) {
+  .abey-form__field-grid>.abey-field:has(+ .abey-form__radio-group),
+  .abey-form__field-grid>.abey-field:has(+ .abey-form__field-split) {
     grid-column: 1 / -1;
   }
 }
@@ -659,7 +661,7 @@ td.abey-list__status[role="alert"] {
 /* Grid y filas ocupan el ancho del bloque; los inputs/select no quedan capados a 32rem */
 .abey-form .abey-form__field-grid,
 .abey-form .abey-form__root-wrap,
-.abey-form--stacked form > .abey-form__main {
+.abey-form--stacked form>.abey-form__main {
   width: 100%;
 }
 
@@ -797,7 +799,7 @@ abey-form.abey-form.abey-form--full abey-select.abey-field__combo {
   width: 100%;
 }
 
-.abey-select-comboRow > .abey-input {
+.abey-select-comboRow>.abey-input {
   flex: 1;
   min-width: 0;
 }
@@ -858,11 +860,11 @@ button.abey-select-clear:disabled {
 }
 
 @media (min-width: 1025px) {
-  .abey-form:not(.abey-form--stacked) form > .abey-field--inlineOptional {
+  .abey-form:not(.abey-form--stacked) form>.abey-field--inlineOptional {
     grid-column: 1 / -1;
   }
 
-  .abey-form.abey-form--stacked form > .abey-field--inlineOptional {
+  .abey-form.abey-form--stacked form>.abey-field--inlineOptional {
     align-self: stretch;
     width: 100%;
     box-sizing: border-box;
@@ -897,7 +899,7 @@ button.abey-select-clear:disabled {
 }
 
 /* Etiquetas sobre input/select de ancho completo (no checkbox/radio) */
-.abey-field:not(:has(> abey-checkbox)):not(:has(> abey-radio)) > .abey-field__label {
+.abey-field:not(:has(> abey-checkbox)):not(:has(> abey-radio))>.abey-field__label {
   color: var(--abey-text-muted);
   font-weight: 500;
 }
@@ -1025,6 +1027,7 @@ abey-form.abey-form.abey-form--full .abey-field__select-wrap {
   color: var(--abey-on-accent, #fff);
   border-color: var(--abey-accent);
 }
+
 .abey-btn--primary:hover:not(:disabled) {
   background: var(--abey-accent-hover);
   border-color: var(--abey-accent-hover);
@@ -1100,7 +1103,7 @@ html {
   color: var(--abey-text);
 }
 
-.abey-shell-app > .abey-shell,
+.abey-shell-app>.abey-shell,
 .abey-shell {
   display: flex;
   flex: 1;
@@ -1116,6 +1119,13 @@ html {
   background: var(--abey-surface);
   box-shadow: 0 1px 0 rgba(15, 23, 42, 0.04);
   z-index: 10;
+}
+
+/* Pegada al hacer scroll viewport (landing o shell sin alto fijo interno). */
+.abey-shell>.abey-appbar {
+  position: sticky;
+  top: 0;
+  z-index: 12;
 }
 
 .abey-appbar__inner {
@@ -1163,7 +1173,9 @@ html {
 .abey-appbar--dashboard {
   height: auto;
   min-height: var(--abey-appbar-h);
-  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+  background: linear-gradient(180deg, var(--abey-surface) 0%, color-mix(in srgb, var(--abey-surface) 96%, var(--abey-bg) 4%) 100%);
+  border-bottom: 1px solid color-mix(in srgb, var(--abey-border) 88%, transparent);
+  box-shadow: 0 1px 0 rgba(15, 23, 42, 0.04), 0 8px 24px -14px rgba(15, 23, 42, 0.12);
 }
 
 .abey-appbar--dashboard .abey-appbar__inner {
@@ -1180,16 +1192,49 @@ html {
   min-height: var(--abey-appbar-h);
 }
 
+/* Overlay / drawer (dashboard): ☰ en la app bar — no pegado al outlet de contenido. */
+.abey-sidebar__toggle.abey-appbar__nav-toggle {
+  display: none;
+  flex-shrink: 0;
+  align-self: center;
+  margin: 0 0.6rem 0 0.75rem;
+}
+
+@media (min-width: 901px) {
+
+  .abey-shell[data-abey-nav-mode="overlay"] .abey-sidebar__toggle.abey-appbar__nav-toggle,
+  .abey-shell[data-abey-nav-mode="drawer"] .abey-sidebar__toggle.abey-appbar__nav-toggle {
+    display: inline-flex;
+  }
+
+  .abey-shell[data-abey-nav-mode="overlay"] .abey-shell__body>.abey-sidebar .abey-sidebar__toggle:not(.abey-appbar__nav-toggle),
+  .abey-shell[data-abey-nav-mode="drawer"] .abey-shell__body>.abey-sidebar .abey-sidebar__toggle:not(.abey-appbar__nav-toggle) {
+    display: none !important;
+  }
+}
+
+@media (max-width: 900px) {
+
+  .abey-shell[data-abey-nav-mode="overlay"] .abey-sidebar__toggle.abey-appbar__nav-toggle,
+  .abey-shell[data-abey-nav-mode="drawer"] .abey-sidebar__toggle.abey-appbar__nav-toggle {
+    display: none !important;
+  }
+}
+
 .abey-appbar__mark {
   display: flex;
   flex-direction: column;
   justify-content: center;
   gap: 0.1rem;
-  min-width: 8.5rem;
-  padding: 0.45rem 1.35rem 0.5rem 1.25rem;
-  background: linear-gradient(135deg, #6d28d9 0%, #4f46e5 55%, #7c3aed 100%);
+  min-width: 8.85rem;
+  padding: 0.5rem 1.35rem 0.52rem 1.25rem;
+  background:
+    radial-gradient(120% 140% at 10% -20%, rgba(255, 255, 255, 0.22) 0%, transparent 45%),
+    linear-gradient(145deg, #5b21b6 0%, #4338ca 42%, #5b21b6 72%, #6d28d9 100%);
   color: #fff;
-  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.06);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.12);
 }
 
 .abey-appbar__mark-title {
@@ -1208,9 +1253,89 @@ html {
   color: rgba(255, 255, 255, 0.85);
 }
 
+/* Título + subtítulo dentro de la marca dashboard (cabecera o franja lateral). */
+.abey-appbar__mark-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  align-items: inherit;
+  text-align: inherit;
+  min-width: 0;
+}
+
+/* Opcional **`brandLogoSrc`**: jamás duplicar con el jewel `::before`. */
+.abey-appbar__mark:has(.abey-appbar__mark-logo)::before {
+  content: none;
+  display: none;
+}
+
+.abey-appbar__mark-logo {
+  flex-shrink: 0;
+  height: 2rem;
+  width: auto;
+  max-width: 10rem;
+  object-fit: contain;
+}
+
+/** Fila **Abey** + **JS** (`brandTitleSplit`). */
+.abey-appbar__mark-heading {
+  display: inline-flex;
+  flex-wrap: nowrap;
+  align-items: baseline;
+  gap: 0;
+  max-width: 100%;
+  min-width: 0;
+  font-weight: inherit;
+  font-size: inherit;
+  line-height: 1.2;
+  letter-spacing: inherit;
+}
+
+/** Tramo sólido (logo Abey···). En franja violeta típico blanco. */
+.abey-appbar--dashboard .abey-appbar__mark-title--lead {
+  color: var(--abey-brand-mark-lead, #ffffff);
+}
+
+/** Tramo con gradiente (logo ···JS — azul → índigo → violeta, afinable con vars). */
+.abey-appbar__mark-title--tail {
+  background: linear-gradient(
+    92deg,
+    var(--abey-brand-tail-a, #38bdf8) 0%,
+    var(--abey-brand-tail-b, #6366f1) 46%,
+    var(--abey-brand-tail-c, #7c3aed) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Dashboard: marca alineada al ancho real del sidebar (--abey-sidebar-w). */
+.abey-appbar--dashboard .abey-appbar__mark {
+  flex: 0 0 var(--abey-sidebar-w);
+  width: var(--abey-sidebar-w);
+  max-width: var(--abey-sidebar-w);
+  min-width: 0;
+  box-sizing: border-box;
+  align-items: center;
+  text-align: center;
+  padding: 0.5rem 0.75rem;
+}
+
 .abey-appbar__spacer {
   flex: 1;
   min-width: 0.5rem;
+}
+
+/* Optional slot before action buttons (`appBarInset`, e.g. search). */
+.abey-appbar__inset {
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 28rem;
+  display: flex;
+  align-items: center;
+  padding: 0 0.35rem;
+  box-sizing: border-box;
 }
 
 .abey-appbar__tools {
@@ -1218,49 +1343,236 @@ html {
   flex-wrap: wrap;
   align-items: center;
   justify-content: flex-end;
-  gap: 0.4rem;
+  gap: 0.5rem;
   padding: 0.35rem 0 0.35rem 0.5rem;
 }
 
+/*
+ * Acciones derecha (**soft UI · iconos**) — superficie tipo “tile” redondeada, borde ligero,
+ * sombra suave (**referencia dashboards** tipo ajustes / notificaciones en bloque claros).
+ */
 .abey-appbar__action {
+  --abey-appbar-action-radius: 0.6875rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2.4rem;
-  height: 2.4rem;
+  width: 2.5rem;
+  height: 2.5rem;
   padding: 0;
   font-size: 1.05rem;
   line-height: 1;
-  border: 1px solid var(--abey-border);
-  border-radius: 9999px;
-  background: var(--abey-surface-elev, #f8fafc);
-  color: var(--abey-text-muted);
+  border: 1px solid color-mix(in srgb, var(--abey-border) 92%, var(--abey-text) 8%);
+  border-radius: var(--abey-appbar-action-radius);
+  background: color-mix(in srgb, var(--abey-surface-elev, #f8fafc) 94%, var(--abey-bg) 6%);
+  color: color-mix(in srgb, var(--abey-text-muted) 86%, var(--abey-text) 14%);
   cursor: pointer;
-  transition: background 0.12s, color 0.12s, border-color 0.12s, box-shadow 0.12s;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.58) inset,
+    0 1px 2px rgba(15, 23, 42, 0.04),
+    0 6px 16px rgba(15, 23, 42, 0.05);
+  transition:
+    background 0.14s ease,
+    color 0.14s ease,
+    border-color 0.14s ease,
+    box-shadow 0.14s ease,
+    transform 0.14s ease;
 }
 
 .abey-appbar__action:hover,
-.abey-appbar__action:focus {
-  color: var(--abey-text);
-  background: var(--abey-surface);
-  border-color: rgba(37, 99, 235, 0.35);
-  box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.12);
+.abey-appbar__action:focus-visible {
+  color: color-mix(in srgb, var(--abey-text) 94%, var(--abey-accent));
+  background: color-mix(in srgb, var(--abey-surface) 94%, var(--abey-accent) 4%);
+  border-color: color-mix(in srgb, var(--abey-accent) 22%, var(--abey-border));
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.45) inset,
+    0 0 0 1px color-mix(in srgb, var(--abey-accent) 12%, transparent),
+    0 8px 22px rgba(15, 23, 42, 0.08);
   outline: none;
 }
 
+.abey-appbar__action:active {
+  transform: translateY(0.5px) scale(0.98);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.42) inset,
+    0 1px 2px rgba(15, 23, 42, 0.06);
+}
+
+.abey.abey--dark .abey-appbar--dashboard .abey-appbar__action {
+  border-color: color-mix(in srgb, var(--abey-border) 78%, transparent);
+  background: color-mix(in srgb, var(--abey-surface-elev) 88%, transparent);
+  color: color-mix(in srgb, var(--abey-text-muted) 78%, var(--abey-text) 22%);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.04) inset,
+    0 2px 10px rgba(0, 0, 0, 0.32);
+}
+
+.abey.abey--dark .abey-appbar--dashboard .abey-appbar__action:hover,
+.abey.abey--dark .abey-appbar--dashboard .abey-appbar__action:focus-visible {
+  color: color-mix(in srgb, var(--abey-text) 92%, var(--abey-accent));
+  border-color: color-mix(in srgb, var(--abey-accent) 28%, var(--abey-border));
+  background: color-mix(in srgb, var(--abey-surface-elev) 76%, transparent);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.06) inset,
+    0 0 0 1px color-mix(in srgb, var(--abey-accent) 22%, transparent),
+    0 10px 28px rgba(0, 0, 0, 0.4);
+}
+
+.abey-appbar__action:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.abey-appbar__action--labeled {
+  width: auto;
+  min-width: 2.4rem;
+  padding: 0 0.65rem;
+  gap: 0.4rem;
+  border-radius: var(--abey-appbar-action-radius);
+}
+
+.abey-appbar__action-txt {
+  font-size: 0.82rem;
+  font-weight: 600;
+  max-width: 10rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.abey-appbar__action i {
+  font-size: 1.02rem;
+  line-height: 1;
+  opacity: 0.92;
+}
+
+.abey-appbar__action.abey-appbar__action--theme i {
+  font-size: 0.94rem;
+  opacity: 0.94;
+}
+
+/* App bar · menú contextual (cuenta / …) — flota sobre contenido (**no clip** en **`.abey-appbar__tools`**). */
+.abey-appbar__dropdown {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.abey-appbar__dropdown-panel {
+  position: absolute;
+  top: calc(100% + 0.4rem);
+  right: 0;
+  z-index: 120;
+  min-width: 12.75rem;
+  max-width: min(18rem, calc(100vw - 2rem));
+  padding: 0.4rem;
+  border-radius: 0.85rem;
+  border: 1px solid color-mix(in srgb, var(--abey-border) 90%, var(--abey-text) 10%);
+  background: color-mix(in srgb, var(--abey-surface) 96%, var(--abey-bg) 4%);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.55) inset,
+    0 8px 28px rgba(15, 23, 42, 0.1),
+    0 2px 8px rgba(15, 23, 42, 0.05);
+}
+
+.abey-appbar__dropdown-item {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  width: 100%;
+  margin: 0;
+  padding: 0.48rem 0.62rem;
+  border: none;
+  border-radius: 0.62rem;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+  text-align: left;
+  text-decoration: none;
+  color: color-mix(in srgb, var(--abey-text-muted) 72%, var(--abey-text) 28%);
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.12s ease, color 0.12s ease;
+}
+
+.abey-appbar__dropdown-item:hover,
+.abey-appbar__dropdown-item:focus-visible {
+  outline: none;
+  color: var(--abey-text);
+  background: color-mix(in srgb, var(--abey-accent) 8%, var(--abey-surface));
+}
+
+.abey-appbar__dropdown-item i {
+  width: 1.1rem;
+  font-size: 0.92rem;
+  text-align: center;
+  opacity: 0.9;
+}
+
+.abey-appbar__dropdown-item-label {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.abey.abey--dark .abey-appbar--dashboard .abey-appbar__dropdown-panel {
+  border-color: color-mix(in srgb, var(--abey-border) 72%, transparent);
+  background: color-mix(in srgb, var(--abey-surface-elev) 94%, transparent);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.05) inset,
+    0 12px 36px rgba(0, 0, 0, 0.45);
+}
+
+.abey.abey--dark .abey-appbar--dashboard .abey-appbar__dropdown-item:hover,
+.abey.abey--dark .abey-appbar--dashboard .abey-appbar__dropdown-item:focus-visible {
+  background: color-mix(in srgb, var(--abey-accent) 14%, var(--abey-surface-elev));
+}
+
+.abey-appbar__action--avatar {
+  overflow: hidden;
+  padding: 2px;
+}
+
+.abey-appbar__action-avatar-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: 2rem;
+  max-height: 2rem;
+  object-fit: cover;
+  border-radius: calc(var(--abey-appbar-action-radius, 0.6875rem) - 2px);
+}
+
 .abey-shell--dashboard .abey-outlet--dashboard {
-  background: #f1f5f9;
-  background: linear-gradient(180deg, #eef2f7 0%, #e8edf4 100%);
+  background:
+    radial-gradient(1200px 400px at 18% -8%, rgba(99, 102, 241, 0.05) 0%, transparent 55%),
+    linear-gradient(175deg, #eef3f9 0%, #e9eef6 52%, #e7ecf4 100%);
 }
 
-.abey-sidebar--dashboard {
-  background: #fff;
-  background: var(--abey-surface, #fff);
-  box-shadow: 1px 0 0 rgba(15, 23, 42, 0.04);
+.abey-shell-app.abey--dark .abey-shell--dashboard .abey-outlet--dashboard {
+  background:
+    radial-gradient(980px 360px at 12% -6%, rgba(56, 189, 248, 0.07) 0%, transparent 50%),
+    linear-gradient(180deg, var(--abey-bg) 0%, var(--abey-surface-elev) 100%);
 }
 
-.abey-sidebar--dashboard .abey-nav-link--sidebar {
-  padding: 0.55rem 0.7rem;
+.abey-shell--dashboard .abey-sidebar--dashboard {
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--abey-surface) 94%, rgba(226, 232, 240, 0.5)) 0%, var(--abey-surface, #fff) 18%), var(--abey-surface, #fff);
+  border-right: 1px solid color-mix(in srgb, var(--abey-border) 94%, transparent);
+  box-shadow: 6px 0 32px rgba(15, 23, 42, 0.06), inset -1px 0 0 rgba(255, 255, 255, 0.45);
+}
+
+.abey-shell-app.abey--dark .abey-shell--dashboard .abey-sidebar--dashboard {
+  background:
+    linear-gradient(165deg, color-mix(in srgb, var(--abey-surface-elev) 88%, transparent) 0%, var(--abey-surface) 42%), var(--abey-surface);
+  border-right-color: color-mix(in srgb, var(--abey-border) 75%, transparent);
+  box-shadow: 8px 0 36px rgba(0, 0, 0, 0.32), inset -1px 0 0 rgba(255, 255, 255, 0.04);
+}
+
+.abey-shell--dashboard .abey-sidebar--dashboard .abey-nav-link--sidebar {
+  padding: 0.55rem 0.72rem;
 }
 
 /* Cuerpo: fila (sidebar + main) */
@@ -1273,6 +1585,8 @@ html {
 
 /* Sidebar (admin) */
 .abey-sidebar {
+  display: flex;
+  flex-direction: column;
   position: relative;
   flex: 0 0 var(--abey-sidebar-w);
   max-width: 100%;
@@ -1284,8 +1598,8 @@ html {
 .abey-sidebar__nav {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  min-height: calc(100vh - var(--abey-appbar-h));
+  flex: 1 1 auto;
+  min-height: 0;
   padding: var(--abey-space-2) 0;
   position: relative;
 }
@@ -1294,6 +1608,142 @@ html {
   flex: 1;
   overflow: auto;
   padding: 0 0.35rem 1rem 0.75rem;
+}
+
+.abey-shell--dashboard .abey-sidebar__inner {
+  padding: 0.15rem 0.4rem 1.25rem 0.7rem;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(100, 116, 139, 0.32) transparent;
+}
+
+.abey-shell--dashboard .abey-sidebar__inner::-webkit-scrollbar {
+  width: 7px;
+}
+
+.abey-shell--dashboard .abey-sidebar__inner::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(100, 116, 139, 0.28);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.abey.abey--dark .abey-shell--dashboard .abey-sidebar__inner::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.22);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.abey-shell--dashboard .abey-sidebar__inner::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+.abey-shell--dashboard .abey-sidebar__inner::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+.abey-shell--dashboard .abey-sidebar__inner::-webkit-scrollbar-thumb:active {
+  background: rgba(100, 116, 139, 0.42);
+}
+
+.abey.abey--dark .abey-shell--dashboard .abey-sidebar__inner::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.36);
+}
+
+.abey.abey--dark .abey-shell--dashboard .abey-sidebar__inner::-webkit-scrollbar-thumb:active {
+  background: color-mix(in srgb, var(--abey-accent) 45%, rgba(148, 163, 184, 0.32));
+}
+
+/* Admin dashboard: navegación más legible y estado activo con acento lateral */
+.abey-shell--dashboard .abey-sidebar .abey-nav-link--sidebar:not(.abey-nav-link--horizontal) {
+  transition:
+    background 0.22s cubic-bezier(0.32, 0.72, 0.25, 1),
+    color 0.2s cubic-bezier(0.32, 0.72, 0.25, 1),
+    border-color 0.2s ease,
+    box-shadow 0.24s cubic-bezier(0.32, 0.72, 0.25, 1),
+    transform 0.2s cubic-bezier(0.32, 0.72, 0.25, 1);
+}
+
+.abey-shell--dashboard .abey-sidebar .abey-nav-link--sidebar:hover:not([aria-current="page"]):not(.abey-nav-link--active),
+.abey-shell--dashboard .abey-sidebar .abey-nav-link--sidebar:focus-visible:not([aria-current="page"]):not(.abey-nav-link--active) {
+  transform: translateX(2px);
+  box-shadow: 0 3px 12px rgba(37, 99, 235, 0.08);
+}
+
+.abey.abey--dark .abey-shell--dashboard .abey-sidebar .abey-nav-link--sidebar:hover:not([aria-current="page"]):not(.abey-nav-link--active),
+.abey.abey--dark .abey-shell--dashboard .abey-sidebar .abey-nav-link--sidebar:focus-visible:not([aria-current="page"]):not(.abey-nav-link--active) {
+  box-shadow: 0 3px 14px rgba(0, 0, 0, 0.28);
+}
+
+.abey-shell--dashboard .abey-sidebar .abey-nav-link[aria-current="page"].abey-nav-link--sidebar,
+.abey-shell--dashboard .abey-sidebar .abey-nav-link--active.abey-nav-link--sidebar {
+  position: relative;
+  isolation: isolate;
+  font-weight: 600;
+  border-color: transparent;
+  background:
+    radial-gradient(120% 220% at 0% 50%, color-mix(in srgb, var(--abey-accent) 28%, transparent) 0%, transparent 68%),
+    linear-gradient(96deg,
+      color-mix(in srgb, var(--abey-accent) 13%, transparent) 0%,
+      color-mix(in srgb, var(--abey-accent) 4%, transparent) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.52),
+    0 0 0 1px color-mix(in srgb, var(--abey-accent) 9%, transparent),
+    0 6px 22px rgba(37, 99, 235, 0.1);
+}
+
+.abey.abey--dark .abey-shell--dashboard .abey-sidebar .abey-nav-link[aria-current="page"].abey-nav-link--sidebar,
+.abey.abey--dark .abey-shell--dashboard .abey-sidebar .abey-nav-link--active.abey-nav-link--sidebar {
+  border-color: transparent;
+  background:
+    radial-gradient(130% 240% at 4% 50%, color-mix(in srgb, var(--abey-accent) 22%, transparent) 0%, transparent 74%),
+    linear-gradient(96deg,
+      color-mix(in srgb, var(--abey-accent) 16%, transparent) 0%,
+      color-mix(in srgb, var(--abey-accent) 5%, transparent) 92%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.065),
+    0 0 0 1px color-mix(in srgb, var(--abey-accent) 12%, transparent),
+    0 8px 28px rgba(0, 0, 0, 0.2),
+    0 0 48px color-mix(in srgb, var(--abey-accent) 7%, transparent);
+}
+
+.abey-shell--dashboard .abey-sidebar .abey-nav-link[aria-current="page"].abey-nav-link--sidebar::before,
+.abey-shell--dashboard .abey-sidebar .abey-nav-link--active.abey-nav-link--sidebar::before {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2.5px;
+  height: 48%;
+  min-height: 0.95rem;
+  border-radius: 999px;
+  background: linear-gradient(180deg, var(--abey-accent) 0%, var(--abey-accent-hover) 100%);
+  box-shadow:
+    0 0 10px color-mix(in srgb, var(--abey-accent) 45%, transparent),
+    0 0 14px color-mix(in srgb, var(--abey-accent) 22%, transparent);
+  opacity: 0.92;
+}
+
+.abey-shell--dashboard .abey-sidebar .abey-nav-link--active.abey-nav-link--sidebar .abey-nav-link__ic,
+.abey-shell--dashboard .abey-sidebar .abey-nav-link[aria-current="page"].abey-nav-link--sidebar .abey-nav-link__ic {
+  background: color-mix(in srgb, var(--abey-accent) 24%, transparent);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.09);
+}
+
+.abey-shell--dashboard .abey-sidebar .abey-nav-tree__summary {
+  border-radius: var(--abey-radius-sm);
+  transition: background 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.15s;
+}
+
+.abey-shell--dashboard .abey-sidebar .abey-nav-tree__summary:hover,
+.abey-shell--dashboard .abey-sidebar .abey-nav-tree__summary:focus-visible {
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+}
+
+.abey-shell--dashboard .abey-sidebar .abey-nav-tree__summary-ic {
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
 }
 
 .abey-sidebar__toggle {
@@ -1319,10 +1769,62 @@ html {
   min-width: 0;
   padding: 1.25rem 1.5rem 2rem;
   overflow: auto;
+  /* Menos shifting del ancho cuando la barra vertical aparece o desaparece al cambiar de ruta/alto. */
+  scrollbar-gutter: stable;
   background: var(--abey-bg);
-  --abey-route-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
-  --abey-route-dur-out: 110ms;
-  --abey-route-dur-in: 140ms;
+  --abey-route-ease: cubic-bezier(0.32, 0.72, 0.25, 1);
+  --abey-route-dur-out: 105ms;
+  --abey-route-dur-in: 145ms;
+}
+
+/* Outlet dashboard: mismo lenguaje que sidebar (sin flechas tipo Win, thumb fino) */
+.abey-shell--dashboard .abey-outlet {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(100, 116, 139, 0.3) transparent;
+}
+
+.abey.abey--dark .abey-shell--dashboard .abey-outlet {
+  scrollbar-color: rgba(148, 163, 184, 0.2) transparent;
+}
+
+.abey-shell--dashboard .abey-outlet::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.abey-shell--dashboard .abey-outlet::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+.abey-shell--dashboard .abey-outlet::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.abey-shell--dashboard .abey-outlet::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+.abey-shell--dashboard .abey-outlet::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(100, 116, 139, 0.28);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.abey-shell--dashboard .abey-outlet::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.4);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.abey.abey--dark .abey-shell--dashboard .abey-outlet::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.22);
+}
+
+.abey.abey--dark .abey-shell--dashboard .abey-outlet::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--abey-accent) 28%, rgba(148, 163, 184, 0.32));
 }
 
 .abey-outlet--landing {
@@ -1333,7 +1835,7 @@ html {
 /* Route transitions (soft refresh on navigation) */
 .abey-outlet--leaving {
   opacity: 0;
-  transform: translateY(6px);
+  transform: translateY(3px) scale(0.996);
   transition:
     opacity var(--abey-route-dur-out) var(--abey-route-ease),
     transform var(--abey-route-dur-out) var(--abey-route-ease);
@@ -1341,13 +1843,14 @@ html {
 
 .abey-outlet--entering {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateY(0) scale(1);
   transition:
     opacity var(--abey-route-dur-in) var(--abey-route-ease),
     transform var(--abey-route-dur-in) var(--abey-route-ease);
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   .abey-outlet--leaving,
   .abey-outlet--entering {
     transition: none !important;
@@ -1384,6 +1887,93 @@ html {
   gap: 0.55rem;
 }
 
+/* Sidebar: grupos anidados (`navChildren` → `<details>`) */
+.abey-nav-tree {
+  border-radius: var(--abey-radius-sm);
+}
+
+.abey-nav-tree+.abey-nav-tree,
+.abey-nav-tree+.abey-nav-link--sidebar,
+.abey-nav-link--sidebar+.abey-nav-tree {
+  margin-top: 0.1rem;
+}
+
+.abey-nav-tree__summary {
+  list-style: none;
+  cursor: pointer;
+  user-select: none;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--abey-text);
+  padding: 0.5rem 0.65rem;
+  border-radius: var(--abey-radius-sm);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.55rem;
+  transition: background 0.12s, color 0.12s;
+}
+
+.abey-nav-tree__summary::-webkit-details-marker {
+  display: none;
+}
+
+.abey-nav-tree__summary::marker {
+  content: "";
+}
+
+.abey-nav-tree__summary:hover,
+.abey-nav-tree__summary:focus {
+  background: rgba(37, 99, 235, 0.08);
+  outline: none;
+}
+
+.abey-nav-tree__summary-ic {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.65rem;
+  height: 1.65rem;
+  flex-shrink: 0;
+  font-size: 0.95rem;
+  line-height: 1;
+  border-radius: 0.45rem;
+  background: rgba(37, 99, 235, 0.08);
+  color: var(--abey-text);
+}
+
+.abey-nav-tree__summary-ic i {
+  font-size: 0.82rem;
+  line-height: 1;
+}
+
+.abey-nav-tree__summary-txt {
+  min-width: 0;
+  flex: 1;
+}
+
+.abey-nav-tree__subs {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  padding: 0.15rem 0 0.35rem 0.5rem;
+  margin-left: 0.35rem;
+  border-left: 1px solid var(--abey-border);
+}
+
+.abey-sidebar--dashboard .abey-nav-tree__summary {
+  padding: 0.55rem 0.7rem;
+}
+
+.abey.abey--dark .abey-nav-tree__subs {
+  border-left-color: rgba(148, 163, 184, 0.25);
+}
+
+.abey.abey--dark .abey-nav-tree__summary:hover,
+.abey.abey--dark .abey-nav-tree__summary:focus {
+  background: rgba(56, 189, 248, 0.08);
+}
+
 .abey-nav-link__ic {
   display: inline-flex;
   align-items: center;
@@ -1413,6 +2003,80 @@ html {
 .abey-nav-link__txt {
   min-width: 0;
   flex: 1;
+}
+
+/* Sidebar · árbol: en carriles estrechos permitir salto de línea (evita desbordes raros). */
+.abey-sidebar .abey-nav-link--with-icon .abey-nav-link__txt,
+.abey-sidebar .abey-nav-tree__summary-txt {
+  overflow-wrap: anywhere;
+  word-break: normal;
+  hyphens: auto;
+}
+
+/* Sidebar: el chip del icono debe leerse antes que la etiqueta. */
+.abey-sidebar .abey-nav-link--with-icon .abey-nav-link__txt {
+  font-size: 0.835rem;
+  font-weight: 450;
+  color: color-mix(in srgb, var(--abey-text-muted) 94%, transparent);
+  letter-spacing: 0.01em;
+}
+
+.abey-sidebar .abey-nav-link--with-icon .abey-nav-link__ic {
+  width: 1.82rem;
+  height: 1.82rem;
+  font-size: 1.05rem;
+  background: rgba(37, 99, 235, 0.1);
+}
+
+.abey-sidebar .abey-nav-link--with-icon .abey-nav-link__ic i {
+  font-size: 0.93rem;
+}
+
+.abey-sidebar .abey-nav-tree__summary-txt {
+  font-size: 0.84rem;
+  font-weight: 500;
+  color: var(--abey-text-muted);
+}
+
+.abey-sidebar .abey-nav-tree__summary {
+  font-weight: 550;
+  color: var(--abey-text-muted);
+}
+
+.abey-sidebar .abey-nav-tree__summary-ic {
+  width: 1.82rem;
+  height: 1.82rem;
+  font-size: 1.02rem;
+  color: var(--abey-text);
+  background: rgba(37, 99, 235, 0.1);
+}
+
+.abey-sidebar .abey-nav-tree__summary-ic i {
+  font-size: 0.9rem;
+}
+
+.abey.abey--dark .abey-sidebar .abey-nav-tree__summary-ic {
+  background: rgba(56, 189, 248, 0.1);
+  color: color-mix(in srgb, var(--abey-accent) 45%, var(--abey-text));
+}
+
+.abey.abey--dark .abey-sidebar .abey-nav-link--with-icon .abey-nav-link__ic {
+  background: rgba(56, 189, 248, 0.1);
+}
+
+.abey.abey--dark .abey-sidebar .abey-nav-link--with-icon:not(.abey-nav-link--active):not([aria-current="page"]) .abey-nav-link__ic {
+  color: color-mix(in srgb, var(--abey-accent) 55%, var(--abey-text));
+}
+
+.abey-nav-link--with-icon.abey-nav-link--sidebar.abey-nav-link--active .abey-nav-link__txt,
+.abey-nav-link--with-icon.abey-nav-link--sidebar[aria-current="page"] .abey-nav-link__txt {
+  color: inherit;
+  font-weight: 575;
+}
+
+.abey-sidebar .abey-nav-tree__summary:is(:hover, :focus) .abey-nav-tree__summary-txt,
+.abey-sidebar details.abey-nav-tree[open]>.abey-nav-tree__summary .abey-nav-tree__summary-txt {
+  color: color-mix(in srgb, var(--abey-text) 78%, var(--abey-text-muted));
 }
 
 .abey-nav-link--horizontal {
@@ -1452,6 +2116,7 @@ html {
   max-width: 32rem;
   box-shadow: var(--abey-shadow);
 }
+
 .abey-starter-card ul {
   margin: 0;
   padding-left: 1.1rem;
@@ -1459,9 +2124,11 @@ html {
   font-size: 0.9rem;
   line-height: 1.5;
 }
+
 .abey-starter-card li {
   margin-bottom: 0.35rem;
 }
+
 .abey-starter-card .abey-btn {
   margin-top: 0.75rem;
 }
@@ -1470,15 +2137,18 @@ html {
 abey-button {
   display: inline-block;
 }
-abey-button > button.abey-btn {
+
+abey-button>button.abey-btn {
   width: 100%;
 }
+
 .abey-starter-card__title {
   font-size: 0.95rem;
   font-weight: 600;
   margin: 0 0 0.5rem;
   color: var(--abey-text);
 }
+
 .abey-starter-footnote {
   font-size: 0.8rem;
   margin-top: 0.9rem;
@@ -1486,10 +2156,12 @@ abey-button > button.abey-btn {
   max-width: 32rem;
   line-height: 1.45;
 }
+
 .abey-page-hero {
   max-width: 40rem;
   margin-bottom: 1.5rem;
 }
+
 .abey-page-hero h1,
 .abey-outlet h1,
 .abey-outlet--landing h1 {
@@ -1499,6 +2171,7 @@ abey-button > button.abey-btn {
   color: var(--abey-text);
   letter-spacing: -0.02em;
 }
+
 .abey-outlet p,
 .abey-outlet--landing p {
   color: var(--abey-text-muted);
@@ -1506,6 +2179,7 @@ abey-button > button.abey-btn {
   line-height: 1.6;
   margin: 0 0 0.75rem;
 }
+
 /* Párrafos dentro de vistas <abeyjs-view>: aprovechan el ancho del main, no 40rem */
 .abey-outlet .abey-abeyview-page p,
 .abey-outlet .abey-abeyview p,
@@ -1850,12 +2524,14 @@ a.abey-welcome-tile:focus {
   max-width: 100%;
   min-width: 0;
 }
+
 .abey-abeyview-title {
   font-size: 1.2rem;
   font-weight: 800;
   margin: 0;
   color: var(--abey-text);
 }
+
 .abey-abeyview-block {
   margin: 0;
   padding: 0.9rem 1.15rem;
@@ -1864,37 +2540,45 @@ a.abey-welcome-tile:focus {
   background: var(--abey-surface, #fff);
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
 }
+
 .abey-abeyview-block p {
   margin: 0;
 }
+
 /* Nota con abeyjs-html: nodo p interno; reset estilo de agente de usuario */
 .abey-abeyview-block.abey-html p {
   margin: 0;
 }
-.abey-abeyview-block.abey-html p + p {
+
+.abey-abeyview-block.abey-html p+p {
   margin-top: 0.5rem;
 }
+
 .abey-abeyview-h2 {
   font-size: 1.05rem;
   font-weight: 700;
   margin: 0 0 0.5rem;
   color: var(--abey-text);
 }
+
 .abey-abeyview-p {
   margin: 0;
   font-size: 0.88rem;
   color: var(--abey-text-muted);
 }
+
 .abey-abeyview-sub {
   margin: 0;
   font-size: 0.88rem;
   color: var(--abey-text);
 }
+
 .abey-abeyview-sub .abey-abeyview-em {
   color: var(--abey-accent);
   font-style: normal;
   font-weight: 700;
 }
+
 .abey-abeyview-list {
   display: flex;
   flex-direction: column;
@@ -1906,6 +2590,7 @@ a.abey-welcome-tile:focus {
   background: none;
   box-shadow: none;
 }
+
 .abey-abeyview-list .abey-abeyview-h3 {
   margin: 0;
   font-size: 0.95rem;
@@ -1913,12 +2598,14 @@ a.abey-welcome-tile:focus {
   color: var(--abey-text);
   letter-spacing: -0.02em;
 }
+
 .abey-abeyview-h3 {
   font-size: 0.95rem;
   font-weight: 700;
   margin: 0 0 0.4rem;
   color: var(--abey-text);
 }
+
 .abey-abeyview-table-wrap {
   overflow-x: auto;
   border: 1px solid var(--abey-border);
@@ -1927,12 +2614,14 @@ a.abey-welcome-tile:focus {
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05), 0 6px 28px -8px rgba(15, 23, 42, 0.12);
   margin: 0;
 }
+
 .abey-abeyview-table {
   width: 100%;
   border-collapse: collapse;
   min-width: 0;
   font-size: 0.8125rem;
 }
+
 .abey-abeyview-table th,
 .abey-abeyview-table td {
   text-align: left;
@@ -1942,6 +2631,7 @@ a.abey-welcome-tile:focus {
   vertical-align: middle;
   transition: background 0.12s ease, box-shadow 0.12s ease;
 }
+
 .abey-abeyview-table thead th {
   font-size: 0.7rem;
   font-weight: 700;
@@ -1954,25 +2644,31 @@ a.abey-welcome-tile:focus {
   padding-top: 0.8rem;
   padding-bottom: 0.8rem;
 }
+
 .abey-abeyview-table tbody tr:nth-child(odd) td {
   background: rgba(248, 250, 252, 0.9);
 }
+
 .abey-abeyview-table tbody tr:hover td {
   background: rgba(99, 102, 241, 0.09);
   box-shadow: inset 0 0 0 1px rgba(99, 102, 241, 0.12);
 }
+
 .abey-abeyview-table tbody tr:last-child td {
   border-bottom: none;
 }
+
 .abey-abeyview-td-nombre {
   font-weight: 600;
   color: var(--abey-text);
   white-space: nowrap;
 }
+
 .abey-abeyview-td-cursos {
   color: var(--abey-text-muted);
   font-size: 0.8rem;
 }
+
 /* Contenedor: vista + pie (misma pila que .abey-abeyview) */
 .abey-abeyview-page {
   display: flex;
@@ -1984,9 +2680,11 @@ a.abey-welcome-tile:focus {
   padding: 0 0 0.5rem;
   box-sizing: border-box;
 }
-.abey-abeyview-page > .abey-abeyview-note {
+
+.abey-abeyview-page>.abey-abeyview-note {
   margin: 0;
 }
+
 .abey-abeyview-note {
   font-size: 0.75rem;
   color: var(--abey-text-muted);
@@ -1995,6 +2693,7 @@ a.abey-welcome-tile:focus {
   margin: 0;
   padding: 0;
 }
+
 .abey-abeyview-note code {
   font-size: 0.95em;
   font-family: ui-monospace, "Cascadia Code", monospace;
@@ -2004,13 +2703,16 @@ a.abey-welcome-tile:focus {
   color: var(--abey-text);
   border: 1px solid var(--abey-border);
 }
+
 .abey.abey--dark .abey-abeyview .abey-abeyview-table tbody tr:nth-child(odd) td {
   background: rgba(15, 23, 42, 0.45);
 }
+
 .abey.abey--dark .abey-abeyview .abey-abeyview-table tbody tr:hover td {
   background: rgba(56, 189, 248, 0.12) !important;
   box-shadow: inset 0 0 0 1px rgba(56, 189, 248, 0.2);
 }
+
 .abey.abey--dark .abey-abeyview .abey-abeyview-table thead th {
   background: linear-gradient(180deg, #1a2234 0%, #151b2a 100%);
   border-bottom-color: var(--abey-border-strong, var(--abey-border));
@@ -2059,7 +2761,969 @@ a.abey-welcome-tile:focus {
   margin: 0;
 }
 
+@media (min-width: 901px) {
+  .abey-shell__body>.abey-sidebar {
+    position: sticky;
+    top: var(--abey-appbar-h);
+    align-self: flex-start;
+    max-height: calc(100vh - var(--abey-appbar-h));
+    box-sizing: border-box;
+    z-index: 2;
+  }
+}
+
+/*
+ * Shell admin · horizontal: una sola franja (**`abey-appbar__row`**) con cromado sobrio Omega.
+ */
+.abey-shell[data-abey-nav-mode="horizontal"].abey-shell--dashboard .abey-appbar--dashboard {
+  overflow: visible;
+  background: var(--abey-surface);
+  border-bottom: 1px solid var(--abey-border);
+  box-shadow: 0 1px 0 rgba(15, 23, 42, 0.04);
+}
+
+.abey.abey--dark .abey-shell[data-abey-nav-mode="horizontal"].abey-shell--dashboard .abey-appbar--dashboard {
+  background: var(--abey-surface);
+  border-bottom-color: color-mix(in srgb, var(--abey-border) 88%, transparent);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.35);
+}
+
+.abey-shell[data-abey-nav-mode="horizontal"].abey-shell--dashboard .abey-appbar--dashboard .abey-appbar__inner {
+  overflow: visible;
+  align-items: center;
+  padding-inline: clamp(0.875rem, 2.2vw, 1.5rem);
+}
+
+.abey-shell[data-abey-nav-mode="horizontal"].abey-shell--dashboard .abey-appbar__row {
+  align-items: center;
+}
+
+/* App bar (+ menús desplegables) por encima del outlet; overflow visible en cadena para no recortar el panel. */
+.abey-shell[data-abey-nav-mode="horizontal"]>.abey-appbar {
+  position: sticky;
+  z-index: 50;
+}
+
+.abey-shell[data-abey-nav-mode="horizontal"] .abey-shell__body {
+  position: relative;
+  z-index: 0;
+}
+
+/* Marca: bloque proporcional sin “jewel”; acento contenido tokens Abey */
+.abey-shell[data-abey-nav-mode="horizontal"].abey-shell--dashboard .abey-appbar__mark {
+  flex: 0 0 auto;
+  width: auto;
+  max-width: none;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: auto minmax(0, max-content);
+  column-gap: 0.55rem;
+  row-gap: 0;
+  align-items: start;
+  justify-items: start;
+  text-align: left;
+  align-self: center;
+  padding: 0.35rem 0.85rem 0.35rem 0;
+  margin: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.abey-shell[data-abey-nav-mode="horizontal"].abey-shell--dashboard .abey-appbar__mark::before {
+  content: "";
+  grid-column: 1;
+  grid-row: 1 / -1;
+  justify-self: center;
+  align-self: center;
+  width: 1.85rem;
+  height: 1.85rem;
+  border-radius: 0.5rem;
+  background: linear-gradient(150deg,
+      color-mix(in srgb, var(--abey-accent, #6366f1) 94%, transparent) 0%,
+      color-mix(in srgb, var(--abey-accent) 58%, var(--abey-text)) 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 1px 3px rgba(15, 23, 42, 0.1);
+}
+
+.abey.abey--dark .abey-shell[data-abey-nav-mode="horizontal"].abey-shell--dashboard .abey-appbar__mark::before {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+.abey-shell[data-abey-nav-mode="horizontal"].abey-shell--dashboard .abey-appbar__mark-text {
+  grid-column: 2;
+  grid-row: 1 / -1;
+  align-self: center;
+}
+
+.abey-shell[data-abey-nav-mode="horizontal"].abey-shell--dashboard .abey-appbar__mark-logo {
+  grid-column: 1;
+  grid-row: 1 / -1;
+  justify-self: center;
+  align-self: center;
+  height: 1.85rem;
+  width: auto;
+  max-height: none;
+  max-width: min(11rem, 36vw);
+}
+
+.abey-shell[data-abey-nav-mode="horizontal"].abey-shell--dashboard .abey-appbar__mark-text>.abey-appbar__mark-title:only-child {
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: -0.024em;
+  text-transform: none;
+  color: var(--abey-text);
+  line-height: 1.2;
+}
+
+.abey-shell[data-abey-nav-mode="horizontal"].abey-shell--dashboard .abey-appbar__mark-heading .abey-appbar__mark-title {
+  font-weight: 775;
+  font-size: 1rem;
+  letter-spacing: -0.024em;
+  text-transform: none;
+  line-height: 1.2;
+}
+
+.abey-shell[data-abey-nav-mode="horizontal"].abey-shell--dashboard .abey-appbar__mark-title--lead {
+  color: var(--abey-brand-mark-lead, var(--abey-text));
+}
+
+.abey-shell[data-abey-nav-mode="horizontal"].abey-shell--dashboard .abey-appbar__mark-sub {
+  margin-top: 1px;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: var(--abey-text-muted);
+}
+
+.abey-shell[data-abey-nav-mode="horizontal"] .abey-appbar__row .abey-shell__nav-horizontal {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.0625rem;
+  padding: 0 0.35rem;
+  /*
+   * Important: omit overflow:auto on axes here. With overflow-x: auto + overflow-y: visible,
+   * CSS clamps overflow-y to auto and clips absolutely positioned submenu panels (“no flota”).
+   * Si necesitamos scroll horizontal con muchísimos ítems de nivel 1, conviene una fila scroll
+   * interna y portar los paneles (p.ej. popover) fuera del scrollport — no el nav entero con auto.
+   */
+  overflow: visible;
+  border: none;
+  margin: 0;
+  background: transparent;
+  box-shadow: none;
+  position: relative;
+  z-index: 0;
+}
+
+.abey-shell__nav-horizontal>.abey-nav-link--horizontal {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border-radius: 0.4rem;
+  border: 1px solid transparent;
+  font-size: 0.8125rem;
+  font-weight: 550;
+  padding: 0.34rem 0.62rem;
+  color: color-mix(in srgb, var(--abey-text) 94%, var(--abey-text-muted));
+  transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+}
+
+.abey-shell__nav-horizontal>.abey-nav-link--horizontal:hover,
+.abey-shell__nav-horizontal>.abey-nav-link--horizontal:focus-visible {
+  background: rgba(15, 23, 42, 0.05);
+  outline: none;
+}
+
+.abey.abey--dark .abey-shell__nav-horizontal>.abey-nav-link--horizontal:hover,
+.abey.abey--dark .abey-shell__nav-horizontal>.abey-nav-link--horizontal:focus-visible {
+  background: rgba(255, 255, 255, 0.065);
+}
+
+.abey-shell__nav-horizontal>.abey-nav-link--horizontal.abey-nav-link--active,
+.abey-shell__nav-horizontal>.abey-nav-link--horizontal[aria-current="page"] {
+  color: var(--abey-accent, #2563eb);
+  background: color-mix(in srgb, var(--abey-accent) 11%, transparent);
+  border-color: color-mix(in srgb, var(--abey-accent) 26%, transparent);
+  box-shadow: none;
+}
+
+.abey.abey--dark .abey-shell__nav-horizontal>.abey-nav-link--horizontal.abey-nav-link--active,
+.abey.abey--dark .abey-shell__nav-horizontal>.abey-nav-link--horizontal[aria-current="page"] {
+  color: color-mix(in srgb, var(--abey-accent) 90%, #fff);
+  background: color-mix(in srgb, var(--abey-accent) 14%, transparent);
+  border-color: color-mix(in srgb, var(--abey-accent) 30%, transparent);
+}
+
+.abey-shell__nav-horizontal>.abey-nav-link--horizontal.abey-nav-link--with-icon .abey-nav-link__ic {
+  width: 1.5rem;
+  height: 1.5rem;
+  font-size: 0.9rem;
+}
+
+.abey-shell__nav-horizontal>.abey-nav-link--horizontal.abey-nav-link--with-icon .abey-nav-link__txt {
+  font-weight: inherit;
+  font-size: inherit;
+}
+
+.abey-shell__nav-horizontal .abey-nav-hz {
+  position: relative;
+  display: block;
+}
+
+.abey-shell__nav-horizontal>.abey-nav-hz[open] {
+  z-index: 160;
+}
+
+.abey-shell__nav-horizontal .abey-nav-hz__panel .abey-nav-hz[open] {
+  z-index: 161;
+}
+
+.abey-shell__nav-horizontal>.abey-nav-hz>.abey-nav-hz__summary {
+  list-style: none;
+  cursor: pointer;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.34rem;
+  border-radius: 0.4rem;
+  border: 1px solid transparent;
+  font-size: 0.8125rem;
+  font-weight: 550;
+  padding: 0.34rem 1.6rem 0.34rem 0.62rem;
+  color: color-mix(in srgb, var(--abey-text) 94%, var(--abey-text-muted));
+  transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+}
+
+.abey-shell__nav-horizontal>.abey-nav-hz>.abey-nav-hz__summary::-webkit-details-marker {
+  display: none;
+}
+
+.abey-shell__nav-horizontal>.abey-nav-hz>.abey-nav-hz__summary::marker {
+  content: "";
+}
+
+.abey-shell__nav-horizontal>.abey-nav-hz>.abey-nav-hz__summary::after {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  right: 0.62rem;
+  top: 50%;
+  margin-top: -2px;
+  width: 0.38rem;
+  height: 0.38rem;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: translateY(-50%) rotate(45deg);
+  opacity: 0.72;
+}
+
+.abey-shell__nav-horizontal>.abey-nav-hz[open]>.abey-nav-hz__summary::after {
+  transform: translateY(-20%) rotate(225deg);
+}
+
+.abey-shell__nav-horizontal>.abey-nav-hz:hover>.abey-nav-hz__summary,
+.abey-shell__nav-horizontal>.abey-nav-hz>.abey-nav-hz__summary:focus-visible {
+  background: rgba(15, 23, 42, 0.05);
+  outline: none;
+}
+
+.abey-shell__nav-horizontal>.abey-nav-hz--branch-active>.abey-nav-hz__summary {
+  color: var(--abey-accent, #2563eb);
+  background: color-mix(in srgb, var(--abey-accent) 11%, transparent);
+  border-color: color-mix(in srgb, var(--abey-accent) 26%, transparent);
+  box-shadow: none;
+}
+
+.abey.abey--dark .abey-shell__nav-horizontal>.abey-nav-hz:hover>.abey-nav-hz__summary,
+.abey.abey--dark .abey-shell__nav-horizontal>.abey-nav-hz>.abey-nav-hz__summary:focus-visible {
+  background: rgba(255, 255, 255, 0.065);
+}
+
+.abey.abey--dark .abey-shell__nav-horizontal>.abey-nav-hz--branch-active>.abey-nav-hz__summary {
+  color: color-mix(in srgb, var(--abey-accent) 90%, #fff);
+  background: color-mix(in srgb, var(--abey-accent) 14%, transparent);
+  border-color: color-mix(in srgb, var(--abey-accent) 30%, transparent);
+}
+
+.abey-nav-hz__ic {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.34rem;
+  height: 1.34rem;
+  flex-shrink: 0;
+  font-size: 0.92rem;
+  line-height: 1;
+}
+
+.abey-nav-hz__ic i {
+  font-size: inherit;
+}
+
+.abey-nav-hz__txt {
+  min-width: 0;
+}
+
+/* Sólo el grupo raíz (**Guías**) en barra horizontal: ellipsis si la etiqueta no cabe. */
+.abey-shell__nav-horizontal > .abey-nav-hz > .abey-nav-hz__summary .abey-nav-hz__txt {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: min(40vw, 12.5rem);
+}
+
+.abey-shell__nav-horizontal .abey-nav-hz__panel {
+  position: absolute;
+  left: 0;
+  top: calc(100% + 6px);
+  min-width: 11.75rem;
+  max-width: min(24rem, min(92vw, 100% - 1rem));
+  padding: 0.3rem;
+  border-radius: var(--abey-radius-sm);
+  border: 1px solid var(--abey-border);
+  background: var(--abey-surface-elev);
+  box-shadow: 0 8px 28px rgba(15, 23, 42, 0.1), 0 2px 6px rgba(15, 23, 42, 0.04);
+  z-index: 200;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+.abey.abey--dark .abey-shell__nav-horizontal .abey-nav-hz__panel {
+  box-shadow:
+    0 12px 36px rgba(0, 0, 0, 0.4),
+    0 0 0 1px color-mix(in srgb, var(--abey-border) 70%, transparent);
+}
+
+.abey-shell__nav-horizontal .abey-nav-hz__panel a.abey-nav-link--hz-drop {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 0.52rem;
+  width: 100%;
+  padding: 0.44rem 0.62rem;
+  border-radius: 0.52rem;
+  font-size: 0.835rem;
+  font-weight: 550;
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+.abey-shell__nav-horizontal .abey-nav-hz__panel a.abey-nav-link--hz-drop .abey-nav-link__ic {
+  margin-top: 0.06em;
+  flex-shrink: 0;
+}
+
+.abey-shell__nav-horizontal .abey-nav-hz__panel a.abey-nav-link--hz-drop .abey-nav-link__txt {
+  min-width: 0;
+  flex: 1;
+  align-self: center;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: normal;
+  line-height: 1.28;
+  hyphens: auto;
+}
+
+.abey-shell__nav-horizontal .abey-nav-hz__panel .abey-nav-hz__txt {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.25;
+  overflow: visible;
+  max-width: none;
+  text-overflow: clip;
+}
+
+.abey-shell__nav-horizontal .abey-nav-hz__panel > .abey-nav-hz .abey-nav-hz__summary {
+  padding: 0.4rem 0.55rem;
+  font-size: 0.8rem;
+  align-items: flex-start;
+}
+
+.abey-shell__nav-horizontal .abey-nav-hz__panel .abey-nav-hz__panel {
+  left: 0;
+  top: calc(100% + 4px);
+}
+
+/*
+ * Overlay / drawer · capa clic para cerrar (por debajo del aside; escritorio ↑ z-index para quedar sobre el contenido).
+ */
+button.abey-shell__nav-scrim {
+  appearance: none;
+  -webkit-appearance: none;
+  position: fixed;
+  inset: var(--abey-appbar-h) 0 0 0;
+  z-index: 7;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  cursor: pointer;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(4px) saturate(1.08);
+  -webkit-backdrop-filter: blur(4px) saturate(1.08);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.22s ease, visibility 0.22s;
+}
+
+.abey-shell__nav-scrim:focus {
+  outline: none;
+}
+
+.abey-shell__nav-scrim:focus-visible {
+  outline: 3px solid var(--abey-accent);
+  outline-offset: -3px;
+}
+
+button.abey-shell__nav-scrim[data-abey-active="true"] {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.abey.abey--dark button.abey-shell__nav-scrim {
+  background: rgba(3, 7, 18, 0.62);
+}
+
+@media (min-width: 901px) {
+  button.abey-shell__nav-scrim[data-abey-active="true"] {
+    z-index: 14;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  button.abey-shell__nav-scrim {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (min-width: 901px) {
+  .abey-shell[data-abey-nav-mode="compact"] {
+    --abey-sidebar-w: 13.25rem;
+  }
+
+  .abey-shell[data-abey-nav-mode="compact"] .abey-shell__body>.abey-sidebar .abey-sidebar__inner {
+    padding-bottom: 0.85rem;
+  }
+
+  .abey-shell[data-abey-nav-mode="compact"] .abey-shell__body>.abey-sidebar .abey-nav-link--sidebar:not(.abey-nav-link--horizontal) {
+    font-size: 0.82rem;
+    padding: 0.38rem 0.55rem;
+  }
+
+  .abey-shell[data-abey-nav-mode="compact"] .abey-shell__body>.abey-sidebar .abey-nav-tree__summary {
+    font-size: 0.82rem;
+    padding: 0.4rem 0.55rem;
+  }
+
+  .abey-shell[data-abey-nav-mode="compact"] .abey-appbar--dashboard .abey-appbar__mark {
+    flex-basis: var(--abey-sidebar-w);
+    width: var(--abey-sidebar-w);
+    max-width: var(--abey-sidebar-w);
+  }
+
+  /*
+   * Slim colapsado: rail tipo Prime — icono arriba, etiqueta pequeña debajo (texto visible).
+   * Expandido (hover / foco / open): mismo ancho estándar — filas horizontales.
+   */
+  .abey-shell[data-abey-nav-mode="slim"] {
+    --abey-slim-rail-w: 5.85rem;
+  }
+
+  /* Rail estrecha; expande con hover, foco en navegación o ☰ (móvil / si el toggle es visible). */
+  .abey-shell[data-abey-nav-mode="slim"] .abey-shell__body>.abey-sidebar {
+    flex: 0 0 var(--abey-slim-rail-w);
+    width: var(--abey-slim-rail-w);
+    max-width: var(--abey-slim-rail-w);
+    overflow: visible;
+    transition:
+      flex-basis 0.26s cubic-bezier(0.32, 0.72, 0.25, 1),
+      width 0.26s cubic-bezier(0.32, 0.72, 0.25, 1),
+      max-width 0.26s cubic-bezier(0.32, 0.72, 0.25, 1),
+      box-shadow 0.26s ease;
+  }
+
+  .abey-shell[data-abey-nav-mode="slim"] .abey-shell__body>.abey-sidebar:is(:hover, :focus-within, [data-abey-open="true"]) {
+    flex-basis: var(--abey-sidebar-w);
+    width: var(--abey-sidebar-w);
+    max-width: var(--abey-sidebar-w);
+    box-shadow: 8px 0 36px rgba(15, 23, 42, 0.1);
+    z-index: 6;
+  }
+
+  .abey.abey--dark .abey-shell[data-abey-nav-mode="slim"] .abey-shell__body>.abey-sidebar:is(:hover, :focus-within, [data-abey-open="true"]) {
+    box-shadow: 10px 0 40px rgba(0, 0, 0, 0.45);
+  }
+
+  .abey-shell[data-abey-nav-mode="slim"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-sidebar__inner {
+    overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-gutter: stable;
+    padding-left: 0.32rem;
+    padding-right: 0.4rem;
+  }
+
+  .abey-shell.abey-shell--dashboard[data-abey-nav-mode="slim"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-sidebar__inner {
+    padding-left: 0.28rem;
+    padding-right: 0.38rem;
+  }
+
+  .abey-shell[data-abey-nav-mode="slim"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-nav-stack {
+    align-items: center;
+    width: 100%;
+  }
+
+  .abey-shell[data-abey-nav-mode="slim"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-nav-link--sidebar:hover,
+  .abey-shell[data-abey-nav-mode="slim"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-nav-link--sidebar:focus-visible {
+    transform: none;
+  }
+
+  .abey-shell.abey-shell--dashboard[data-abey-nav-mode="slim"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-nav-link--sidebar:not(.abey-nav-link--horizontal),
+  .abey-shell.abey-shell--dashboard[data-abey-nav-mode="slim"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-nav-tree__summary {
+    padding: 0.45rem 0.22rem;
+  }
+
+  .abey-shell.abey-shell--dashboard[data-abey-nav-mode="slim"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-nav-link[aria-current="page"].abey-nav-link--sidebar::before,
+  .abey-shell.abey-shell--dashboard[data-abey-nav-mode="slim"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-nav-link--active.abey-nav-link--sidebar::before {
+    display: none;
+  }
+
+  .abey-shell[data-abey-nav-mode="slim"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-nav-link--with-icon.abey-nav-link--sidebar {
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0.3rem;
+    text-align: center;
+    border-radius: 0.65rem;
+  }
+
+  /* Etiquetas bajo el icono — visibles en carril angosto */
+  .abey-shell[data-abey-nav-mode="slim"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-nav-link--with-icon.abey-nav-link--sidebar .abey-nav-link__txt {
+    flex: none;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    margin: 0;
+    overflow: hidden;
+    text-align: center;
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.015em;
+    line-height: 1.18;
+    white-space: normal;
+    word-break: break-word;
+    hyphens: auto;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    color: color-mix(in srgb, var(--abey-text-muted) 88%, transparent);
+    transition: none;
+  }
+
+  .abey-shell[data-abey-nav-mode="slim"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-nav-link--with-icon.abey-nav-link--sidebar.abey-nav-link--active .abey-nav-link__txt,
+  .abey-shell[data-abey-nav-mode="slim"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-nav-link--with-icon.abey-nav-link--sidebar[aria-current="page"] .abey-nav-link__txt {
+    color: color-mix(in srgb, var(--abey-accent, #2563eb) 55%, var(--abey-text));
+  }
+
+  .abey-shell[data-abey-nav-mode="slim"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-nav-tree__summary {
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0.3rem;
+    text-align: center;
+    padding: 0.45rem 0.22rem;
+    border-radius: 0.65rem;
+  }
+
+  .abey-shell[data-abey-nav-mode="slim"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-nav-tree__summary-txt {
+    flex: none;
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
+    text-align: center;
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.015em;
+    line-height: 1.18;
+    white-space: normal;
+    word-break: break-word;
+    hyphens: auto;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+  }
+
+  /* En carril: sin subárbol hasta expandir lateral (coincide con hover / foco sobre menú amplio). */
+  .abey-shell[data-abey-nav-mode="slim"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-nav-tree__subs {
+    display: none;
+  }
+
+  .abey-shell[data-abey-nav-mode="slim"] .abey-appbar--dashboard .abey-appbar__mark {
+    flex-basis: var(--abey-slim-rail-w);
+    width: var(--abey-slim-rail-w);
+    max-width: var(--abey-slim-rail-w);
+    transition: flex-basis 0.26s cubic-bezier(0.32, 0.72, 0.25, 1), width 0.26s cubic-bezier(0.32, 0.72, 0.25, 1),
+      max-width 0.26s cubic-bezier(0.32, 0.72, 0.25, 1);
+  }
+
+  .abey-shell[data-abey-nav-mode="slim"]:has(.abey-shell__body > .abey-sidebar:is(:hover, :focus-within, [data-abey-open="true"])) .abey-appbar--dashboard .abey-appbar__mark {
+    flex-basis: var(--abey-sidebar-w);
+    width: var(--abey-sidebar-w);
+    max-width: var(--abey-sidebar-w);
+  }
+
+  /*
+   * Franja lateral izquierda (toggle): antes `translateX(calc(-100% + …))` dejaba visible
+   * el borde derecho del aside — el ☰ está a la izquierda → el menú se veía cortado mal.
+   */
+  .abey-shell[data-abey-nav-mode="reveal"] {
+    /* Chip + paddings dashboard; menos de ~5rem recorta iconos contra el borde. */
+    --abey-overlay-rail-w: 5.5rem;
+  }
+
+  /* Reveal: rail estrecho; ☰ (`data-abey-open`), hover o foco dentro amplían el ancho (táctil/teclado). */
+  .abey-shell[data-abey-nav-mode="reveal"] .abey-shell__body>.abey-sidebar {
+    position: fixed;
+    left: 0;
+    top: var(--abey-appbar-h);
+    height: calc(100vh - var(--abey-appbar-h));
+    max-height: none;
+    align-self: auto;
+    z-index: 18;
+    width: var(--abey-overlay-rail-w);
+    min-width: var(--abey-overlay-rail-w);
+    max-width: var(--abey-overlay-rail-w);
+    flex: 0 0 auto;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+    visibility: visible;
+    transform: none;
+    transition:
+      width 0.28s cubic-bezier(0.32, 0.72, 0.25, 1),
+      min-width 0.28s cubic-bezier(0.32, 0.72, 0.25, 1),
+      max-width 0.28s cubic-bezier(0.32, 0.72, 0.25, 1),
+      box-shadow 0.28s ease;
+    box-shadow: 4px 0 24px rgba(15, 23, 42, 0.08);
+  }
+
+  .abey-shell[data-abey-nav-mode="reveal"] .abey-shell__body>.abey-sidebar:is(:hover, :focus-within, [data-abey-open="true"]) {
+    width: min(18rem, calc(100vw - 12px));
+    min-width: min(18rem, calc(100vw - 12px));
+    max-width: min(18rem, calc(100vw - 12px));
+    overflow: visible;
+    box-shadow: 12px 0 48px rgba(15, 23, 42, 0.18);
+  }
+
+  .abey.abey--dark .abey-shell[data-abey-nav-mode="reveal"] .abey-shell__body>.abey-sidebar:is(:hover, :focus-within, [data-abey-open="true"]) {
+    box-shadow: 16px 0 56px rgba(0, 0, 0, 0.45);
+  }
+
+  .abey-shell[data-abey-nav-mode="reveal"] .abey-sidebar__nav {
+    flex: 1;
+    min-height: 0;
+  }
+
+  .abey-shell[data-abey-nav-mode="reveal"] .abey-sidebar__inner {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+  }
+
+  /* Reveal escritorio: sin ☰ en el rail (solo iconos); ampliación con hover o foco en la lista. El ☰ sigue en móvil ≤900px. */
+  .abey-shell[data-abey-nav-mode="reveal"] .abey-shell__body>.abey-sidebar .abey-sidebar__toggle {
+    display: none !important;
+  }
+
+  /* Reveal colapsado: texto como slim (iconos en carril estrecho). */
+  .abey-shell[data-abey-nav-mode="reveal"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-nav-link__txt {
+    opacity: 0;
+    visibility: hidden;
+    width: 0;
+    min-width: 0;
+    max-width: 0;
+    margin: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    transition: opacity 0.15s ease, visibility 0.15s ease, width 0.2s ease;
+  }
+
+  .abey-shell[data-abey-nav-mode="reveal"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-nav-tree__summary-txt {
+    opacity: 0;
+    visibility: hidden;
+    width: 0;
+    min-width: 0;
+    max-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    flex: unset;
+    transition: opacity 0.15s ease, visibility 0.15s ease, width 0.2s ease;
+  }
+
+  .abey-shell[data-abey-nav-mode="reveal"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-nav-tree__subs {
+    display: none;
+  }
+
+  .abey-shell[data-abey-nav-mode="reveal"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-nav-link--with-icon.abey-nav-link--sidebar {
+    justify-content: center;
+    gap: 0;
+  }
+
+  .abey-shell[data-abey-nav-mode="reveal"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-nav-tree__summary {
+    justify-content: center;
+    gap: 0;
+  }
+
+  /* Overlay / drawer: cerrado fuera del lienzo (☰ en la app bar); abierto mismo panel que en móvil. */
+  .abey-shell[data-abey-nav-mode="overlay"] .abey-shell__body>.abey-sidebar,
+  .abey-shell[data-abey-nav-mode="drawer"] .abey-shell__body>.abey-sidebar {
+    position: fixed;
+    left: 0;
+    top: var(--abey-appbar-h);
+    height: calc(100vh - var(--abey-appbar-h));
+    max-height: none;
+    align-self: auto;
+    z-index: 18;
+    flex: 0 0 auto;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+    width: min(18rem, calc(100vw - 12px));
+    min-width: min(18rem, calc(100vw - 12px));
+    max-width: min(18rem, calc(100vw - 12px));
+    transition:
+      transform 0.26s cubic-bezier(0.32, 0.72, 0.25, 1),
+      box-shadow 0.26s ease;
+    border-right: none;
+    background: linear-gradient(180deg, var(--abey-surface) 0%, color-mix(in srgb, var(--abey-surface) 93%, var(--abey-accent) 3%) 100%);
+  }
+
+  .abey-shell[data-abey-nav-mode="overlay"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]),
+  .abey-shell[data-abey-nav-mode="drawer"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) {
+    transform: translateX(-100%);
+    pointer-events: none;
+    box-shadow: none;
+  }
+
+  .abey-shell[data-abey-nav-mode="overlay"] .abey-shell__body>.abey-sidebar[data-abey-open="true"],
+  .abey-shell[data-abey-nav-mode="drawer"] .abey-shell__body>.abey-sidebar[data-abey-open="true"] {
+    transform: translateX(0);
+    pointer-events: auto;
+    overflow: hidden;
+    border-right: 2px solid color-mix(in srgb, var(--abey-accent) 35%, var(--abey-border));
+    box-shadow:
+      12px 0 48px rgba(15, 23, 42, 0.2),
+      0 0 0 1px color-mix(in srgb, var(--abey-border) 70%, transparent);
+  }
+
+  .abey.abey--dark .abey-shell[data-abey-nav-mode="overlay"] .abey-shell__body>.abey-sidebar[data-abey-open="true"],
+  .abey.abey--dark .abey-shell[data-abey-nav-mode="drawer"] .abey-shell__body>.abey-sidebar[data-abey-open="true"] {
+    box-shadow:
+      16px 0 52px rgba(0, 0, 0, 0.48),
+      0 0 0 1px color-mix(in srgb, var(--abey-accent) 18%, transparent);
+  }
+
+  .abey-shell[data-abey-nav-mode="overlay"] .abey-sidebar__toggle,
+  .abey-shell[data-abey-nav-mode="drawer"] .abey-sidebar__toggle {
+    display: inline-flex;
+    align-self: center;
+    flex-shrink: 0;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .abey-shell[data-abey-nav-mode="overlay"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-sidebar__toggle,
+  .abey-shell[data-abey-nav-mode="drawer"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-sidebar__toggle {
+    margin-top: 0.75rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1.22rem;
+    line-height: 1;
+    font-weight: 600;
+    border-radius: calc(var(--abey-radius-sm) + 2px);
+    border: 2px solid color-mix(in srgb, var(--abey-accent) 48%, var(--abey-border));
+    background: linear-gradient(165deg,
+        color-mix(in srgb, var(--abey-accent) 18%, var(--abey-surface)) 0%,
+        color-mix(in srgb, var(--abey-surface) 96%, var(--abey-accent)) 100%);
+    color: var(--abey-accent-hover, var(--abey-accent));
+    box-shadow:
+      0 2px 8px rgba(15, 23, 42, 0.12),
+      0 1px 0 rgba(255, 255, 255, 0.35) inset;
+  }
+
+  .abey.abey--dark .abey-shell[data-abey-nav-mode="overlay"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-sidebar__toggle,
+  .abey.abey--dark .abey-shell[data-abey-nav-mode="drawer"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-sidebar__toggle {
+    background: linear-gradient(165deg,
+        color-mix(in srgb, var(--abey-accent) 22%, var(--abey-surface)) 0%,
+        color-mix(in srgb, var(--abey-surface) 94%, transparent) 100%);
+    color: var(--abey-accent);
+    box-shadow:
+      0 2px 14px rgba(0, 0, 0, 0.4),
+      0 0 18px color-mix(in srgb, var(--abey-accent) 22%, transparent);
+  }
+
+  .abey-shell[data-abey-nav-mode="overlay"] .abey-shell__body>.abey-sidebar[data-abey-open="true"] .abey-sidebar__toggle,
+  .abey-shell[data-abey-nav-mode="drawer"] .abey-shell__body>.abey-sidebar[data-abey-open="true"] .abey-sidebar__toggle {
+    margin-top: 0.35rem;
+  }
+
+  .abey-shell[data-abey-nav-mode="overlay"] .abey-shell__body>.abey-sidebar .abey-sidebar__nav,
+  .abey-shell[data-abey-nav-mode="drawer"] .abey-shell__body>.abey-sidebar .abey-sidebar__nav {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .abey-shell[data-abey-nav-mode="overlay"] .abey-shell__body>.abey-sidebar .abey-sidebar__inner,
+  .abey-shell[data-abey-nav-mode="drawer"] .abey-shell__body>.abey-sidebar .abey-sidebar__inner {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  /* Colapsado overlay/drawer: paddings simétricos + ítems centrados (evita chips cortados a la izquierda). */
+  .abey-shell[data-abey-nav-mode="overlay"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-sidebar__inner,
+  .abey-shell[data-abey-nav-mode="drawer"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-sidebar__inner {
+    padding-left: 0.3rem;
+    padding-right: 0.42rem;
+    padding-top: 0.2rem;
+    box-sizing: border-box;
+  }
+
+  .abey-shell.abey-shell--dashboard[data-abey-nav-mode="overlay"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-sidebar__inner,
+  .abey-shell.abey-shell--dashboard[data-abey-nav-mode="drawer"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-sidebar__inner {
+    padding-left: 0.26rem;
+    padding-right: 0.36rem;
+  }
+
+  .abey-shell[data-abey-nav-mode="overlay"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-nav-stack,
+  .abey-shell[data-abey-nav-mode="drawer"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-nav-stack {
+    align-items: center;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .abey-shell[data-abey-nav-mode="overlay"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-nav-link--with-icon.abey-nav-link--sidebar,
+  .abey-shell[data-abey-nav-mode="drawer"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-nav-link--with-icon.abey-nav-link--sidebar {
+    justify-content: center;
+    gap: 0;
+  }
+
+  .abey-shell[data-abey-nav-mode="overlay"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-nav-tree__summary,
+  .abey-shell[data-abey-nav-mode="drawer"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-nav-tree__summary {
+    justify-content: center;
+    gap: 0;
+  }
+
+  .abey-shell[data-abey-nav-mode="overlay"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-nav-link--sidebar:not(.abey-nav-link--horizontal),
+  .abey-shell[data-abey-nav-mode="overlay"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-nav-tree__summary,
+  .abey-shell[data-abey-nav-mode="drawer"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-nav-link--sidebar:not(.abey-nav-link--horizontal),
+  .abey-shell[data-abey-nav-mode="drawer"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-nav-tree__summary {
+    padding-left: 0.32rem;
+    padding-right: 0.32rem;
+  }
+
+  /* Dashboard usa paddings algo mayores por defecto: un poco más apretados en rail. */
+  .abey-shell.abey-shell--dashboard[data-abey-nav-mode="overlay"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-nav-link--sidebar:not(.abey-nav-link--horizontal),
+  .abey-shell.abey-shell--dashboard[data-abey-nav-mode="overlay"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-nav-tree__summary,
+  .abey-shell.abey-shell--dashboard[data-abey-nav-mode="drawer"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-nav-link--sidebar:not(.abey-nav-link--horizontal),
+  .abey-shell.abey-shell--dashboard[data-abey-nav-mode="drawer"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-nav-tree__summary {
+    padding-left: 0.26rem;
+    padding-right: 0.26rem;
+  }
+
+  .abey-shell.abey-shell--dashboard[data-abey-nav-mode="overlay"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-nav-link--sidebar:hover,
+  .abey-shell.abey-shell--dashboard[data-abey-nav-mode="overlay"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-nav-link--sidebar:focus-visible,
+  .abey-shell.abey-shell--dashboard[data-abey-nav-mode="drawer"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-nav-link--sidebar:hover,
+  .abey-shell.abey-shell--dashboard[data-abey-nav-mode="drawer"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-nav-link--sidebar:focus-visible {
+    transform: none;
+  }
+
+  .abey-shell.abey-shell--dashboard[data-abey-nav-mode="overlay"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-nav-link[aria-current="page"].abey-nav-link--sidebar::before,
+  .abey-shell.abey-shell--dashboard[data-abey-nav-mode="overlay"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-nav-link--active.abey-nav-link--sidebar::before,
+  .abey-shell.abey-shell--dashboard[data-abey-nav-mode="drawer"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-nav-link[aria-current="page"].abey-nav-link--sidebar::before,
+  .abey-shell.abey-shell--dashboard[data-abey-nav-mode="drawer"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-nav-link--active.abey-nav-link--sidebar::before {
+    left: 3px;
+    width: 2px;
+  }
+
+  /* Reveal (rail colapsado): mismos márgenes que overlay carril. */
+  .abey-shell[data-abey-nav-mode="reveal"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-sidebar__inner {
+    padding-left: 0.3rem;
+    padding-right: 0.42rem;
+    box-sizing: border-box;
+  }
+
+  .abey-shell.abey-shell--dashboard[data-abey-nav-mode="reveal"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-sidebar__inner {
+    padding-left: 0.26rem;
+    padding-right: 0.36rem;
+  }
+
+  .abey-shell[data-abey-nav-mode="reveal"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-nav-stack {
+    align-items: center;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .abey-shell[data-abey-nav-mode="reveal"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-nav-link--sidebar:not(.abey-nav-link--horizontal),
+  .abey-shell[data-abey-nav-mode="reveal"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-nav-tree__summary {
+    padding-left: 0.32rem;
+    padding-right: 0.32rem;
+  }
+
+  .abey-shell.abey-shell--dashboard[data-abey-nav-mode="reveal"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-nav-link--sidebar:not(.abey-nav-link--horizontal),
+  .abey-shell.abey-shell--dashboard[data-abey-nav-mode="reveal"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-nav-tree__summary {
+    padding-left: 0.26rem;
+    padding-right: 0.26rem;
+  }
+
+  .abey-shell.abey-shell--dashboard[data-abey-nav-mode="reveal"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-nav-link--sidebar:hover,
+  .abey-shell.abey-shell--dashboard[data-abey-nav-mode="reveal"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-nav-link--sidebar:focus-visible {
+    transform: none;
+  }
+
+  .abey-shell[data-abey-nav-mode="drawer"] .abey-shell__body>.abey-sidebar[data-abey-open="true"] {
+    box-shadow: 24px 0 72px rgba(15, 23, 42, 0.22);
+  }
+
+  .abey.abey--dark .abey-shell[data-abey-nav-mode="drawer"] .abey-shell__body>.abey-sidebar[data-abey-open="true"] {
+    box-shadow: 28px 0 80px rgba(0, 0, 0, 0.55);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .abey-shell[data-abey-nav-mode="overlay"] .abey-shell__body>.abey-sidebar,
+  .abey-shell[data-abey-nav-mode="drawer"] .abey-shell__body>.abey-sidebar,
+  .abey-shell[data-abey-nav-mode="reveal"] .abey-shell__body>.abey-sidebar {
+    transition-duration: 0.01ms !important;
+  }
+}
+
 @media (max-width: 900px) {
+
+  /* Mismo ancho que `.abey-sidebar` en este breakpoint (marca del app bar). */
+  .abey-appbar--dashboard .abey-appbar__mark {
+    flex: 0 0 min(18rem, 100vw);
+    width: min(18rem, 100vw);
+    max-width: min(18rem, 100vw);
+  }
+
   .abey-sidebar {
     position: fixed;
     inset: var(--abey-appbar-h) 0 0 0;
@@ -2071,16 +3735,20 @@ a.abey-welcome-tile:focus {
     transition: transform 0.2s ease, visibility 0.2s;
     visibility: hidden;
   }
+
   .abey-sidebar[data-abey-open="true"] {
     transform: translateX(0);
     visibility: visible;
   }
+
   .abey-sidebar__toggle {
     display: inline-flex;
   }
+
   .abey-sidebar__inner {
     padding-bottom: 2.5rem;
   }
+
   .abey-outlet {
     width: 100%;
   }

@@ -3,7 +3,7 @@ export type ActionHandler = (el: HTMLElement, ev: Event) => void;
 export type ActionMap = Record<string, ActionHandler>;
 
 /**
- * Declarative click binding via `data-action`, similar in spirit to Angular template events.
+ * Declarative click binding via `data-action` (markup names the handler; TS supplies the map).
  *
  * Usage:
  * - HTML: `<button data-action="save">Save</button>`

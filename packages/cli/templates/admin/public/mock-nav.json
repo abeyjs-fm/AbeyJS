@@ -1,0 +1,33 @@
+{
+  "items": [
+    {
+      "path": "/",
+      "label": "Inicio · menú API",
+      "navIconFa": "fa-solid fa-house"
+    },
+    {
+      "path": "/catalogo",
+      "label": "Catálogo · menú API",
+      "navIconFa": "fa-solid fa-folder-tree",
+      "children": [
+        {
+          "path": "/catalogo/items",
+          "label": "Ítems (API)",
+          "navIconFa": "fa-solid fa-list"
+        },
+        {
+          "path": "/catalogo/grupos",
+          "label": "Grupos",
+          "navIconFa": "fa-solid fa-layer-group",
+          "children": [
+            {
+              "path": "/catalogo/grupos/nuevo",
+              "label": "Alta grupo",
+              "navIconFa": "fa-solid fa-circle-plus"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

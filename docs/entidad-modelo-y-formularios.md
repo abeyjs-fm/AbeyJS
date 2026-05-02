@@ -1,32 +1,34 @@
-# Entidad única (estilo C#) → Formularios, validación y JSON
+# Single entity (C#-style) → forms, validation, and JSON
 
-AbeyJs permite definir una **sola entidad** (una clase) y reutilizarla para:
+For teams that **dislike** three parallel definitions of the same DTO (TypeScript table, form draft, hand-written Zod). Decorators live in `@abeyjs/uikit` and target “classic” flat-entity forms; if your screen is a document with lines (**invoice**, etc.), do not force this pattern—use dedicated meta like the billing examples in the repo.
 
-- **UI de formulario** (`<abey-form>`)
-- **validación** (Zod)
-- **JSON** para enviar/recibir del API (tipado)
-- **listado** (tabla) usando el mismo modelo
+With one **marker class** you get from a single file:
 
-La idea es evitar duplicación tipo:
+- **form UI** (`<abey-form>`)
+- **validation** (Zod)
+- **typed JSON** for API I/O
+- **listing** (table) using the same model
 
-- `type Entity` (tabla)
+Avoid duplication like:
+
+- `type Entity` (table)
 - `type EntityDraft` (form)
-- validación manual por pantalla
+- per-screen manual validation
 
 ---
 
-## 1) La entidad (clase) con decoradores
+## 1) Entity (class) with decorators
 
-Ejemplo real en el repo: `AlumnoEntity` en `examples/MyMiusic/src/ecosystems/alumnos/model/alumnos.types.ts`.
+Real example: `AlumnoEntity` in `examples/MyMiusic/src/ecosystems/alumnos/model/alumnos.types.ts`.
 
-Conceptos principales:
+Main ideas:
 
-- **Campos de UI + JSON**: propiedades normales de la clase.
-- **PK**: `@PrimaryKey()` (default lógico `"id"` si no se marca).
-- **Campos solo API (no UI)**: `@Hidden()` (ej. `id`).
-- **Opcional**: `@Optional()` (permite vacío/undefined según el tipo).
+- **UI + JSON fields**: normal class properties.
+- **PK**: `@PrimaryKey()` (logical default `"id"` if unset).
+- **API-only (no UI)**: `@Hidden()` (e.g. `id`).
+- **Optional**: `@Optional()` (empty/undefined per type).
 
-Decoradores disponibles (exportados desde `@abeyjs/uikit`):
+Decorators (from `@abeyjs/uikit`):
 
 - `@FormModel({ title })`
 - `@Label("...")`
@@ -40,9 +42,9 @@ Decoradores disponibles (exportados desde `@abeyjs/uikit`):
 
 ---
 
-## 2) Generar el formulario automáticamente (`<abey-form>`)
+## 2) Auto-generate the form (`<abey-form>`)
 
-Con la clase, se genera un `AbeyFormConfig` (fields + schema):
+From the class you get `AbeyFormConfig` (fields + schema):
 
 ```ts
 import { classToAbeyFormConfig, AbeyFormElement } from "@abeyjs/uikit";
@@ -53,26 +55,26 @@ const form = document.querySelector("abey-form")!;
 form.config = classToAbeyFormConfig(AlumnoEntity);
 ```
 
-`classToAbeyFormConfig(...)` genera:
+`classToAbeyFormConfig(...)` yields:
 
-- `fields: ViewField[]` (para render)
-- `schema: ZodType` (para validar al submit)
+- `fields: ViewField[]` (render)
+- `schema: ZodType` (submit validation)
 
 ---
 
-## 3) JSON tipado/validado para enviar al API
+## 3) Typed / validated JSON for the API
 
-Si querés transformar un input (del form o de red) en un JSON válido y tipado:
+Turn form or network input into valid typed JSON:
 
 ```ts
 import { parseClassJson } from "@abeyjs/uikit";
 import { AlumnoEntity } from "./model/alumnos.types.js";
 
-const dto = parseClassJson(AlumnoEntity, input); // lanza si es inválido
-// JSON.stringify(dto) → listo para API
+const dto = parseClassJson(AlumnoEntity, input); // throws if invalid
+// JSON.stringify(dto) → ready for API
 ```
 
-Si solo querés el **schema Zod**:
+**Zod schema only:**
 
 ```ts
 import { classToSchema } from "@abeyjs/uikit";
@@ -81,9 +83,9 @@ const schema = classToSchema(AlumnoEntity);
 
 ---
 
-## 4) Select/FK (lista dura o por API)
+## 4) Select / FK (static list or API)
 
-### A) Lista dura (value/label)
+### A) Static value/label list
 
 ```ts
 import { SelectStatic, Optional } from "@abeyjs/uikit";
@@ -93,12 +95,12 @@ import { SelectStatic, Optional } from "@abeyjs/uikit";
   { value: "badbunny", label: "Bad Bunny" },
 ])
 @Optional()
-artistaFavoritoId?: string;
+favoriteArtistId?: string;
 ```
 
-### B) Por API (GET por defecto, POST opcional)
+### B) Via API (GET default, optional POST)
 
-`@SelectApi(...)` define **cómo** obtener opciones:
+`@SelectApi(...)` defines **how** to load options:
 
 ```ts
 import { SelectApi, Optional } from "@abeyjs/uikit";
@@ -111,19 +113,19 @@ import type { SelectApiOptions } from "@abeyjs/uikit";
   dataPath: "data",
 } satisfies SelectApiOptions)
 @Optional()
-generoId?: string;
+genreId?: string;
 ```
 
 #### `dataPath`
 
-Es la ruta (con puntos) dentro del JSON donde vive el array:
+Dot path inside JSON to the array:
 
-- Respuesta: `{ "data": [ ... ] }` → `dataPath: "data"`
-- Respuesta: `{ "result": { "rows": [ ... ] } }` → `dataPath: "result.rows"`
+- Response `{ "data": [ ... ] }` → `dataPath: "data"`
+- Response `{ "result": { "rows": [ ... ] } }` → `dataPath: "result.rows"`
 
-#### `method` y `body`
+#### `method` and `body`
 
-Por defecto `method` es `"GET"`. Si tu API requiere POST:
+Default `method` is `"GET"`. For POST APIs:
 
 ```ts
 @SelectApi({
@@ -138,29 +140,29 @@ Por defecto `method` es `"GET"`. Si tu API requiere POST:
 
 ---
 
-## 5) Conectar selects a red vía Flow (Omega)
+## 5) Wire selects to the network via flow (Omega)
 
-`<abey-form>` no hace `fetch` directo por default: la app decide.
+`<abey-form>` does not `fetch` by default—the app decides.
 
-Patrón recomendado:
+Recommended pattern:
 
-- UI define `cfg.resolveSelectOptions = async (opts) => ...`
-- `resolveSelectOptions` dispara un **intent** (`runtime.dispatch(intentOf(...))`)
-- El **Flow/Agent** consume ese intent y usa `OmegaHttp` para consultar red
-- El Agent emite un **event** con `{ requestId, items }`
-- `resolveSelectOptions` espera ese event y retorna la lista al form
+- UI sets `cfg.resolveSelectOptions = async (opts) => ...`
+- `resolveSelectOptions` fires an **intent** (`runtime.dispatch(intentOf(...))`)
+- **Flow/agent** handles it with `OmegaHttp`
+- Agent emits **event** `{ requestId, items }`
+- `resolveSelectOptions` waits for that event and returns rows to the form
 
-Ejemplo en este repo (géneros Deezer) vive en:
+Example (Deezer genres) in this repo:
 
-- `examples/MyMiusic/src/ecosystems/alumnos/ui/app-alumnos.ts` (resolveSelectOptions)
-- `examples/MyMiusic/src/ecosystems/alumnos/omega/agent.ts` (http.getJson/postJson)
+- `examples/MyMiusic/src/ecosystems/alumnos/ui/app-alumnos.ts` (`resolveSelectOptions`)
+- `examples/MyMiusic/src/ecosystems/alumnos/omega/agent.ts` (`http.getJson` / `postJson`)
 - `examples/MyMiusic/src/ecosystems/alumnos/omega/flow.ts` / `behavior.ts` / `register.ts`
 
 ---
 
 ## 6) PK (primary key)
 
-Marcá el PK en la entidad:
+Mark PK on entity:
 
 ```ts
 @Hidden()
@@ -169,10 +171,9 @@ Marcá el PK en la entidad:
 id?: string;
 ```
 
-Y podés consultarlo desde código:
+Read from code:
 
 ```ts
 import { classPrimaryKey } from "@abeyjs/uikit";
-const pk = classPrimaryKey(AlumnoEntity); // "id" si no se marcó
+const pk = classPrimaryKey(AlumnoEntity); // `"id"` if not declared
 ```
-

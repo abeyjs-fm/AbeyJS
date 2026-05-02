@@ -9,6 +9,12 @@ export type ComponentRouteSpec = {
    * before mounting (recommended when the component lives in a split chunk).
    */
   load?: () => Promise<unknown>;
+  /**
+   * When `load` is set, set to `true` to show a short “Cargando…” line in the outlet until the chunk resolves.
+   * Default keeps the outlet empty (avoids placeholder flash; brief blank is possible).
+   * @default false
+   */
+  showLoading?: boolean;
   /** Attributes to set on the created element (e.g. `{ runtimepath: "__abeyRuntime" }`). */
   attrs?: Record<string, string>;
 };
@@ -38,12 +44,14 @@ export function componentRoute(path: string, nav: ComponentRouteNav, spec: Compo
         return;
       }
 
-      outlet.textContent = "";
-      const loading = document.createElement("p");
-      loading.className = "abey-starter-footnote";
-      loading.setAttribute("role", "status");
-      loading.textContent = "Cargando…";
-      outlet.appendChild(loading);
+      outlet.replaceChildren();
+      if (spec.showLoading === true) {
+        const loading = document.createElement("p");
+        loading.className = "abey-starter-footnote";
+        loading.setAttribute("role", "status");
+        loading.textContent = "";//TODO: add loading text
+        outlet.appendChild(loading);
+      }
 
       void spec
         .load()

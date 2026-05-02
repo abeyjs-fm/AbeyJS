@@ -1,11 +1,12 @@
 {
-  "name": "abeyjs-monorepo",
+  "name": "abeyjs",
   "private": true,
   "license": "MIT",
   "author": "AbeyJs (https://github.com/abeyjs-fm)",
   "workspaces": [
     "packages/*",
-    "examples/*"
+    "examples/*",
+    "docs/*"
   ],
   "devDependencies": {
     "typescript": "^5.7.3"
@@ -17,6 +18,9 @@
     "example:scaffold": "node scripts/scaffold-example.cjs",
     "example:crud": "npm run dev -w @abeyjs/example-crud",
     "example:starter": "npm run dev -w @abeyjs/example-starter",
+    "docs:dev": "npm run dev -w abeyjs-docs-web",
+    "docs:build": "npm run build -w abeyjs-docs-web",
+    "docs:preview": "npm run preview -w abeyjs-docs-web",
     "abeyjs:new": "npm run build -w @abeyjs/cli && node packages/cli/dist/cli.js init",
     "abeyjs:new:empty": "npm run build -w @abeyjs/cli && node packages/cli/dist/cli.js init --template empty",
     "abeyjs:new:appbar": "npm run build -w @abeyjs/cli && node packages/cli/dist/cli.js init --template admin --shell appbar",

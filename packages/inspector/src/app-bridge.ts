@@ -59,6 +59,12 @@ export function connectOmegaInspectorAppBridge(runtime: OmegaRuntime, opts: Omeg
   let disposed = false;
   let ws: WebSocket | undefined;
   let attempt = 0;
+  /** After a successful `open`, keep reconnecting (hub restarts). If the hub never comes up, stop after this many close cycles. */
+  let openedOnce = false;
+  let cyclesWithoutOpen = 0;
+  const maxCyclesWithoutOpen = 12;
+  let preConnectLogsLeft = 2;
+  let emittedStopHint = false;
 
   const nextDelay = () => Math.min(maxDelay, Math.round(baseDelay * Math.pow(1.6, attempt++)));
 
@@ -97,6 +103,8 @@ export function connectOmegaInspectorAppBridge(runtime: OmegaRuntime, opts: Omeg
 
     ws.addEventListener("open", () => {
       attempt = 0;
+      openedOnce = true;
+      cyclesWithoutOpen = 0;
       wsSend(ws!, { type: "hello", role: "app", appId: opts.appId, token: opts.token });
       ready = true;
       // eslint-disable-next-line no-console
@@ -113,21 +121,47 @@ export function connectOmegaInspectorAppBridge(runtime: OmegaRuntime, opts: Omeg
     const scheduleReconnect = () => {
       if (disposed) return;
       if (!reconnect) return;
+      if (!openedOnce) {
+        cyclesWithoutOpen += 1;
+        if (cyclesWithoutOpen > maxCyclesWithoutOpen) {
+          if (!emittedStopHint) {
+            emittedStopHint = true;
+            // eslint-disable-next-line no-console
+            console.log(
+              `[AbeyJs Inspector] bridge stopped reconnecting (hub unreachable at ${opts.url}). ` +
+                `Start the hub or unset VITE_INSPECTOR_HUB.`,
+            );
+          }
+          return;
+        }
+      }
       const d = nextDelay();
       window.setTimeout(() => connect(), d);
     };
 
     ws.addEventListener("close", () => {
       ready = false;
-      // eslint-disable-next-line no-console
-      console.log(`[AbeyJs Inspector] bridge closed url=${opts.url} appId=${opts.appId}`);
+      if (openedOnce) {
+        // eslint-disable-next-line no-console
+        console.log(`[AbeyJs Inspector] bridge closed url=${opts.url} appId=${opts.appId}`);
+      } else if (preConnectLogsLeft > 0) {
+        preConnectLogsLeft -= 1;
+        // eslint-disable-next-line no-console
+        console.log(`[AbeyJs Inspector] bridge closed url=${opts.url} appId=${opts.appId}`);
+      }
       scheduleReconnect();
     });
     ws.addEventListener("error", () => {
       ready = false;
-      // eslint-disable-next-line no-console
-      console.log(`[AbeyJs Inspector] bridge error url=${opts.url} appId=${opts.appId}`);
-      scheduleReconnect();
+      if (openedOnce) {
+        // eslint-disable-next-line no-console
+        console.log(`[AbeyJs Inspector] bridge error url=${opts.url} appId=${opts.appId}`);
+      } else if (preConnectLogsLeft > 0) {
+        preConnectLogsLeft -= 1;
+        // eslint-disable-next-line no-console
+        console.log(`[AbeyJs Inspector] bridge error url=${opts.url} appId=${opts.appId}`);
+      }
+      // Reconnect only from `close` (error + close usually both fire — avoids double timers).
     });
   };
 

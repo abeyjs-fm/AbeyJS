@@ -24,7 +24,7 @@ No React/other VDOM dependency — **`StateCell`** + incremental updates or comp
 
  **`bootstrapOmegaApp(root, config)`** (`bootstrap/omega-bootstrap.ts`) — optional **auth** branch for **public paths**, then **`mountRoutedApp`** + resolves **`OmegaRuntime`** from **`createOmega`**. Publishes **`omega/nav:changed`** on navigation (**`source: abey-router`**). Apps should import **`@abeyjs/view/theme/omega-default.css`** (not auto-injected).
 
- **`mountRoutedApp`** / **`mountAppShell`** — admin / landing / **blank** variants, sidebar + **`main.abey-outlet`**, **`PathRouter`** via **`history`**.
+ **`mountRoutedApp`** / **`mountAppShell`** — admin / landing / **blank** variants, sidebar + **`main.abey-outlet`**, **`PathRouter`** via **`history`**. Admin (**`variant: "admin"`**) defaults to **dark** chrome (**`appearance`** **`"dark"`**); use **`appearance: "light"`** for claro inicial, ☀️/🌙 in the app bar to toggle, **`ABEY_SHELL_APPEARANCE_STORAGE_KEY`** (**`persistAppearance`** default **`true`**) persists choice.
 
  **`createPathRouter`**, **`normalizePathname`** — align with **`setPath`** from **`@abeyjs/runtime`** for intent-first URL sync.
 
@@ -34,17 +34,21 @@ No React/other VDOM dependency — **`StateCell`** + incremental updates or comp
 
  **`AppRoute`** (**`shell/app-routes`**) — path, **`mount(outlet)`**, nav metadata. Helpers:
 
-- **`pageRoute`** + **`buildPageView` / `createPageViewElement`** — declarative **`PageViewSpec`** pages (safe **`textContent`**, no blind **`innerHTML`**).
-- **`componentRoute`** — load **`defineAbeyComponent`** / **`AbeyComponentElement`** screens (**`component-route.ts`**).
+- **`pageRoute`** + **`buildPageView` / `createPageViewElement`** — declarative **`PageViewSpec`** pages (nav: **`PageRouteNav`**).
+- **`componentRoute`** — **`ComponentRouteNav`** + **`ComponentRouteSpec`** (**`component-route.ts`**); use **`satisfies`** in app **`routes.ts`** for strict literals.
 - **`lazyViewMount(importFn, exportName)`** — dynamic **`import()`** + spinner; teardown returns inner **`dispose`** when exposed.
 
  **`firstNavPath`**, **`matchAppRoute`** — table-driven matching.
+
+- Optional **`navChildren`** (**`AppRouteNavChild[]`**, recursive **`children`**) — admin sidebar renders nested groups (**`<details>`**); every leaf **`path`** must still appear on a top-level **`AppRoute`** so **`matchAppRoute`** resolves the view.
 
 ---
 
 ## `@AbeyComponent` & OM templates
 
- **`AbeyComponent`**, **`defineAbeyComponent`**, **`AbeyComponentElement`** — custom elements with **`template`**, optional **`stylesHrefs`**, DOM-DI **`providers`**, **`runtimepath`** (default **`__abeyRuntime`** on **`globalThis`**). Reactive **`state`** object drives **`bindAbeyTemplate`**.
+ **`AbeyComponent`**, **`defineAbeyComponent`**, **`AbeyComponentElement`** — custom elements with **`template`**, optional **`stylesHrefs`** (async **`<link>`**), optional **`stylesText`** (raw CSS, e.g. Vite **`import sheet from "./x.css?inline"`** → **open Shadow DOM** + **`<style>`**, styles ship in the same chunk as the component), DOM-DI **`providers`**, **`runtimepath`**. Reactive **`state`** drives **`bindAbeyTemplate`**.
+
+ **`componentRoute`** with **`load()`** leaves the outlet empty by default; set **`showLoading: true`** to show “Cargando…” while the chunk loads.
 
 Companion: **`mountModuleStyles`**, **`withModuleStyles`**.
 

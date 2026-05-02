@@ -24,6 +24,16 @@ function compileExpr<T = unknown>(exprRaw: string): (ctx: Record<string, unknown
   ) as (ctx: Record<string, unknown>) => T;
 }
 
+/** For `(event)="..."` — may be multiple statements; `return (a; b)` would be invalid. */
+function compileEventHandler(exprRaw: string): (ctx: Record<string, unknown>) => unknown {
+  const expr = exprRaw.trim();
+  // eslint-disable-next-line no-new-func
+  return new Function(
+    "ctx",
+    `try { with (ctx) { ${expr}; } } catch { return undefined; }`,
+  ) as (ctx: Record<string, unknown>) => unknown;
+}
+
 function parseMustache(input: string): Array<{ kind: "text"; value: string } | { kind: "expr"; expr: string }> {
   const out: Array<{ kind: "text"; value: string } | { kind: "expr"; expr: string }> = [];
   const re = /\{\{\s*([\s\S]+?)\s*\}\}/g;
@@ -124,6 +134,7 @@ function defaultContext(
  * - `[hidden]`, `[class.foo]`, `[attr.x]`
  * - `(event)` handlers con expresiones
  * - `{{ }}` dentro de atributos normales
+ * - No bindea dentro de descendientes `@pre,code` (literales OM en código / docs).
  */
 export function bindAbeyTemplate(root: Element, ctx: AbeyTemplateContext): BoundTemplate {
   const runtime = ctx.runtime ?? null;
@@ -146,6 +157,9 @@ export function bindAbeyTemplate(root: Element, ctx: AbeyTemplateContext): Bound
     textNodes.push(n as Text);
   }
   for (const tn of textNodes) {
+    if (tn.parentElement?.closest("pre, code")) {
+      continue;
+    }
     const raw = tn.nodeValue ?? "";
     if (!raw.includes("{{")) continue;
     const segs = parseMustache(raw);
@@ -181,6 +195,9 @@ export function bindAbeyTemplate(root: Element, ctx: AbeyTemplateContext): Bound
     els.push(n as Element);
   }
   for (const el of els) {
+    if (el.closest("pre, code")) {
+      continue;
+    }
     const attrs = Array.from(el.attributes);
     for (const a of attrs) {
       const name = a.name.trim();
@@ -232,7 +249,7 @@ export function bindAbeyTemplate(root: Element, ctx: AbeyTemplateContext): Bound
         const evName = name.slice(1, -1).trim();
         const handlerExpr = value;
         el.removeAttribute(name);
-        const fn = compileExpr(handlerExpr);
+        const fn = compileEventHandler(handlerExpr);
         const onEv = (ev: Event): void => {
           fn(ctxFor(el, ev));
           render();
