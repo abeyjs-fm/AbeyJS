@@ -60,6 +60,7 @@ File: **`.github/workflows/docs-github-pages.yml`**
 | Step | Purpose |
 |------|---------|
 | `npm ci` | Install workspaces (linked `packages/*`). |
+| `npm run build` (root) | Compiles **`packages/*`** to **`dist/`** (`.js` + `.d.ts`). **`docs/web`** **`tsc`** resolves **`@abeyjs/view`** etc. via **`package.json` `types` → `dist/index.d.ts`**; without this step CI fails with **`TS2307`** because **`dist`** is not committed. |
 | `DOCS_SITE_BASE="/<repo-lowercase>/"` | Vite **`base`** for **`docs/web`** (`vite.config.ts` reads **`process.env.DOCS_SITE_BASE`**; default **`/`** when unset → local **`npm run docs:dev`** unchanged). |
 | `npm run docs:build` | Root script → **`abeyjs-docs-web`** **`tsc` + `vite build`**. |
 | Copy **`index.html` → `404.html`** | So deep links (**`/guides/quick-start`**, etc.) return the SPA shell; client router resolves the route. |

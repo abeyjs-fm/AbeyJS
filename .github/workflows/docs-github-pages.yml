@@ -34,6 +34,10 @@ jobs:
       - name: Install
         run: npm ci
 
+      # Workspace packages expose `types` from `dist/`; `dist` is not in git — `tsc` in docs/web needs it.
+      - name: Build @abeyjs/* packages
+        run: npm run build
+
       - name: Build docs (subpath = repo name, lowercase)
         run: |
           R=$(echo "${GITHUB_REPOSITORY##*/}" | tr "[:upper:]" "[:lower:]")
