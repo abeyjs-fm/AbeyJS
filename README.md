@@ -1,9 +1,9 @@
-# AbeyJs
+<h1 align="center">AbeyJs</h1>
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/images/imagotipo_drak.png">
-  <img alt="AbeyJs" src="docs/images/imagotipo_lite.png" width="480">
-</picture>
+<p align="center">
+  <img src="docs/images/imagotipo_lite.png#gh-light-mode-only" alt="AbeyJs" width="480" />
+  <img src="docs/images/imagotipo_drak.png#gh-dark-mode-only" alt="AbeyJs" width="480" />
+</p>
 
 **AbeyJs** is a **modular development framework** for building **behavior-rich** web applications with **TypeScript or JavaScript**, shipped as **`@abeyjs/*`** packages.
 
