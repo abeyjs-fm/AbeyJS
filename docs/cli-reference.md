@@ -10,11 +10,14 @@ What **`@abeyjs/cli`** publishes as stable contract. Flags missing here but show
 | **Project** — `@abeyjs/cli` in **`devDependencies`** (default in templates): from project root | `npx abeyjs …` (uses **`node_modules/.bin`**) |
 | **One-off** — no entry in `package.json` | `npx @abeyjs/cli …` |
 
+**Important:** `--template` must be followed by the **template name**, not another flag. Prefer `--template admin` or `--template=admin` or the shorthand **`--admin`**. **`--template --admin`** was previously misread — it is accepted now (second token is normalized), but **`abeyjs init appadmin --template admin`** remains the canonical form.
+
 **Global examples**
 
 ```bash
 abeyjs --help
 abeyjs init my-app --template admin
+abeyjs init my-app --admin
 ```
 
 **Local-to-project examples** (same subcommands, prefixed with `npx`):

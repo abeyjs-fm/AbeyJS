@@ -275,13 +275,15 @@ function buildHelp(): string {
     `  ${c("abeyjs create")} <folder> [options]    ${d("alias")}`,
     "",
     `    ${d("Options")}`,
-    `      --template ${c("admin")} | ${c("abeyjs")} | ${c("empty")} | ${c("minimal")}`,
+    `      --template ${c("admin")} | ${c("abeyjs")} | ${c("empty")} | ${c("minimal")}   ${d("or")} ${c("--template=admin")}`,
     `        ${d("abeyjs")} and ${d("empty")} are the same Vite + OM starter (${d("templates/empty")}).`,
     `        ${d("admin")} is the dashboard shell; ${d("minimal")} is a tiny workspace (${d("@abeyjs/core")} only).`,
-    `      --shell ${c("dashboard")} | ${c("appbar")}     ${d("only with --template admin")}`,
+    `      ${c("--admin")}             ${d("shorthand for")} ${c("--template admin")}`,
+    `      --shell ${c("dashboard")} | ${c("appbar")}     ${d("only with --template admin")}   ${d("or")} ${c("--shell=dashboard")}`,
     `      ${c("--skip-install")}     ${d("Skip automatic npm install after scaffold.")}`,
     "",
     `    ${d("Runs")} ${c("npm install")} ${d("in the new project unless")} ${c("--skip-install")} ${d("or")} SKIP_ABEYJS_SCAFFOLD_INSTALL=1.`,
+    `    ${d("Examples")}  ${c("abeyjs init")} my-app ${c("--template admin")}   ·   ${c("abeyjs init")} my-app ${c("--admin")}`,
     "",
     `${b("OpenAPI in an existing app")}`,
     `  ${c("abeyjs add openapi")} <folder>`,
@@ -351,6 +353,19 @@ ${list}
 type InitTemplate = "admin" | "abeyjs" | "minimal";
 type InitShell = "dashboard" | "appbar";
 
+/** Strips accidental leading `--` (e.g. user passes `--template --admin`). */
+function normalizeInitTemplate(raw: string): InitTemplate | null {
+  const t = raw.trim().replace(/^--+/u, "");
+  if (t === "admin" || t === "minimal") return t;
+  if (t === "empty" || t === "abeyjs") return "abeyjs";
+  return null;
+}
+
+function normalizeInitShell(raw: string): InitShell | null {
+  const s = raw.trim().replace(/^--+/u, "");
+  return s === "dashboard" || s === "appbar" ? s : null;
+}
+
 function toWorkspaceSafePackageName(raw: string): string {
   const base = raw.trim().toLowerCase();
   const cleaned = base
@@ -385,6 +400,7 @@ type ParseResult =
   | { kind: "connect"; swaggerUrl: string; target: string; insecure: boolean }
   | { kind: "generateViews"; target: string; scaffold: ScaffoldMode }
   | { kind: "generateEcosystem"; name: string; featureRoot?: string; target: string; showInNav?: boolean }
+  | { kind: "initSyntaxErr"; message: string }
   | { kind: "err" };
 
 function parseInitTemplate(a: string[]): {
@@ -393,32 +409,73 @@ function parseInitTemplate(a: string[]): {
   rest: string[];
   target?: string;
   skipInstall: boolean;
+  initError?: string;
 } {
   const rest: string[] = [];
   let template: InitTemplate = "abeyjs";
   let shell: InitShell = "dashboard";
   let target: string | undefined;
   let skipInstall = false;
+  let initError: string | undefined;
+
+  function setInitError(msg: string): void {
+    if (!initError) initError = msg;
+  }
+
   for (let i = 0; i < a.length; i += 1) {
     if (a[i] === "--skip-install") {
       skipInstall = true;
       continue;
     }
+    if (a[i] === "--admin") {
+      template = "admin";
+      continue;
+    }
+    if (a[i]?.startsWith("--template=")) {
+      const raw = a[i]!.slice("--template=".length);
+      const t = normalizeInitTemplate(raw);
+      if (t !== null) {
+        template = t;
+        continue;
+      }
+      setInitError(`Invalid --template value ${JSON.stringify(raw)}. Expected admin, empty, abeyjs, minimal. Example: abeyjs init my-app --template admin`);
+      continue;
+    }
     if (a[i] === "--template" && a[i + 1]) {
-      const t = a[i + 1]! as string;
-      if (t === "admin" || t === "abeyjs" || t === "minimal" || t === "empty") {
-        template = t === "empty" ? "abeyjs" : t;
+      const raw = a[i + 1]!;
+      const t = normalizeInitTemplate(raw);
+      if (t !== null) {
+        template = t;
         i += 1;
         continue;
       }
+      setInitError(
+        `Invalid --template value ${JSON.stringify(raw)}. Expected admin, empty, abeyjs, minimal (not "--admin" twice — use: abeyjs init my-app --template admin).`,
+      );
+      i += 1;
+      continue;
+    }
+    if (a[i]?.startsWith("--shell=")) {
+      const raw = a[i]!.slice("--shell=".length);
+      const s = normalizeInitShell(raw);
+      if (s !== null) {
+        shell = s;
+        continue;
+      }
+      setInitError(`Invalid --shell value ${JSON.stringify(raw)}. Expected dashboard or appbar.`);
+      continue;
     }
     if (a[i] === "--shell" && a[i + 1]) {
-      const s = a[i + 1]! as string;
-      if (s === "dashboard" || s === "appbar") {
+      const raw = a[i + 1]!;
+      const s = normalizeInitShell(raw);
+      if (s !== null) {
         shell = s;
         i += 1;
         continue;
       }
+      setInitError(`Invalid --shell value ${JSON.stringify(raw)}. Expected dashboard or appbar.`);
+      i += 1;
+      continue;
     }
     if (a[i] === "--target" && a[i + 1]) {
       target = a[i + 1]!;
@@ -431,7 +488,7 @@ function parseInitTemplate(a: string[]): {
     }
     rest.push(a[i]!);
   }
-  return { template, shell, rest, target, skipInstall };
+  return { template, shell, rest, target, skipInstall, initError };
 }
 
 function parseArgs(argv: string[]): ParseResult {
@@ -446,10 +503,19 @@ function parseArgs(argv: string[]): ParseResult {
     return { kind: "help" };
   }
   if (a[0] === "init" || a[0] === "new" || a[0] === "create") {
-    const { rest, template, shell, target, skipInstall } = parseInitTemplate(a.slice(1));
-    const fromArg = target ?? rest[0];
+    const parsed = parseInitTemplate(a.slice(1));
+    if (parsed.initError) {
+      return { kind: "initSyntaxErr", message: parsed.initError };
+    }
+    const fromArg = parsed.target ?? parsed.rest[0];
     const fromNpmConfig = process.env.npm_config_target;
-    return { kind: "init", target: fromArg ?? fromNpmConfig, template, shell, skipInstall };
+    return {
+      kind: "init",
+      target: fromArg ?? fromNpmConfig,
+      template: parsed.template,
+      shell: parsed.shell,
+      skipInstall: parsed.skipInstall,
+    };
   }
   if (a[0] === "add" && a[1] === "openapi") {
     const fromPositional = a[2] && !a[2].startsWith("--") ? a[2] : undefined;
@@ -707,6 +773,11 @@ async function askGenerateEntities(candidates: string[]): Promise<string[] | nul
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 async function run() {
   const p = parseArgs(process.argv);
+  if (p.kind === "initSyntaxErr") {
+    // eslint-disable-next-line no-console
+    console.error(p.message);
+    process.exit(1);
+  }
   if (p.kind === "err") {
     const argv = process.argv.slice(2);
     if (

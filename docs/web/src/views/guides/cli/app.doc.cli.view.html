@@ -22,9 +22,11 @@
 <td><code>npx @abeyjs/cli …</code></td>
 </tr>
 </tbody></table>
+<p><strong>Important:</strong> <code>--template</code> must be followed by the <strong>template name</strong>, not another flag. Prefer <code>--template admin</code> or <code>--template=admin</code> or the shorthand <strong><code>--admin</code></strong>. <strong><code>--template --admin</code></strong> was previously misread — it is accepted now (second token is normalized), but <strong><code>abeyjs init appadmin --template admin</code></strong> remains the canonical form.</p>
 <p><strong>Global examples</strong></p>
 <pre><code class="language-bash">abeyjs --help
 abeyjs init my-app --template admin
+abeyjs init my-app --admin
 </code></pre>
 <p><strong>Local-to-project examples</strong> (same subcommands, prefixed with <code>npx</code>):</p>
 <pre><code class="language-bash">npx abeyjs --help
