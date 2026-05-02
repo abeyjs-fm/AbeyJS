@@ -50,8 +50,12 @@ GitHub Pages for a **project site** serves the SPA under **`https://<user>.githu
 
 ### Repo settings
 
+Do this **before** relying on **`docs-github-pages.yml`**. Without it, **`actions/configure-pages`** returns **404** (**“Get Pages site failed”** / **`HttpError: Not Found`**) — there is nothing for the Pages API to read until Actions is chosen as the source.
+
 1. **Settings → Pages → Build and deployment**
 2. **Source**: **GitHub Actions** (not “Deploy from a branch” unless you intentionally use `gh-pages`).
+
+Alternatively, [actions/configure-pages](https://github.com/actions/configure-pages) supports **`enablement: true`** with a Personal Access Token (not **`GITHUB_TOKEN`**) per that action’s docs; switching **Source → GitHub Actions** in settings is simpler for most repos.
 
 ### Workflow in this monorepo
 

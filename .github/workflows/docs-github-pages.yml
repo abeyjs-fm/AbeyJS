@@ -1,5 +1,8 @@
 # Builds `docs/web` and deploys to GitHub Pages (project site: https://<user>.github.io/<repo>/).
-# Enable: Settings → Pages → Build and deployment → Source: **GitHub Actions**.
+#
+# Prerequisite (once per repo): Settings → Pages → Build and deployment → Source: **GitHub Actions**.
+# If Source is unset or still “Deploy from a branch”, `actions/configure-pages` fails with
+# “Get Pages site failed” / HttpError: Not Found — the API has no GH Actions-backed site yet.
 
 name: Docs — GitHub Pages
 
