@@ -12,7 +12,7 @@
     "typescript": "^5.7.3"
   },
   "scripts": {
-    "build": "npm run build -w @abeyjs/core -w @abeyjs/state -w @abeyjs/validation -w @abeyjs/agents -w @abeyjs/flows -w @abeyjs/runtime -w @abeyjs/http -w @abeyjs/compiler -w @abeyjs/uikit -w @abeyjs/openapi -w @abeyjs/view -w @abeyjs/cli",
+    "build": "npm run build:packages",
     "build:packages": "node scripts/build-packages-sequential.cjs",
     "publish:packages": "npm run build:packages && node scripts/publish-packages.cjs",
     "example:scaffold": "node scripts/scaffold-example.cjs",
