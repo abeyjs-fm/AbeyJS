@@ -1,10 +1,10 @@
 /*
- * AbeyJs Docs — aspecto propio (marca, halos shell, scrollbar viewport, vistas `pageRoute`).
- * Va después de omega-default + `doc-shell.css` (plantilla / tokens prose).
+ * AbeyJs Docs — site-specific look (brand, shell halos, viewport scrollbar, `pageRoute` views).
+ * Loaded after omega-default + `doc-shell.css` (template / prose tokens).
  */
 
 :root {
-  /* Matiz secundario marca; `--abey-accent` viene del tema en `main.ts` */
+  /* Secondary brand tint; `--abey-accent` comes from theme in `main.ts` */
   --doc-brand-hue-2: #6848fc;
   --doc-brand-purple: #9d2cff;
   --doc-scrollbar-dark-thumb: rgba(100, 116, 139, 0.22);
@@ -18,7 +18,7 @@
   --doc-scrollbar-light-thumb-hover: rgba(71, 85, 105, 0.45);
 }
 
-/* ─── Barras del navegador (html/body) en sitio docs: discretas, sin botones ─── */
+/* ─── Browser scrollbars (html/body) on docs site: thin, no buttons ─── */
 html:has(.doc-site.abey--dark),
 html:has(.doc-site.abey--dark) body {
   scrollbar-width: thin;
@@ -126,7 +126,7 @@ html:has(.doc-site:not(.abey--dark)) body::-webkit-scrollbar-button {
 }
 
 /*
- * Sidebar / compact: placa de marca; halo suave desde `--abey-accent` y violeta marca.
+ * Sidebar / compact: brand plaque; soft halo from `--abey-accent` and brand purple.
  */
 .doc-site.abey-shell-app.abey--dark .abey-appbar__mark {
   background:
@@ -143,14 +143,14 @@ html:has(.doc-site:not(.abey--dark)) body::-webkit-scrollbar-button {
     0 10px 28px rgba(0, 0, 0, 0.45);
 }
 
-/* Contorno tenue sobre el tramo degradé — ayuda donde el vínculo tema/fondo siga siendo cercano. */
+/* Soft outline on the gradient stretch — helps when text/background contrast is still close. */
 .doc-site.abey-shell-app.abey--dark
   .abey-appbar__mark
   .abey-appbar__mark-title--tail {
   filter: drop-shadow(0 0.06em 0.14em rgba(2, 6, 23, 0.85));
 }
 
-/* Modo lite · sidebar: placa un poco más profunda + halos claros para que „Abey“ / „JS“ no se fundan. */
+/* Light mode · sidebar: slightly deeper plaque + light halos so “Abey” / “JS” stay readable. */
 .doc-site.abey-shell-app:not(.abey--dark)
   .abey-appbar--dashboard
   .abey-appbar__mark {
@@ -188,7 +188,7 @@ html:has(.doc-site:not(.abey--dark)) body::-webkit-scrollbar-button {
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
-/* Marca más grande en docs (**Abey / JS**, „docs”) — sidebar, compact y el resto de modos por defecto Omega. */
+/* Larger mark in docs (**Abey / JS**, “docs”) — sidebar, compact, and other default Omega modes. */
 .doc-site.abey-shell-app
   .abey-appbar--dashboard
   .abey-appbar__mark-heading
@@ -210,8 +210,8 @@ html:has(.doc-site:not(.abey--dark)) body::-webkit-scrollbar-button {
 }
 
 /*
- * Horizontal: Omega pone rejilla jewel (::before) + título/subtítulo → sensación “escalón” y doble badge.
- * En docs queremos sólo texto alineado (AbeyJs + docs).
+ * Horizontal: Omega adds jewel grid (::before) + title/subtitle → “step” feel and double badge.
+ * In docs we want plain aligned text only (AbeyJs + docs).
  */
 .doc-site.abey-shell-app
   .abey-shell[data-abey-nav-mode="horizontal"].abey-shell--dashboard
@@ -442,7 +442,7 @@ html:has(.doc-site:not(.abey--dark)) body::-webkit-scrollbar-button {
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
-/* Modo claro: doc con un poco de “glass” sobre Omega (persistencia tema claro sigue igual) */
+/* Light mode: doc with a bit of “glass” over Omega (light theme persistence unchanged) */
 
 .doc-site.abey-shell-app:not(.abey--dark)
   main.abey-outlet.abey-outlet--dashboard {
@@ -460,7 +460,7 @@ html:has(.doc-site:not(.abey--dark)) body::-webkit-scrollbar-button {
     var(--abey-bg, #f7fafc);
 }
 
-/* Scrollbar fina en el outlet (modo lite): igual idea que oscuro, sin flechas sobredimensionadas. */
+/* Thin scrollbar on outlet (light mode): same idea as dark, no oversized arrows. */
 .doc-site.abey-shell-app:not(.abey--dark) .abey-shell--dashboard .abey-outlet {
   scrollbar-width: thin;
   scrollbar-color: color-mix(
@@ -554,7 +554,7 @@ html:has(.doc-site:not(.abey--dark)) body::-webkit-scrollbar-button {
   background-clip: padding-box;
 }
 
-/* Ítem activo sidebar: halo “sky” legible sobre blanco (~`#ebf8ff`). */
+/* Active sidebar item: readable “sky” halo on white (~`#ebf8ff`). */
 .doc-site.abey-shell-app:not(.abey--dark)
   .abey-shell--dashboard
   .abey-sidebar
@@ -587,7 +587,7 @@ html:has(.doc-site:not(.abey--dark)) body::-webkit-scrollbar-button {
   );
 }
 
-/* ─── Sidebar layout fino sobre omega-default (densidad docs) ─── */
+/* ─── Tighter sidebar layout over omega-default (docs density) ─── */
 
 .doc-site.abey-shell-app .abey-sidebar__inner {
   padding-left: max(0.35rem, var(--abey-space-2, 8px));
@@ -601,7 +601,7 @@ html:has(.doc-site:not(.abey--dark)) body::-webkit-scrollbar-button {
   border-left-style: dashed;
 }
 
-/* pageRoute (`/guides`, `/omega`, 404): ancho completo del main; omega-default metía ~40rem si ganaba en cascada */
+/* pageRoute (`/guides`, `/omega`, 404): full main width; omega-default could win cascade at ~40rem */
 .doc-site.abey-shell-app main.abey-outlet .abey-page-hero {
   width: 100%;
   max-width: none;
@@ -660,7 +660,7 @@ html:has(.doc-site:not(.abey--dark)) body::-webkit-scrollbar-button {
   margin-top: 0.35rem;
 }
 
-/* omega-default limita `.abey-outlet p`; en hero declarativo queremos párrafos de ancho completo */
+/* omega-default caps `.abey-outlet p`; declarative hero needs full-width paragraphs */
 .doc-site.abey-shell-app main.abey-outlet .abey-page-hero p {
   max-width: none;
 }
@@ -728,8 +728,8 @@ html:has(.doc-site:not(.abey--dark)) body::-webkit-scrollbar-button {
 }
 
 /*
- * Pantallas anchas: dos columnas (título + lead | bloque lista) y altura mínima del panel
- * para que el contenido no quede “pegado arriba” en monitores grandes.
+ * Wide screens: two columns (title + lead | list block) and minimum panel height
+ * so content does not sit “stuck at the top” on large monitors.
  */
 @media (min-width: 1280px) {
   .doc-site.abey-shell-app
@@ -782,7 +782,7 @@ html:has(.doc-site:not(.abey--dark)) body::-webkit-scrollbar-button {
     margin-top: 0.75rem;
   }
 
-  /* Rutas sólo texto (sin card): un poco de aire vertical igual */
+  /* Text-only routes (no card): still add a bit of vertical breathing room */
   .doc-site.abey-shell-app
     main.abey-outlet
     .abey-page-hero:not(:has(.abey-starter-card)) {

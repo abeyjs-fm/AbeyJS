@@ -1,7 +1,7 @@
 /*
- * Entrada de estilos vía abey.json → /abey-styles.js.
- * Sitio docs: `./styles/doc-shell.css` (plantilla) + `doc-site-appearance.css` (marca),
- * importados en main.ts después de `omega-default.css`.
+ * Style entry via abey.json → /abey-styles.js.
+ * Docs site: `./styles/doc-shell.css` (template) + `doc-site-appearance.css` (branding),
+ * imported from main.ts after `omega-default.css`.
  */
 :root {
   --doc-abey-global-anchor: 0;

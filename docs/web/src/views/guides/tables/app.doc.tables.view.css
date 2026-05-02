@@ -1,3 +1,3 @@
 /*
- * Estilos específicos de esta guía (custom element de esta carpeta). Selectores compartidos `[data-role="doc-guide-root"]` y `[data-doc="markdown"]` se cargan vía `doc-guide.view.css` en el `.ts`.
+ * Guide-specific styles (this folder’s custom element). Shared `[data-role="doc-guide-root"]` and `[data-doc="markdown"]` load from `doc-guide.view.css` via the `.ts` file.
  */

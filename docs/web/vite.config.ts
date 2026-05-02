@@ -2,7 +2,7 @@ import { defineConfig } from "vite";
 import { createAbeyViteLogger } from "@abeyjs/view/dev/vite-logger";
 import { abeyVitePlugin } from "@abeyjs/compiler";
 
-/** GitHub Pages / subpath CI: **`DOCS_SITE_BASE=/RepoName/`** (must include leading and trailing slashes). Local dev omit → **`/`**. */
+/** GitHub Pages subpath CI: **`DOCS_SITE_BASE=/ExactRepoSlug/`** — casing must match the repo segment · **user**.github.io/**ExactRepoSlug**/ (leading + trailing `/`). Local dev: omit env → **`/`**. */
 function docsSiteBase(): string {
   const raw = process.env.DOCS_SITE_BASE?.trim();
   if (!raw || raw === "/" || raw === "") return "/";

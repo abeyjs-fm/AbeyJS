@@ -1,6 +1,6 @@
 /*
- * Capa compartida Markdown (`[data-role="doc-guide-root"]`, `[data-doc="markdown"]`) para todas las guías OM.
- * Importar en cada `app.doc.*.view.ts` antes del `*.view.css` colocalizado del componente.
+ * Shared Markdown layer (`[data-role="doc-guide-root"]`, `[data-doc="markdown"]`) for all OM guides.
+ * Import from each `app.doc.*.view.ts` before that component’s colocated `*.view.css`.
  */
 
 :host {
@@ -13,7 +13,7 @@
   scrollbar-width: thin;
   scrollbar-color: rgba(148, 163, 184, 0.22) transparent;
 
-  /* Tokens locales si el tema no define todos */
+  /* Local tokens when the theme does not define everything */
   --dg-accent: var(--abey-accent, #2e7dff);
   --dg-accent-soft: color-mix(in srgb, var(--dg-accent) 18%, transparent);
   --dg-surface: var(--abey-surface-elev, #ffffff);
@@ -110,14 +110,14 @@
   );
 }
 
-/* Sitio docs: host a ancho outlet; `--doc-prose-max` viene de doc-shell (+ tema en `#app`). */
+/* Docs site: host fills outlet width; `--doc-prose-max` comes from doc-shell (+ theme on `#app`). */
 :host-context(.doc-site.abey-shell-app) {
   width: 100%;
   max-width: none;
   margin-inline: 0;
 }
 
-/* Tarjeta `[data-role="doc-guide-root"]` al ancho completo del host (en lite el panel blanco ya no “flota” estrecho). */
+/* `[data-role="doc-guide-root"]` card full width of host (white panel no longer floats narrow in lite). */
 :host-context(.doc-site.abey-shell-app) [data-role="doc-guide-root"] {
   width: 100%;
   max-width: none;
@@ -157,7 +157,7 @@
   isolation: isolate;
 }
 
-/* Viñetas decorativas de fondo (no compiten con el texto) */
+/* Decorative background blobs (do not compete with text) */
 [data-role="doc-guide-root"]::after {
   content: "";
   position: absolute;
@@ -184,7 +184,7 @@
   );
 }
 
-/* Franja gradiente tipo “marcador” de guía */
+/* Guide “marker” gradient strip */
 [data-role="doc-guide-root"]::before {
   content: "";
   position: absolute;
@@ -252,7 +252,7 @@
   line-height: 1.74;
 }
 
-/* Primer párrafo: lead */
+/* First paragraph: lead */
 [data-doc="markdown"] > p:first-of-type {
   font-size: 1.08rem;
   line-height: 1.72;
@@ -370,7 +370,7 @@
   padding-left: 1.42rem;
 }
 
-/* Pasos numerados nivel raíz → tarjetas con badge */
+/* Top-level numbered steps → cards with badge */
 [data-doc="markdown"] > ol {
   counter-reset: dgstep;
   list-style: none;
@@ -519,7 +519,7 @@
 }
 
 [data-doc="markdown"] pre::before {
-  content: "Código";
+  content: "Code";
   position: absolute;
   left: 0.85rem;
   top: 0.58rem;
@@ -560,10 +560,10 @@
 
 [data-doc="markdown"] pre:has(code.language-text)::before,
 [data-doc="markdown"] pre:has(code.language-plain)::before {
-  content: "Texto";
+  content: "Text";
 }
 
-/* Brillo esquina en bloques código */
+/* Corner highlight on code blocks */
 [data-doc="markdown"] pre::after {
   content: "";
   position: absolute;
@@ -759,7 +759,7 @@
   opacity: 0.42;
 }
 
-/* Huérfanos del shell antiguo (si reaparecen) */
+/* Legacy shell orphans (if they reappear) */
 [data-role="doc-guide-host"] {
   min-height: 2rem;
 }

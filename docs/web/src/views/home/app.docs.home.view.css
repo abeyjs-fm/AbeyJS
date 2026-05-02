@@ -1,12 +1,12 @@
 /*
- * Landing docs (solo este componente, shadow DOM): hero, tarjetas y CTAs.
- * Tokens prose (`--doc-*` plantilla), marca viewport (`doc-site-appearance`) y tema Omega heredan al shadow.
+ * Docs landing (this component only, shadow DOM): hero, cards, CTAs.
+ * Prose tokens (`--doc-*` template), viewport branding (`doc-site-appearance`), and Omega theme leak into the shadow.
  */
 :host {
   display: block;
 }
 
-/* Hero en home (oscuro dentro del outlet claro típico de docs claros) */
+/* Home hero (dark inset inside typical light-docs outlet) */
 
 .doc-home {
   padding: 2rem 1.5rem 3.25rem;
@@ -426,7 +426,7 @@
   grid-template-columns: minmax(0, min(28rem, 100%));
 }
 
-/* Tarjetas de guía (solo home) */
+/* Guide cards (home only) */
 
 .doc-card {
   display: block;

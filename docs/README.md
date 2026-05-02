@@ -1,34 +1,36 @@
-# Documentación AbeyJs
+# AbeyJs documentation sources
 
 
 
-Los **`*.md` en esta carpeta** pueden usarse sólo como **fuente opcional**: el sitio **no** los importa en runtime. Las guías viven como OM en **`docs/web/src/views/guides/**`** (`*.view.html` + `*.view.ts`); editá los HTML ahí o regenerá desde Markdown.
+The **`*.md` files in this folder** are an **optional source**: the site **does not** import them at runtime. Guides ship as OM under **`docs/web/src/views/guides/**`** (`*.view.html` + `*.view.ts`); edit those HTML files directly or regenerate from Markdown.
 
 
 
-**Sitio navegable estilo docs de frameworks (sidebar + contenido prose):**
+**Framework-style docs site (sidebar + prose):**
 
 
 
-1. Desde la raíz del monorepo: `npm install` si aún no lo hiciste.
+1. From the monorepo root: `npm install` if you have not already.
 
-2. Tras cambiar los `*.md` que quieras reflejar: en **`docs/web`** ejecutá **`npm run generate:guides-html`** (regenera cada `app.doc.*.view.html`).
+2. After changing the `*.md` files you want reflected: in **`docs/web`** run **`npm run generate:guides-html`** (regenerates each `app.doc.*.view.html`).
 
-3. `npm run docs:dev` — abre Vite en el puerto **5190**.
+3. `npm run docs:dev` — Vite on port **5190**.
 
-4. `npm run docs:build` / `npm run docs:preview` para el build estático (`docs/web/dist`).
+4. `npm run docs:build` / `npm run docs:preview` for the static build (`docs/web/dist`).
 
-
-
-Código fuente del sitio: **`docs/web/`** (`bootstrapOmegaApp`, OM, tema omega + **`doc-shell.css`** + **`doc-guide.view.css`** en shadow de cada guía).
+**Production deploy (GitHub Pages):** see **`monorepo-desarrollo.md`** → *Publishing `docs/web` to GitHub Pages* (enable **GitHub Actions** as the Pages source, workflow **`.github/workflows/docs-github-pages.yml`**, **`DOCS_SITE_BASE`**, URL **`https://<user>.github.io/<repo>/`**).
 
 
 
-### Páginas (orden sugerido)
+Site source: **`docs/web/`** (`bootstrapOmegaApp`, OM, omega theme + **`doc-shell.css`** + **`doc-guide.view.css`** in each guide’s shadow root).
 
 
 
-| Ruta web | Vistas OM |
+### Pages (suggested order)
+
+
+
+| Web route | OM views |
 
 |---------|-----------|
 
@@ -66,13 +68,13 @@ Código fuente del sitio: **`docs/web/`** (`bootstrapOmegaApp`, OM, tema omega +
 
 
 
-En cada carpeta hay **`*.view.ts`** y **`*.view.html`** con el mismo cuerpo prose. En el sitio, todas aparecen bajo el grupo **Guías** en el sidebar (índice en **`/guides`**).
+Each folder has **`*.view.ts`** and **`*.view.html`** with the same prose body. In the app they appear under **Guides** in the sidebar (index at **`/guides`**).
 
 
 
-### Mapa Markdown → generador (referencia)
+### Markdown → generator map (reference)
 
 
 
-Si regenerás desde `docs/*.md`: `intro-abeyjs.md`, `quick-start.md`, `view-bootstrap-shell.md`, `view-routing.md`, `view-abey-component.md`, `view-data-driven.md`, `omega-overview.md`, `cli-reference.md`, `monorepo-desarrollo.md`, `vision-omegax.md`, `abey-templates.md`, `crud-automatico-omegax.md`, `security-omegax.md`, `abey-table.md`, `abey-table-flows.md`, `entidad-modelo-y-formularios.md` (ver `docs/web/scripts/generate-guide-html.mjs`).
+If you regenerate from `docs/*.md`: `intro-abeyjs.md`, `quick-start.md`, `view-bootstrap-shell.md`, `view-routing.md`, `view-abey-component.md`, `view-data-driven.md`, `omega-overview.md`, `cli-reference.md`, `monorepo-desarrollo.md`, `vision-omegax.md`, `abey-templates.md`, `crud-automatico-omegax.md`, `security-omegax.md`, `abey-table.md`, `abey-table-flows.md`, `entidad-modelo-y-formularios.md` (see `docs/web/scripts/generate-guide-html.mjs`).
 

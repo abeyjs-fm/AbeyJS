@@ -65,14 +65,14 @@ File: **`.github/workflows/docs-github-pages.yml`**
 |------|---------|
 | `npm ci` | Install workspaces (linked `packages/*`). |
 | `npm run build` (root) | Runs **`build:packages`** — each **`@abeyjs/*`** workspace one after another (**`scripts/abeyjs-workspace-order.cjs`**, **`view` before `openapi`**). That guarantees **`dist/index.d.ts`** exists before dependents’ **`tsc`**. Omitting this in CI yields **`TS2307`** (**`dist`** is not in git). Running `openapi`'s `tsc` before `view` has written **`dist/`** — e.g. concurrent workspace builds from a long **`npm run build -w …`** list — causes the same failure. |
-| `DOCS_SITE_BASE="/<repo-lowercase>/"` | Vite **`base`** for **`docs/web`** (`vite.config.ts` reads **`process.env.DOCS_SITE_BASE`**; default **`/`** when unset → local **`npm run docs:dev`** unchanged). |
+| **`DOCS_SITE_BASE`** | Vite **`base`** for **`docs/web`** — CI sets **`/` + `${GITHUB_REPOSITORY##*/}` + `/`** using the **exact repository name casing**. GitHub Pages URLs are **case-sensitive**; a lowercased slug when the repo is **`AbeyJS`** makes **`index.html`** request **`/abeyjs/assets/...`** while the site is served under **`/AbeyJS/`** → **404** on JS/CSS. Locally omit env → **`/`** via `vite.config.ts`. |
 | `npm run docs:build` | Root script → **`abeyjs-docs-web`** **`tsc` + `vite build`**. |
 | Copy **`index.html` → `404.html`** | So deep links (**`/guides/quick-start`**, etc.) return the SPA shell; client router resolves the route. |
 | **`.nojekyll`** | Disables Jekyll so files GitHub might ignore otherwise are kept. |
 
 Triggers: **`push`** to **`main`** or **`master`**, plus **`workflow_dispatch`**. The artifact is deployed with **`actions/deploy-pages`**.
 
-Published URL follows GitHub rules (repo segment is **lowercase** in practice); the workflow lowercases **`${GITHUB_REPOSITORY##*/}`** when building **`DOCS_SITE_BASE`**.
+The workflow sets **`DOCS_SITE_BASE`** from **`${GITHUB_REPOSITORY##*/}`** (exact repository name casing from GitHub).
 
 ### **`@abeyjs/view`** support (`pathnameBase`)
 
