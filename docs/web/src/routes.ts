@@ -8,6 +8,8 @@ import type {
 import { componentRoute, pageRoute } from "@abeyjs/view";
 import { getOmegaPkgRoutes } from "./omega-pkg-routes.js";
 
+/** New doc routes: add the same path to `vite-doc-spa-paths.ts` so GitHub Pages serves `…/path/index.html` (HTTP 200). */
+
 /**
  * Sidebar: **Guides** (OM) and **Tools** (`/omega`, one child per `@abeyjs/*` package).
  */

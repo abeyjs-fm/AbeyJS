@@ -1,31 +1,44 @@
-import { defineConfig, type Plugin } from "vite";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { defineConfig, loadEnv, type Plugin } from "vite";
 import { createAbeyViteLogger } from "@abeyjs/view/dev/vite-logger";
 import { abeyVitePlugin } from "@abeyjs/compiler";
+import { DOC_SPA_HTML_FALLBACK_PATHS } from "./vite-doc-spa-paths.js";
 
-/** Fallback when **`DOC_SITE_ORIGIN`** unset (canonical / Open Graph URLs must be absolute). */
-const DEFAULT_DOC_SITE_ORIGIN = "https://abeyjs-fm.github.io/AbeyJS";
-
-function resolveDocSiteOrigin(): string {
+function resolveDocSiteOrigin(
+  mode: string,
+  envFiles: Record<string, string>,
+): string {
   const raw =
     process.env.DOC_SITE_ORIGIN?.trim() ||
     process.env.DOCS_SITE_ORIGIN?.trim() ||
+    envFiles.DOC_SITE_ORIGIN?.trim() ||
+    envFiles.DOCS_SITE_ORIGIN?.trim() ||
     "";
-  const chosen = raw || DEFAULT_DOC_SITE_ORIGIN;
-  return chosen.replace(/\/+$/, "");
+  const stripped = raw.replace(/\/+$/, "");
+  if (stripped) return stripped;
+  if (mode === "production") {
+    throw new Error(
+      "[docs/web] DOC_SITE_ORIGIN (or DOCS_SITE_ORIGIN) is required for production build. Set docs/web/.env.production or export the variable (see .env.example).",
+    );
+  }
+  // Dev: placeholders in index.html when no .env.development value.
+  return "http://localhost:5190";
 }
 
 /**
- * **`%DOC_SITE_ORIGIN%`** in **`index.html`** → **`https://&lt;user&gt;.github.io/&lt;repo&gt;`** without trailing slash
- * (**`DOC_SITE_ORIGIN`** / **`DOCS_SITE_ORIGIN`** in CI or `.env.development.local`).
+ * Replaces **`%DOC_SITE_ORIGIN%`** in **`index.html`** (no trailing slash).
+ * Priority: **`process.env`** (e.g. CI), then **`loadEnv`** (`.env`, `.env.[mode]`). See **`docs/web/.env.example`**.
  */
-function docsSeoIndexHtml(): Plugin {
+function docsSeoIndexHtml(getOrigin: () => string): Plugin {
   const description =
     "AbeyJs framework documentation — Omega runtime, OM templates, routed shell (@abeyjs/view), CLI, OpenAPI-assisted CRUD, tables, forms, and monorepo guides.";
   return {
     name: "docs-seo-index-html",
     enforce: "pre",
     transformIndexHtml(html) {
-      const origin = resolveDocSiteOrigin();
+      const origin = getOrigin();
       const patched = html.replace(/%DOC_SITE_ORIGIN%/g, origin);
       const ld = {
         "@context": "https://schema.org",
@@ -61,18 +74,52 @@ function docsSiteBase(): string {
   return withSlash.endsWith("/") ? withSlash : `${withSlash}/`;
 }
 
+/**
+ * Copies root **`dist/index.html`** under each **`DOC_SPA_HTML_FALLBACK_PATHS`** (**`vite-doc-spa-paths.ts`**).
+ * Keeps vite config independent of **`src/routes.ts`** (OM imports).
+ * @see `docs/monorepo-desarrollo.md` — **SPA deep links on GitHub Pages**.
+ */
+function docsSpaHtmlFallbackDirs(): Plugin {
+  let outDirAbs = "";
+  return {
+    name: "docs-spa-html-fallback-dirs",
+    apply: "build",
+    enforce: "post",
+    configResolved(cfg) {
+      outDirAbs = path.resolve(cfg.root, cfg.build.outDir);
+    },
+    closeBundle() {
+      const indexPath = path.join(outDirAbs, "index.html");
+      const html = readFileSync(indexPath, "utf8");
+      for (const pathname of DOC_SPA_HTML_FALLBACK_PATHS) {
+        const relDir = pathname.replace(/^\//, "");
+        const targetDir = path.join(outDirAbs, relDir);
+        mkdirSync(targetDir, { recursive: true });
+        writeFileSync(path.join(targetDir, "index.html"), html, "utf8");
+      }
+    },
+  };
+}
+
+const configDir = path.dirname(fileURLToPath(import.meta.url));
+
 /** Framework docs SPA: OM guides (`*.view.html`). */
-export default defineConfig({
-  appType: "spa",
-  base: docsSiteBase(),
-  publicDir: "public",
-  clearScreen: false,
-  customLogger: createAbeyViteLogger(),
-  plugins: [docsSeoIndexHtml(), abeyVitePlugin()],
-  server: {
-    port: 5190,
-  },
-  build: {
-    chunkSizeWarningLimit: 600,
-  },
+export default defineConfig(({ mode }) => {
+  const envFiles = loadEnv(mode, configDir, "");
+  const origin = (): string => resolveDocSiteOrigin(mode, envFiles);
+
+  return {
+    appType: "spa",
+    base: docsSiteBase(),
+    publicDir: "public",
+    clearScreen: false,
+    customLogger: createAbeyViteLogger(),
+    plugins: [docsSeoIndexHtml(origin), abeyVitePlugin(), docsSpaHtmlFallbackDirs()],
+    server: {
+      port: 5190,
+    },
+    build: {
+      chunkSizeWarningLimit: 600,
+    },
+  };
 });
