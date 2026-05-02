@@ -1,0 +1,114 @@
+---
+@Component({
+  selector: "app-alumnos-compiler",
+  aot: true,
+  state: {
+    count: 0,
+    query: "",
+    turno: "",
+    acepta: false,
+    nivel: "A",
+    turnos: [
+      { id: "manana", label: "Mañana" },
+      { id: "tarde", label: "Tarde" },
+    ],
+  },
+})
+---
+<section class="alu" style="padding:16px">
+  <header class="alu-head">
+    <div>
+      <h1 class="alu-h1">Alumnos (compiler demo)</h1>
+      <p class="alu-lead">Demo real del compiler: (click), [(model)], [class.*], [attr.*]</p>
+    </div>
+    <div class="alu-pills">
+      <span class="alu-pill">Count: {{ ctx.count }}</span>
+      <span class="alu-pill" [class.alu-pill--ok]="ctx.count % 2 === 0" [attr.title]="ctx.count">
+        Paridad: {{ ctx.count % 2 === 0 ? "par" : "impar" }}
+      </span>
+    </div>
+  </header>
+
+  <div style="display:flex;gap:8px;align-items:center;margin:12px 0">
+    <button class="alu-btn" type="button" (click)="ctx.count++">+1</button>
+    <button class="alu-btn" type="button" (click)="ctx.count = 0">Reset</button>
+  </div>
+
+  <label style="display:block;margin:10px 0">
+    Buscar:
+    <input
+      [(model)]="ctx.query"
+      [attr.placeholder]="'Escribí...'"
+      style="padding:8px;border:1px solid #ddd;border-radius:8px;min-width:240px"
+    />
+  </label>
+
+  <label style="display:block;margin:10px 0">
+    Turno:
+    <select
+      [(model)]="ctx.turno"
+      [items]="ctx.turnos"
+      [value]="id"
+      [name]="label"
+      style="padding:8px;border:1px solid #ddd;border-radius:8px;min-width:240px"
+    >
+      <option value="">(elegí)</option>
+    </select>
+  </label>
+
+  <label style="display:flex;gap:8px;align-items:center;margin:10px 0">
+    <input type="checkbox" [(model)]="ctx.acepta" />
+    Acepta términos
+  </label>
+
+  <div style="display:flex;gap:14px;align-items:center;margin:10px 0">
+    <label style="display:flex;gap:6px;align-items:center">
+      <input type="radio" name="nivel" value="A" [(model)]="ctx.nivel" />
+      Nivel A
+    </label>
+    <label style="display:flex;gap:6px;align-items:center">
+      <input type="radio" name="nivel" value="B" [(model)]="ctx.nivel" />
+      Nivel B
+    </label>
+  </div>
+
+  <div style="display:flex;gap:8px;align-items:center;margin:10px 0">
+    <button class="alu-btn" type="button" (click)="ctx.nivel = 'A'">Set A</button>
+    <button class="alu-btn" type="button" (click)="ctx.nivel = 'B'">Set B</button>
+    <span style="opacity:.75">debug: nivel={{ JSON.stringify(ctx.nivel) }}</span>
+  </div>
+
+  <p style="margin:0">
+    Query:
+    <strong [attr.title]="ctx.query">{{ ctx.query }}</strong>
+  </p>
+
+  <p style="margin:6px 0 0 0">
+    Turno={{ ctx.turno }} · Acepta={{ ctx.acepta }} · Nivel={{ ctx.nivel }}
+  </p>
+
+  <div style="margin-top:14px;display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+    <a href="/u/{{ ctx.query }}" target="_blank" rel="noreferrer">Link attr-mix</a>
+    <span [class]="{ ok: ctx.acepta, err: !ctx.acepta }">Class map</span>
+    <div
+      style="height:10px;border-radius:8px;background:#eee;min-width:80px"
+      [style.width.px]="ctx.count * 10"
+      [style]="{ backgroundColor: ctx.acepta ? '#3ddc97' : '#ff6b6b' }"
+      [attr.title]="'width=' + (ctx.count*10)"
+    ></div>
+  </div>
+
+  <div style="margin-top:14px">
+    <p *if="ctx.query.trim() !== ''">*if OK: query no vacío</p>
+    <ul>
+      <li *for="t of ctx.turnos">{{ t.label }}</li>
+    </ul>
+
+    @switch (ctx.nivel) {
+      @case ("A") { <p>Nivel A (switch)</p> }
+      @case ("B") { <p>Nivel B (switch)</p> }
+      @default { <p>Otro nivel</p> }
+    }
+  </div>
+</section> 
+

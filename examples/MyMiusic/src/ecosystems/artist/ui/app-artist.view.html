@@ -1,0 +1,51 @@
+<section class="abey-artist" data-role="artist-root">
+  <header class="abey-artist__hero">
+    <div class="abey-artist__heroGlow" aria-hidden="true"></div>
+    <div class="abey-artist__heroInner">
+      <div class="abey-artist__heroText">
+        <p class="abey-artist__eyebrow">AbeyJs</p>
+        <h1 class="abey-artist__title">Artistas</h1>
+        <p class="abey-artist__subtitle">Explorá y seleccioná desde el catálogo público.</p>
+      </div>
+      <div class="abey-artist__heroAside">
+        <span class="abey-artist__statusChip" data-role="artist-status" data-state="idle">{{ status }}</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="abey-artist__table">
+    <abey-table
+      selectable
+      loadNetwork="true"
+      flow="true"
+      intentload="{{ intentLoad }}"
+      intentselection="{{ intentSelection }}"
+      intentaction="{{ intentAction }}"
+      eventcolumns="{{ eventColumns }}"
+      eventactions="{{ eventActions }}"
+      eventitems="{{ eventItems }}"
+      pageSizes="10,20,30"
+      pageSize="10"
+      page="1"
+    >
+      <template data-abey-cell="name">
+        <div style="display:flex;align-items:center;gap:10px">
+          <img
+            data-abey-if="picture_small"
+            src="{{ picture_small }}"
+            alt="{{ name }}"
+            width="28"
+            height="28"
+            style="border-radius:999px;object-fit:cover"
+          />
+          <span>{{ name }}</span>
+        </div>
+      </template>
+
+      <template data-abey-cell="link">
+        <a data-abey-if="link" href="{{ link }}" target="_blank" rel="noreferrer">Open</a>
+      </template>
+    </abey-table>
+  </div>
+</section>
+

@@ -1,0 +1,24 @@
+<section style="padding:16px;max-width:720px;margin:0 auto;font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif">
+  <h1>Compiler test</h1>
+
+  <p>
+    Count:
+    <strong [class.ok]="ctx.count % 2 === 0" [attr.title]="ctx.count">{{ ctx.count }}</strong>
+  </p>
+
+  <div style="display:flex;gap:8px;align-items:center;margin:12px 0">
+    <button type="button" (click)="ctx.count++">+1</button>
+    <button type="button" (click)="ctx.count = 0">Reset</button>
+  </div>
+
+  <label style="display:block;margin:8px 0">
+    Text:
+    <input [(model)]="ctx.text" [attr.placeholder]="'Type here...'" />
+  </label>
+
+  <p>
+    Echo:
+    <span [attr.title]="ctx.text">{{ ctx.text }}</span>
+  </p>
+</section>
+

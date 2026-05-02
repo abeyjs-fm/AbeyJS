@@ -1,0 +1,42 @@
+{
+  "name": "@abeyjs/inspector",
+  "version": "0.1.0",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./app": {
+      "types": "./dist/app.d.ts",
+      "import": "./dist/app.js"
+    },
+    "./hub": {
+      "types": "./dist/hub-entry.d.ts",
+      "import": "./dist/hub-entry.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "hub": "node ./dist/cli.js"
+  },
+  "bin": {
+    "abeyjs-inspector-hub": "./dist/cli.js"
+  },
+  "dependencies": {
+    "@abeyjs/core": "0.1.0",
+    "@abeyjs/runtime": "0.1.0",
+    "ws": "^8.18.3"
+  },
+  "devDependencies": {
+    "@types/ws": "^8.18.0",
+    "typescript": "^5.7.0"
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "name": "@abeyjs/uikit",
+  "version": "0.1.0",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./styles/abey-table.css": "./styles/abey-table.css",
+    "./form-types": {
+      "types": "./dist/form/form-types.d.ts",
+      "import": "./dist/form/form-types.js"
+    },
+    "./mount-form": {
+      "types": "./dist/form/mount-form.d.ts",
+      "import": "./dist/form/mount-form.js"
+    },
+    "./abey-form-classes": {
+      "types": "./dist/abey-form-classes.d.ts",
+      "import": "./dist/abey-form-classes.js"
+    },
+    "./form-field-ui-types": {
+      "types": "./dist/form-field-ui-types.d.ts",
+      "import": "./dist/form-field-ui-types.js"
+    },
+    "./checkbox": {
+      "types": "./dist/checkbox/index.d.ts",
+      "import": "./dist/checkbox/index.js"
+    },
+    "./radio": {
+      "types": "./dist/radio/index.d.ts",
+      "import": "./dist/radio/index.js"
+    },
+    "./select": {
+      "types": "./dist/select/index.d.ts",
+      "import": "./dist/select/index.js"
+    },
+    "./input": {
+      "types": "./dist/input/index.d.ts",
+      "import": "./dist/input/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "styles"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@abeyjs/core": "0.1.0",
+    "@abeyjs/runtime": "0.1.0",
+    "@abeyjs/validation": "0.1.0",
+    "@abeyjs/state": "0.1.0"
+  },
+  "peerDependencies": {
+    "zod": "^3.24.0"
+  },
+  "peerDependenciesMeta": {
+    "zod": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "typescript": "^5.7.3",
+    "zod": "^3.24.0"
+  }
+}

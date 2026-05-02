@@ -1,0 +1,26 @@
+{
+  "name": "@abeyjs/cli",
+  "version": "0.1.0",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "abeyjs": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "templates"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "openapi-typescript": "^7.6.1",
+    "yaml": "^2.8.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0"
+  },
+  "peerDependencies": {
+    "typescript": ">=5.0.0"
+  }
+}

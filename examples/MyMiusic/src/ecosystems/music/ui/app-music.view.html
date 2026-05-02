@@ -1,0 +1,55 @@
+<section class="abey-music" data-role="music-root">
+  <header class="abey-music__hero">
+    <div class="abey-music__heroGlow" aria-hidden="true"></div>
+    <div class="abey-music__heroInner">
+      <div class="abey-music__heroText">
+        <p class="abey-music__eyebrow">AbeyJs</p>
+        <h1 class="abey-music__title">Music</h1>
+        <p class="abey-music__subtitle">Tracks: búsqueda en la tabla y paginación por red.</p>
+      </div>
+      <div class="abey-music__heroAside">
+        <span class="abey-music__statusChip" data-role="music-status" data-state="idle">{{ status }}</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="abey-music__table">
+    <abey-table
+      selectable
+      loadNetwork="true"
+      flow="true"
+      intentload="{{ intentLoad }}"
+      intentselection="{{ intentSelection }}"
+      intentaction="{{ intentAction }}"
+      eventcolumns="{{ eventColumns }}"
+      eventactions="{{ eventActions }}"
+      eventitems="{{ eventItems }}"
+      pageSizes="10,20,30"
+      pageSize="10"
+      page="1"
+    >
+      <template data-abey-cell="cover">
+        <img
+          data-abey-if="cover_small"
+          src="{{ cover_small }}"
+          alt=""
+          width="40"
+          height="40"
+          style="border-radius: 8px; object-fit: cover; display: block"
+        />
+      </template>
+
+      <template data-abey-cell="artist">
+        <div class="music-user-cell">
+          <span class="music-user-cell__avatar">{{ artistInitials }}</span>
+          <span class="music-user-cell__name">{{ artistName }}</span>
+        </div>
+      </template>
+
+      <template data-abey-cell="link">
+        <a data-abey-if="link" href="{{ link }}" target="_blank" rel="noreferrer">Abrir</a>
+      </template>
+    </abey-table>
+  </div>
+</section>
+

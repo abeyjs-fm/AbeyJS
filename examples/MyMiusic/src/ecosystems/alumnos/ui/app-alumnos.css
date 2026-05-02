@@ -1,0 +1,107 @@
+.alu {
+  padding: 16px;
+}
+
+.alu-head {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.alu-h1 {
+  margin: 0;
+  font-size: 20px;
+  line-height: 1.2;
+}
+
+.alu-lead {
+  margin: 6px 0 0;
+  color: var(--abey-muted, #6b7280);
+}
+
+.alu-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.alu-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: rgba(0, 0, 0, 0.02);
+  font-size: 12px;
+}
+
+.alu-toast {
+  margin: 10px 0 14px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.alu-toast--ok {
+  border-color: rgba(16, 185, 129, 0.35);
+  background: rgba(16, 185, 129, 0.09);
+}
+
+.alu-toast--err {
+  border-color: rgba(239, 68, 68, 0.35);
+  background: rgba(239, 68, 68, 0.08);
+}
+
+.alu-main {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 14px;
+}
+
+.alu-card {
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 14px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.65);
+}
+
+.alu-h2 {
+  margin: 0 0 10px;
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.alu-host {
+  width: 100%;
+}
+
+.alu-host abey-table.abey-table {
+  display: block;
+  width: 100%;
+}
+
+.alu-act {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+
+.alu-btn {
+  border: 1px solid rgba(0, 0, 0, 0.14);
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 12px;
+  padding: 10px 12px;
+  cursor: pointer;
+}
+
+@media (max-width: 1100px) {
+  .alu-main {
+    grid-template-columns: 1fr;
+  }
+}

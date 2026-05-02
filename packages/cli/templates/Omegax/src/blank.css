@@ -1,0 +1,22 @@
+.abey-blank {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px 18px;
+}
+.abey-blank h1 {
+  margin: 0 0 10px;
+  font-size: 32px;
+}
+.abey-blank p {
+  margin: 0 0 18px;
+  color: rgba(255, 255, 255, 0.7);
+}
+.abey-blank__list {
+  margin: 0;
+  padding-left: 18px;
+  color: rgba(255, 255, 255, 0.85);
+}
+.abey-blank__list code {
+  color: rgba(92, 200, 255, 0.95);
+}
+

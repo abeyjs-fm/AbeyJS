@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Omega Inspector</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <div class="topbar">
+      <div class="brand">OMEGA INSPECTOR</div>
+      <div class="muted">Flows • Events • VM Service</div>
+      <div id="status" class="pill" data-ok="false">DISCONNECTED</div>
+    </div>
+
+    <div class="wrap">
+      <div class="connect">
+        <input id="hubUrl" placeholder="Hub WS URL (ej: ws://127.0.0.1:7071)" />
+        <input id="appId" placeholder="App ID (ej: mymuisic-dev)" />
+        <input id="filter" placeholder="Filter (regex opcional)" />
+        <button id="btnConnect">Connect</button>
+      </div>
+      <div class="hint">
+        Tip: levantá el hub con <code>npm -w @abeyjs/inspector run hub</code> y conectá tu app con el bridge.
+      </div>
+
+      <div class="grid">
+        <div class="panel">
+          <h3>LIVE SESSION</h3>
+          <div class="body">
+            <div class="kv">
+              <div class="k">hub</div>
+              <div id="kvHub" class="v">-</div>
+              <div class="k">appId</div>
+              <div id="kvApp" class="v">-</div>
+              <div class="k">events</div>
+              <div id="kvCount" class="v">0</div>
+            </div>
+            <div style="height: 10px"></div>
+            <div class="row">
+              <button id="btnSnap" class="tinyBtn">Snapshot</button>
+              <button id="btnClear" class="tinyBtn">Clear</button>
+              <button id="btnPause" class="tinyBtn">Pause</button>
+              <button id="btnCopy" class="tinyBtn">Copy</button>
+              <button id="btnExport" class="tinyBtn">Export</button>
+              <div class="grow"></div>
+              <label class="toggle">
+                <input id="chkOnlyNet" type="checkbox" />
+                <span>Only network</span>
+              </label>
+              <label class="toggle">
+                <input id="chkAutoSnap" type="checkbox" checked />
+                <span>Auto-snapshot</span>
+              </label>
+              <label class="toggle">
+                <input id="chkAutoScroll" type="checkbox" checked />
+                <span>Auto-scroll</span>
+              </label>
+              <div class="muted" id="kvLast">-</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>EVENTS</h3>
+          <div class="tabs">
+            <button id="tabAll" class="tab" data-on="true">All</button>
+            <button id="tabNav" class="tab" data-on="false">Nav</button>
+            <button id="tabNet" class="tab" data-on="false">Network</button>
+          </div>
+          <div class="pager">
+            <button id="btnNewer" class="tinyBtn">Newer</button>
+            <div id="pageInfo" class="muted">Page 1/1</div>
+            <button id="btnOlder" class="tinyBtn">Older</button>
+          </div>
+          <div id="events" class="body events"></div>
+        </div>
+
+        <div class="panel">
+          <h3>DETAILS</h3>
+          <div class="body">
+            <pre id="details">{}</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
+

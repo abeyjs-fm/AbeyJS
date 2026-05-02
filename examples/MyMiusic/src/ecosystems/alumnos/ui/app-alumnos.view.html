@@ -1,0 +1,49 @@
+<section class="alu" data-role="alumnos-root">
+  <header class="alu-head">
+    <div>
+      <h1 class="alu-h1">Alumnos (CRUD de ejemplo)</h1>
+      <p class="alu-lead">
+        Ejemplo en memoria usando intents + agent/flow. No persiste: recargá y vuelve al sample.
+      </p>
+    </div>
+    <div class="alu-pills">
+      <span class="alu-pill">Registros: {{ stats.count }}</span>
+      <span class="alu-pill" [hidden]="stats.lastChangeAt === 0">Último cambio: {{ stats.lastChangeLabel }}</span>
+    </div>
+  </header>
+
+  <p
+    class="alu-toast"
+    [class.alu-toast--ok]="banner.tone === 'ok'"
+    [class.alu-toast--err]="banner.tone === 'err'"
+    [hidden]="banner.text === ''"
+    role="status"
+    [attr.aria-live]="'polite'"
+  >{{ banner.text }}</p>
+
+  <div class="alu-main">
+    <div class="alu-card">
+      <h2 class="alu-h2">Listado</h2>
+      <div class="alu-host">
+        <abey-table
+          data-role="alumnos-table"
+          flow="false"
+          loadNetwork="false"
+          autoload="false"
+          page="1"
+          pageSize="100"
+          pageSizes="100"
+          columns='[{"key":"nombres","header":"Nombres"},{"key":"email","header":"Email"},{"key":"edad","header":"Edad"},{"key":"grado","header":"Grado"},{"key":"artistaFavoritoId","header":"Artista"}]'
+          actions='[{"id":"edit","label":"Editar"},{"id":"delete","label":"Eliminar"}]'
+        ></abey-table>
+      </div>
+    </div>
+
+    <div class="alu-card">
+      <abey-form data-role="alumnos-form" flow="false"></abey-form>
+      <div class="alu-act">
+        <button class="alu-btn" type="button" data-action="clear-form" [hidden]="editingId === ''">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</section>

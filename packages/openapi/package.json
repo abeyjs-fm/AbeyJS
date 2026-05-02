@@ -1,0 +1,35 @@
+{
+  "name": "@abeyjs/openapi",
+  "version": "0.1.0",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@abeyjs/agents": "0.1.0",
+    "@abeyjs/core": "0.1.0",
+    "@abeyjs/runtime": "0.1.0",
+    "@abeyjs/state": "0.1.0",
+    "@abeyjs/http": "0.1.0",
+    "@abeyjs/uikit": "0.1.0",
+    "@abeyjs/validation": "0.1.0",
+    "@abeyjs/view": "0.1.0",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0"
+  }
+}

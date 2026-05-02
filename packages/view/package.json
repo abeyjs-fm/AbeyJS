@@ -1,0 +1,40 @@
+{
+  "name": "@abeyjs/view",
+  "version": "0.1.0",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./dev/vite-logger": {
+      "types": "./dist/dev/abey-vite-logger.d.ts",
+      "import": "./dist/dev/abey-vite-logger.js"
+    },
+    "./theme/omega-default.css": "./theme/omega-default.css"
+  },
+  "files": [
+    "dist",
+    "theme"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  },
+  "peerDependencies": {
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "zod": "^3.24.0"
+  },
+  "dependencies": {
+    "@abeyjs/core": "0.1.0",
+    "@abeyjs/runtime": "0.1.0",
+    "@abeyjs/state": "0.1.0",
+    "@abeyjs/uikit": "0.1.0",
+    "@abeyjs/validation": "0.1.0"
+  }
+}

@@ -1,0 +1,137 @@
+.abey-music {
+  --abey-music-gutter: clamp(1rem, 3vw, 1.5rem);
+  --abey-music-table-pad: 14px;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: min(1120px, 100%);
+  margin-inline: auto;
+  padding: 1rem var(--abey-music-gutter) 1.5rem;
+}
+
+.abey-music__hero {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1rem;
+  border: 1px solid color-mix(in srgb, CanvasText 10%, transparent);
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, #6366f1 14%, Canvas) 0%,
+    color-mix(in srgb, #a855f7 10%, Canvas) 45%,
+    Canvas 100%
+  );
+  box-shadow: 0 18px 40px color-mix(in srgb, #312e81 12%, transparent);
+}
+
+.abey-music__heroGlow {
+  position: absolute;
+  inset: -40% -20% auto;
+  height: 70%;
+  background: radial-gradient(ellipse at 50% 0%, color-mix(in srgb, #c4b5fd 35%, transparent), transparent 65%);
+  pointer-events: none;
+}
+
+.abey-music__heroInner {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem 1.5rem;
+  padding: 1.35rem var(--abey-music-table-pad) 1.35rem;
+}
+
+.abey-music__heroText {
+  min-width: 0;
+}
+
+.abey-music__eyebrow {
+  margin: 0 0 0.35rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, #4f46e5 55%, CanvasText);
+}
+
+.abey-music__title {
+  margin: 0 0 0.4rem;
+  font-size: clamp(1.45rem, 2.5vw, 1.85rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  color: CanvasText;
+}
+
+.abey-music__subtitle {
+  margin: 0;
+  max-width: 36rem;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  color: color-mix(in srgb, CanvasText 72%, transparent);
+}
+
+.abey-music__heroAside {
+  flex-shrink: 0;
+}
+
+.abey-music__statusChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: 0.01em;
+  border: 1px solid color-mix(in srgb, CanvasText 12%, transparent);
+  background: color-mix(in srgb, Canvas 88%, CanvasText 4%);
+  color: CanvasText;
+  box-shadow: 0 1px 0 color-mix(in srgb, CanvasText 6%, transparent);
+}
+
+.abey-music__statusChip[data-state="loading"] {
+  border-color: color-mix(in srgb, #d97706 35%, transparent);
+  background: color-mix(in srgb, #fffbeb 70%, Canvas);
+  color: color-mix(in srgb, #92400e 90%, CanvasText);
+}
+
+.abey-music__statusChip[data-state="success"] {
+  border-color: color-mix(in srgb, #16a34a 28%, transparent);
+  background: color-mix(in srgb, #ecfdf5 75%, Canvas);
+  color: color-mix(in srgb, #14532d 88%, CanvasText);
+}
+
+.abey-music__statusChip[data-state="error"] {
+  border-color: color-mix(in srgb, #dc2626 35%, transparent);
+  background: color-mix(in srgb, #fef2f2 78%, Canvas);
+  color: color-mix(in srgb, #991b1b 90%, CanvasText);
+}
+
+.abey-music__table {
+  padding: 1rem 0 0;
+}
+
+.music-user-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.music-user-cell__avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: color-mix(in srgb, CanvasText 12%, transparent);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  flex-shrink: 0;
+}
+
+.music-user-cell__name {
+  min-width: 0;
+}

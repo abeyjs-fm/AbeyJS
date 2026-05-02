@@ -1,0 +1,118 @@
+export type DomDiToken = string;
+
+export type DomDiFactory<T = unknown> = (ctx: { host: Element; token: DomDiToken }) => T;
+
+type ProviderDef =
+  | { kind: "value"; value: unknown }
+  | { kind: "factory"; factory: DomDiFactory };
+
+const PROVIDER_CACHE = new WeakMap<Element, unknown>();
+
+function resolveGlobalPath(path: string): unknown {
+  const parts = path.split(".").filter(Boolean);
+  let cur: unknown = globalThis as unknown;
+  for (const p of parts) {
+    if (cur == null || typeof cur !== "object") return undefined;
+    cur = (cur as Record<string, unknown>)[p];
+  }
+  return cur;
+}
+
+function parseJsonLoose(raw: string): unknown {
+  const s = raw.trim();
+  if (!s) return undefined;
+  try {
+    return JSON.parse(s);
+  } catch {
+    // fallback: string literal sin JSON
+    return s;
+  }
+}
+
+function getProviderDef(el: Element): { token: DomDiToken; def: ProviderDef } | null {
+  const token = (el.getAttribute("token") ?? "").trim();
+  if (!token) return null;
+
+  const valueAttr = el.getAttribute("use-value");
+  if (valueAttr != null) {
+    return { token, def: { kind: "value", value: parseJsonLoose(valueAttr) } };
+  }
+
+  const factoryPath = (el.getAttribute("use-factory") ?? "").trim();
+  if (factoryPath) {
+    const fn = resolveGlobalPath(factoryPath);
+    if (typeof fn === "function") {
+      return { token, def: { kind: "factory", factory: fn as DomDiFactory } };
+    }
+    return { token, def: { kind: "factory", factory: () => undefined } };
+  }
+
+  return { token, def: { kind: "value", value: undefined } };
+}
+
+function computeProviderValue(el: Element, token: DomDiToken): unknown {
+  if (PROVIDER_CACHE.has(el)) return PROVIDER_CACHE.get(el);
+  const meta = getProviderDef(el);
+  if (!meta) return undefined;
+  let v: unknown = undefined;
+  if (meta.def.kind === "value") {
+    v = meta.def.value;
+  } else {
+    v = meta.def.factory({ host: el, token });
+  }
+  // No cachear `undefined`: permite que factories dependientes de runtime se resuelvan cuando aparezca.
+  if (v !== undefined) {
+    PROVIDER_CACHE.set(el, v);
+  }
+  return v;
+}
+
+/**
+ * Resuelve un token buscando el provider más cercano hacia arriba en el DOM:
+ * `<abey-provide token="x" ...>` dentro de scopes/containers.
+ */
+export function injectFromDom<T = unknown>(tokenRaw: DomDiToken, from: Element): T {
+  const token = tokenRaw.trim();
+  if (!token) {
+    throw new Error("injectFromDom: token vacío.");
+  }
+  const selector = `abey-provide[token="${CSS.escape(token)}"]`;
+  // 1) Provider local (dentro del propio componente / subtree)
+  const local = (from as ParentNode).querySelector?.(selector) ?? null;
+  // 2) Provider en el scope (hacia arriba)
+  const provider = local ?? from.closest(selector) ?? from.parentElement?.closest(selector) ?? null;
+  if (!provider) {
+    throw new Error(`injectFromDom: no se encontró provider para "${token}".`);
+  }
+  return computeProviderValue(provider, token) as T;
+}
+
+export function tryInjectFromDom<T = unknown>(tokenRaw: DomDiToken, from: Element): T | undefined {
+  try {
+    return injectFromDom<T>(tokenRaw, from);
+  } catch {
+    return undefined;
+  }
+}
+
+export class AbeyProvideElement extends HTMLElement {
+  static get observedAttributes(): string[] {
+    return ["token", "use-value", "use-factory"];
+  }
+
+  connectedCallback(): void {
+    this.setAttribute("data-abey-provide", "1");
+  }
+
+  attributeChangedCallback(): void {
+    // invalidate cache
+    PROVIDER_CACHE.delete(this);
+  }
+
+  static define(tagName = "abey-provide"): void {
+    if (!customElements.get(tagName)) {
+      customElements.define(tagName, AbeyProvideElement as CustomElementConstructor);
+    }
+  }
+}
+

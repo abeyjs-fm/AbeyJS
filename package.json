@@ -1,0 +1,27 @@
+{
+  "name": "abeyjs-monorepo",
+  "private": true,
+  "license": "MIT",
+  "author": "AbeyJs (https://github.com/abeyjs-fm)",
+  "workspaces": [
+    "packages/*",
+    "examples/*"
+  ],
+  "devDependencies": {
+    "typescript": "^5.7.3"
+  },
+  "scripts": {
+    "build": "npm run build -w @abeyjs/core -w @abeyjs/state -w @abeyjs/validation -w @abeyjs/agents -w @abeyjs/flows -w @abeyjs/runtime -w @abeyjs/http -w @abeyjs/compiler -w @abeyjs/uikit -w @abeyjs/openapi -w @abeyjs/view -w @abeyjs/cli",
+    "example:scaffold": "node scripts/scaffold-example.cjs",
+    "example:crud": "npm run dev -w @abeyjs/example-crud",
+    "example:starter": "npm run dev -w @abeyjs/example-starter",
+    "abeyjs:new": "npm run build -w @abeyjs/cli && node packages/cli/dist/cli.js init",
+    "abeyjs:new:landing": "npm run build -w @abeyjs/cli && node packages/cli/dist/cli.js init --template landing",
+    "abeyjs:new:appbar": "npm run build -w @abeyjs/cli && node packages/cli/dist/cli.js init --template admin --shell appbar",
+    "abeyjs:add:openapi": "npm run build -w @abeyjs/cli && node packages/cli/dist/cli.js add openapi",
+    "abeyjs:connect": "npm run build -w @abeyjs/cli && node packages/cli/dist/cli.js connect",
+    "abeyjs:generate:views": "npm run build -w @abeyjs/cli && node packages/cli/dist/cli.js generate views",
+    "abeyjs:generate:ecosystem": "npm run build -w @abeyjs/cli && node packages/cli/dist/cli.js generate ecosystem",
+    "abeyjs:generate:document": "node scripts/document-from-json.cjs"
+  }
+}
