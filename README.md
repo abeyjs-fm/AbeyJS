@@ -1,5 +1,10 @@
 # AbeyJs
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/imagotipo_drak.png">
+  <img alt="AbeyJs" src="docs/images/imagotipo_lite.png" width="480">
+</picture>
+
 **AbeyJs** is a **modular development framework** for building **behavior-rich** web applications with **TypeScript or JavaScript**, shipped as **`@abeyjs/*`** packages.
 
 The stack is **opinionated**: **one observable channel**, **explicit intents**, an **`OmegaRuntime`** composition root, **flows/agents**, **HTTP that publishes correlated traffic on that channel**, and **views on standard DOM** (compiled OM templates, custom elements, and imperative mounts). It stays **modular**: **no mandatory third-party view runtime**, and **you compose only the packages you need** from **`@abeyjs/*`**.
