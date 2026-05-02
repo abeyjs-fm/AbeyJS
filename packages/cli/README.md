@@ -116,7 +116,7 @@ Prints built-in usage text.
 
 ## Templates
 
-**`packages/cli/templates/`** contains **`admin`** and **`AbeyJs`** (note capital **O** folder name). **`minimal`** is generated in code — no template directory.
+**`packages/cli/templates/`** contains **`admin`** and **`empty`** (Vite + OM starter; **`abeyjs`** / **`empty`** CLI flags copy this folder). **`minimal`** is generated in code — no template directory.
 
 Layout, shell flags, and post-copy patches: **`templates/README.md`** in this package.
 

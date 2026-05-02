@@ -17,10 +17,10 @@ import {
 
 const usage = `abeyjs — AbeyJs helper CLI
 
-  abeyjs new <folder> [--template admin|abeyjs|minimal] [--shell dashboard|appbar]
+  abeyjs new <folder> [--template admin|abeyjs|empty|minimal] [--shell dashboard|appbar]
   abeyjs create <folder> [options]   (alias)
   abeyjs init <folder> [options]     (same as \`new\`: copy template in one step)
-      Scaffolds Vite+TS+AbeyJs. Templates \`abeyjs\` (default) and \`admin\` ship a runnable app;
+      Scaffolds Vite+TS+AbeyJs. Templates \`abeyjs\` / \`empty\` (same starter; disk: \`templates/empty\`) and \`admin\` ship a runnable app;
       \`minimal\` is a tiny workspace skeleton with only @abeyjs/core.
       \`--shell\` applies only to \`--template admin\`: \`dashboard\` = top bar + side nav + <main> (default);
       \`appbar\` = compact app bar + sidebar.
@@ -121,8 +121,8 @@ function parseInitTemplate(a: string[]): { template: InitTemplate; shell: InitSh
   for (let i = 0; i < a.length; i += 1) {
     if (a[i] === "--template" && a[i + 1]) {
       const t = a[i + 1]! as string;
-      if (t === "admin" || t === "abeyjs" || t === "minimal") {
-        template = t;
+      if (t === "admin" || t === "abeyjs" || t === "minimal" || t === "empty") {
+        template = t === "empty" ? "abeyjs" : t;
         i += 1;
         continue;
       }
@@ -471,9 +471,9 @@ async function run() {
     const dir = resolveFromInvocationDir(target);
     await mkdir(dir, { recursive: true });
     const packageRoot = fileURLToPath(new URL("..", import.meta.url));
-    const templateFolder = p.template === "abeyjs" ? "AbeyJs" : p.template;
+    const templateFolder = p.template === "abeyjs" ? "empty" : p.template;
     const from = join(packageRoot, "templates", templateFolder);
-    if (templateFolder === "admin" || templateFolder === "AbeyJs") {
+    if (templateFolder === "admin" || templateFolder === "empty") {
       await cp(from, dir, { recursive: true, force: true });
       // Ensure unique workspace package name (avoid collisions like "abeyjs-starter").
       await patchPackageJsonName(dir, target);
@@ -496,8 +496,8 @@ async function run() {
             : "";
       const readMeLine3 =
         p.template === "admin"
-          ? "3. Routes: src/routes.ts · home: src/views/home/home.ts (+ home.html/home.css) · intents/runtime: src/omegaSetup.ts · flows: src/flows · HTTP: src/services/http.ts (optional: --shell appbar)"
-          : "3. Routes: src/routes.ts · home: src/home/home.ts (+ home.html/home.css) · intents/runtime: src/omegaSetup.ts · environments: src/environment.ts · assets: public/";
+          ? "3. Routes: src/routes.ts · home: src/home/home.ts (+ home.html/home.css) · intents/runtime: src/omegaSetup.ts · flows: src/flows · HTTP: src/services/http.ts (optional: --shell appbar)"
+          : "3. Routes: src/routes.ts · home: src/views/home/ (app.home.view.html / .ts / .css) · intents/runtime: src/omegaSetup.ts · environments: src/environment.ts · assets: public/";
       await writeFile(
         join(dir, "README.txt"),
         [

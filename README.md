@@ -89,7 +89,7 @@ With **workspace** tooling you rarely publish each tarball separately locally; e
 
 ## Typical app creation flow
 
-1. **`abeyjs new`** (CLI) copies an **admin** or **AbeyJs** skeleton (`packages/cli/templates/`), including **`package.json`**, Vite, and **`omegaSetup.ts`** with **`createOmega()`**.
+1. **`abeyjs new`** (CLI) copies an **admin** or **`empty`** starter (`packages/cli/templates/`), including **`package.json`**, Vite, and **`omegaSetup.ts`** with **`createOmega()`** (use **`--template abeyjs`** or **`--template empty`** for the OM starter).
 2. **`main.ts`** typically combines **`registerAbeyJsUi()`**, **`bootstrapOmegaApp`**, and the **theme stylesheet** (`@abeyjs/view/theme/omega-default.css`).
 3. **`routes.ts`** wires **`componentRoute`**, **`pageRoute`**, **`lazyViewMount`**, etc., to **`AppRoute`** entries.
 4. OM screens import **`?raw`** or use **`abeyVitePlugin()`** so **`.view.html`/`.abey`** compile during dev/build.

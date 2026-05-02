@@ -3,7 +3,7 @@
  * que `templates/admin` (`@abeyjs/view/theme/omega-default.css` en `src/main.ts`).
  *
  *   npm run example:scaffold -- mi-app
- *   npm run example:scaffold -- otra --template landing
+ *   npm run example:scaffold -- otra --template empty
  *   npm run example:scaffold -- admin-demo --template admin --shell appbar
  */
 const { execFileSync } = require("node:child_process");
@@ -18,11 +18,11 @@ let name;
 for (let i = 0; i < raw.length; i += 1) {
   if (raw[i] === "--template" && raw[i + 1]) {
     const t = raw[i + 1];
-    if (t === "admin" || t === "landing" || t === "minimal") {
-      template = t;
+    if (t === "admin" || t === "abeyjs" || t === "empty" || t === "minimal") {
+      template = t === "empty" ? "abeyjs" : t;
     } else {
       // eslint-disable-next-line no-console
-      console.error("Usa: --template admin|landing|minimal");
+      console.error("Usa: --template admin|abeyjs|empty|minimal");
       process.exit(1);
     }
     i += 1;
@@ -46,7 +46,7 @@ for (let i = 0; i < raw.length; i += 1) {
 }
 if (!name) {
   // eslint-disable-next-line no-console
-  console.error("Uso: npm run example:scaffold -- <nombre> [--template admin|landing|minimal] [--shell dashboard|appbar]\n  Ej: npm run example:scaffold -- mi-app  (admin+shell dashboard = barra+sidebar+contenido)");
+  console.error("Uso: npm run example:scaffold -- <nombre> [--template admin|abeyjs|empty|minimal] [--shell dashboard|appbar]\n  Ej: npm run example:scaffold -- mi-app  (admin+shell dashboard = barra+sidebar+contenido)");
 
   process.exit(1);
 }

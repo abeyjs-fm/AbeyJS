@@ -36,11 +36,11 @@ Optional **`abey.json`** beside Vite **`root`** for global styles (**`packages/c
 
 ## Starters shipped with the CLI
 
-The **`AbeyJs`** template includes a compiled home view:
+The **`empty`** template (CLI flags **`--template abeyjs`** or **`--template empty`**) includes a compiled home view:
 
 - **`src/views/home/app.home.view.html`** + **`app.home.view.ts`** (`@AbeyComponent` wrapper).
 
-See **`packages/cli/templates/README.md`** for how **`admin`** / **`AbeyJs`** differ.
+See **`packages/cli/templates/README.md`** for how **`admin`** / **`empty`** differ.
 
 ---
 
