@@ -1,6 +1,6 @@
 {
   "name": "@abeyjs/inspector",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "license": "MIT",
   "publishConfig": {
     "access": "public"
@@ -34,8 +34,8 @@
     "abeyjs-inspector-hub": "./dist/cli.js"
   },
   "dependencies": {
-    "@abeyjs/core": "0.1.0",
-    "@abeyjs/runtime": "0.1.0",
+    "@abeyjs/core": "0.1.1",
+    "@abeyjs/runtime": "0.1.1",
     "ws": "^8.18.3"
   },
   "devDependencies": {

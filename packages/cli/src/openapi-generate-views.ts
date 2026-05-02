@@ -1599,8 +1599,8 @@ async function ensureDependencies(targetDir: string): Promise<void> {
   };
   pkg.dependencies = {
     ...pkg.dependencies,
-    "@abeyjs/http": "^0.1.0",
-    "@abeyjs/openapi": "^0.1.0",
+    "@abeyjs/http": "^0.1.1",
+    "@abeyjs/openapi": "^0.1.2",
   };
   await writeFile(pkgPath, JSON.stringify(pkg, null, 2) + "\n", "utf-8");
 }

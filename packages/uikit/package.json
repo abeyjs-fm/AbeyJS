@@ -1,6 +1,6 @@
 {
   "name": "@abeyjs/uikit",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "MIT",
   "publishConfig": {
     "access": "public"
@@ -56,10 +56,10 @@
     "build": "tsc -p tsconfig.json"
   },
   "dependencies": {
-    "@abeyjs/core": "0.1.0",
-    "@abeyjs/runtime": "0.1.0",
-    "@abeyjs/validation": "0.1.0",
-    "@abeyjs/state": "0.1.0"
+    "@abeyjs/core": "0.1.1",
+    "@abeyjs/runtime": "0.1.1",
+    "@abeyjs/validation": "0.1.1",
+    "@abeyjs/state": "0.1.1"
   },
   "peerDependencies": {
     "zod": "^3.24.0"

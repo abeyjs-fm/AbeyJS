@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@abeyjs/inspector": "^0.1.0"
+    "@abeyjs/inspector": "^0.1.2"
   },
   "devDependencies": {
     "typescript": "^5.7.0",

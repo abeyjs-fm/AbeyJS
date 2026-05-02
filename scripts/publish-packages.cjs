@@ -3,7 +3,7 @@
  * un orden estable entre workspaces).
  *
  * Requisitos: `npm login` con permiso en el scope `@abeyjs`, y versiones en cada
- * `package.json` que coincidan con las dependencias internas (`"0.1.0"`, etc.).
+ * `package.json` que coincidan con las dependencias internas (p.ej. `"0.1.1"`, `"0.1.2"`).
  *
  *   npm run publish:packages
  *   npm run publish:packages -- --dry-run

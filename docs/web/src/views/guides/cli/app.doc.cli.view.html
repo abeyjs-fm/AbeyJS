@@ -1,12 +1,36 @@
 <section data-role="doc-guide-root">
   <article data-doc="markdown">
-<p>What <strong><code>@abeyjs/cli</code></strong> publishes as stable contract. Flags missing here but shown in <strong><code>--help</code></strong> → <strong>trust the binary</strong> — we aim to avoid desync.<strong>Live implementation:</strong> <code>packages/cli/src/cli.ts</code>.</p>
-<h2>Install / invocation</h2>
-<pre><code class="language-bash">npx @abeyjs/cli --help
-# or global
-npm i -g @abeyjs/cli
-abeyjs --version
+<p>What <strong><code>@abeyjs/cli</code></strong> publishes as stable contract. Flags missing here but shown in <strong><code>--help</code></strong> → <strong>trust the binary</strong> — we aim to avoid desync. <strong>Live implementation:</strong> <code>packages/cli/src/cli.ts</code>.</p>
+<h2>Install and how you invoke it</h2>
+<table>
+<thead>
+<tr>
+<th>Setup</th>
+<th>Run</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Global</strong> — <code>npm install -g @abeyjs/cli</code>; <code>abeyjs</code> is on your <code>PATH</code></td>
+<td><code>abeyjs …</code></td>
+</tr>
+<tr>
+<td><strong>Project</strong> — <code>@abeyjs/cli</code> in <strong><code>devDependencies</code></strong> (default in templates): from project root</td>
+<td><code>npx abeyjs …</code> (uses <strong><code>node_modules/.bin</code></strong>)</td>
+</tr>
+<tr>
+<td><strong>One-off</strong> — no entry in <code>package.json</code></td>
+<td><code>npx @abeyjs/cli …</code></td>
+</tr>
+</tbody></table>
+<p><strong>Global examples</strong></p>
+<pre><code class="language-bash">abeyjs --help
+abeyjs init my-app --template admin
 </code></pre>
+<p><strong>Local-to-project examples</strong> (same subcommands, prefixed with <code>npx</code>):</p>
+<pre><code class="language-bash">npx abeyjs --help
+npx abeyjs generate views
+</code></pre>
+<p><strong>Shorthand in this page:</strong> section titles use <strong><code>abeyjs …</code></strong>. If you did <strong>not</strong> install globally, substitute <strong><code>npx abeyjs …</code></strong>.</p>
 <h2>Project commands</h2>
 <h3><code>new</code> · <code>init</code> · <code>create</code> (aliases)</h3>
 <p>Scaffold folder with Vite + TS + OM plugin.</p>
@@ -18,12 +42,12 @@ abeyjs --version
 </tr>
 </thead>
 <tbody><tr>
-<td>`--template admin</td>
-<td>abeyjs</td>
+<td><code>--template admin</code> · <code>abeyjs</code> · <code>empty</code> · <code>minimal</code></td>
+<td><code>empty</code> ≈ <strong><code>abeyjs</code></strong>. <strong><code>minimal</code></strong> ships fewer view files.</td>
 </tr>
 <tr>
-<td>`--shell dashboard</td>
-<td>appbar`</td>
+<td><code>--shell dashboard</code> · <code>appbar</code></td>
+<td><strong>Only</strong> with <strong><code>admin</code></strong> — sidebar vs compact app-bar layout.</td>
 </tr>
 <tr>
 <td><code>--skip-install</code></td>
@@ -50,7 +74,7 @@ abeyjs --version
 </tr>
 <tr>
 <td><code>--skip-install</code></td>
-<td></td>
+<td>Skip <code>npm install</code> after patching.</td>
 </tr>
 </tbody></table>
 <h3><code>abeyjs connect &lt;url-or-local-swagger-path&gt;</code></h3>
@@ -88,8 +112,8 @@ abeyjs --version
 <td>App root.</td>
 </tr>
 <tr>
-<td>`--scaffold minimal</td>
-<td>full`</td>
+<td><code>--scaffold minimal</code> · <code>full</code></td>
+<td>Or legacy <strong><code>--full-scaffold</code></strong>.</td>
 </tr>
 </tbody></table>
 <h3><code>abeyjs generate ecosystem &lt;PascalName&gt;</code></h3>
@@ -114,12 +138,13 @@ abeyjs --version
 <td>Add visible <strong><code>componentRoute</code></strong> in admin sidebar template.</td>
 </tr>
 </tbody></table>
-<h3><code>abeyjs codegen &lt;spec.yaml|json&gt; -o &lt;dir&gt;</code></h3>
+<h3><code>abeyjs codegen &lt;spec.yaml&gt;</code> / <code>&lt;spec.json&gt;</code> <code>-o &lt;dir&gt;</code></h3>
 <p><strong>openapi-typescript</strong> → path types + <strong><code>omegaSetup.generated.ts</code></strong> stub (does not replace domain logic). Useful typing baseline for huge OpenAPI.</p>
 <h2>AbeyJs monorepo utility (core dev)</h2>
+<p>Inside this repo, npm scripts call the CLI from the workspace (not necessarily global):</p>
 <pre><code class="language-bash">npm run abeyjs:generate:ecosystem -- MyModule --target examples/mi-admin
 </code></pre>
-<p>Root shorthand to avoid typoing <strong><code>node packages/cli/dist/cli.js</code></strong>.</p>
+<p>Shorthand to avoid <strong><code>node packages/cli/dist/cli.js</code></strong>. In <strong>an external app</strong>, use global <strong><code>abeyjs …</code></strong> or project-local <strong><code>npx abeyjs …</code></strong> as in the install table above.</p>
 <h2>More detail</h2>
 <p><code>packages/cli/README.md</code> accumulates release edge cases. README vs versioned binary divergence ⇒ <strong>file a bug</strong>.</p>
 <p>Next: <strong><code>/guides/monorepo</code></strong>.</p>

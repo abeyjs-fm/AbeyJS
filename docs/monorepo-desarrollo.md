@@ -24,6 +24,20 @@ The repo uses **npm workspaces**: publishable `packages/*`, demo `examples/*`, `
 
 Before a release version bump, review **`build:packages`** / **`publish:packages`** (maintainer sequence).
 
+## Published `dist` and Vite sourcemap warnings
+
+**`tsconfig.base.json`** compiles packages with **`sourceMap: false`** so published **`dist/`** does not include **`.map`** (or **`//# sourceMappingURL`**) that reference **`src/`** missing from the npm tarball — that mismatch is what triggers Vite’s *“Sourcemap … points to missing source files”*.
+
+**Consumers** must use **new publishes** (**`npm update @abeyjs/view …`**) after the maintainers bump versions; older tarballs still carry the old maps.
+
+**Workaround without upgrading yet:** from your app root (e.g. `prueba/`):
+
+```bash
+node path/to/AbeyJs/scripts/strip-abeyjs-sourcemaps-in-node-modules.cjs
+```
+
+It deletes **`node_modules/@abeyjs/*/dist/**/*.map`** and strips **`//# sourceMappingURL=`** lines from **`dist/**/*.js`**. Re-run **`npm install`** if you reinstall deps (it restores the originals).
+
 ## Working on `packages/view` without publishing
 
 With linked workspaces (`npm install` at root), `examples/*` resolves **`@abeyjs/view`** to the locally built tree after **`npm run build -w @abeyjs/view`** (or root build). TS changes missing in the consumer usually means **you forgot to build the package**—consumers do not transpile our raw src by default unless you add special path mapping.

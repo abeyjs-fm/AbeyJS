@@ -20,8 +20,8 @@ export async function addOpenapiToApp(targetDir: string, opts: AddOpenapiOpts): 
   const pkg = JSON.parse(await readFile(pkgPath, "utf-8")) as { dependencies?: Record<string, string> };
   pkg.dependencies = {
     ...pkg.dependencies,
-    "@abeyjs/openapi": "^0.1.0",
-    "@abeyjs/http": "^0.1.0",
+    "@abeyjs/openapi": "^0.1.2",
+    "@abeyjs/http": "^0.1.1",
   };
   await writeFile(pkgPath, JSON.stringify(pkg, null, 2) + "\n", "utf-8");
 

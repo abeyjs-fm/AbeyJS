@@ -13,6 +13,7 @@
   },
   "scripts": {
     "build": "npm run build:packages",
+    "clean:packages-dist": "node -e \"require('./scripts/clean-packages-dist.cjs').cleanPackagesDist(process.cwd())\"",
     "build:packages": "node scripts/build-packages-sequential.cjs",
     "publish:packages": "npm run build:packages && node scripts/publish-packages.cjs",
     "example:scaffold": "node scripts/scaffold-example.cjs",

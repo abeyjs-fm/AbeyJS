@@ -876,7 +876,7 @@ async function run() {
       scripts: {
         codegen: "abeyjs codegen ./openapi.json -o ./src/generated",
       },
-      dependencies: { "@abeyjs/core": "^0.1.0" },
+      dependencies: { "@abeyjs/core": "^0.1.1" },
     };
     await writeFile(join(dir, "package.json"), JSON.stringify(pkg, null, 2), "utf-8");
     await writeFile(

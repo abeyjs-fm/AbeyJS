@@ -1,6 +1,6 @@
 {
   "name": "@abeyjs/runtime",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "MIT",
   "publishConfig": {
     "access": "public"
@@ -22,8 +22,8 @@
     "build": "tsc -p tsconfig.json"
   },
   "dependencies": {
-    "@abeyjs/core": "0.1.0",
-    "@abeyjs/flows": "0.1.0"
+    "@abeyjs/core": "0.1.1",
+    "@abeyjs/flows": "0.1.1"
   },
   "devDependencies": {
     "typescript": "^5.7.0"

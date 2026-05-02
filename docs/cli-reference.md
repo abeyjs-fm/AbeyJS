@@ -1,15 +1,30 @@
 # `abeyjs` CLI — maintainer reference
 
-What **`@abeyjs/cli`** publishes as stable contract. Flags missing here but shown in **`--help`** → **trust the binary** — we aim to avoid desync.**Live implementation:** `packages/cli/src/cli.ts`.
+What **`@abeyjs/cli`** publishes as stable contract. Flags missing here but shown in **`--help`** → **trust the binary** — we aim to avoid desync. **Live implementation:** `packages/cli/src/cli.ts`.
 
-## Install / invocation
+## Install and how you invoke it
+
+| Setup | Run |
+|--------|-----|
+| **Global** — `npm install -g @abeyjs/cli`; `abeyjs` is on your `PATH` | `abeyjs …` |
+| **Project** — `@abeyjs/cli` in **`devDependencies`** (default in templates): from project root | `npx abeyjs …` (uses **`node_modules/.bin`**) |
+| **One-off** — no entry in `package.json` | `npx @abeyjs/cli …` |
+
+**Global examples**
 
 ```bash
-npx @abeyjs/cli --help
-# or global
-npm i -g @abeyjs/cli
-abeyjs --version
+abeyjs --help
+abeyjs init my-app --template admin
 ```
+
+**Local-to-project examples** (same subcommands, prefixed with `npx`):
+
+```bash
+npx abeyjs --help
+npx abeyjs generate views
+```
+
+**Shorthand in this page:** section titles use **`abeyjs …`**. If you did **not** install globally, substitute **`npx abeyjs …`**.
 
 ## Project commands
 
@@ -19,8 +34,8 @@ Scaffold folder with Vite + TS + OM plugin.
 
 | Flag | Effect |
 |------|--------|
-| `--template admin|abeyjs|empty|minimal` | `empty` ≈ **`abeyjs`**. **`minimal`** ships fewer view files. |
-| `--shell dashboard|appbar` | **Only** **`admin`** — sidebar vs compact app-bar layout. |
+| `--template admin` · `abeyjs` · `empty` · `minimal` | `empty` ≈ **`abeyjs`**. **`minimal`** ships fewer view files. |
+| `--shell dashboard` · `appbar` | **Only** with **`admin`** — sidebar vs compact app-bar layout. |
 | `--skip-install` | Skip **`npm install`**. Env **`SKIP_ABEYJS_SCAFFOLD_INSTALL=1`** mirrors post-CI behavior. |
 
 ## OpenAPI wiring
@@ -33,7 +48,7 @@ Inserts Vite proxies (`/api`, `/swagger` typical), `.env.example`, hooks markers
 |------|-----|
 | `--proxy <url>` | Backend default proxy (e.g. local Kestrel). |
 | `--openapi-path <path>` | Swagger JSON/YAML path on proxy host. |
-| `--skip-install` | |
+| `--skip-install` | Skip `npm install` after patching. |
 
 ### `abeyjs connect <url-or-local-swagger-path>`
 
@@ -57,7 +72,7 @@ Emit OM views + TS from connected contract.
 | Flag | |
 |------|--|
 | `--target` | App root. |
-| `--scaffold minimal|full` | **`full`** adds **`src/app`**, **`src/ui`**, infra per generator template. |
+| `--scaffold minimal` · `full` | Or legacy **`--full-scaffold`**. |
 
 ### `abeyjs generate ecosystem <PascalName>`
 
@@ -69,17 +84,19 @@ Vertical slice **`omega/` + `ui/`** plus example tick.
 | `--feature-root` | Subfolder under **`src/`** (must stay under src). |
 | `--show-nav` / `--no-show-nav` | Add visible **`componentRoute`** in admin sidebar template. |
 
-### `abeyjs codegen <spec.yaml|json> -o <dir>`
+### `abeyjs codegen <spec.yaml>` / `<spec.json>` `-o <dir>`
 
 **openapi-typescript** → path types + **`omegaSetup.generated.ts`** stub (does not replace domain logic). Useful typing baseline for huge OpenAPI.
 
 ## AbeyJs monorepo utility (core dev)
 
+Inside this repo, npm scripts call the CLI from the workspace (not necessarily global):
+
 ```bash
 npm run abeyjs:generate:ecosystem -- MyModule --target examples/mi-admin
 ```
 
-Root shorthand to avoid typoing **`node packages/cli/dist/cli.js`**.
+Shorthand to avoid **`node packages/cli/dist/cli.js`**. In **an external app**, use global **`abeyjs …`** or project-local **`npx abeyjs …`** as in the install table above.
 
 ## More detail
 
