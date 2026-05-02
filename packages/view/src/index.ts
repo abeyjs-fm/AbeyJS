@@ -18,7 +18,15 @@ export type {
   ViewField,
 } from "./view-types.js";
 export { applyViewTheme, ABEYJS_VIEW_BASE_CLASS, type ViewTheme } from "./view-theme.js";
-export { createPathRouter, normalizePathname, type PathRouter } from "./router/path-router.js";
+export {
+  createPathRouter,
+  normalizeBasename,
+  normalizePathname,
+  stripBasenameFromPathname,
+  withBasename,
+  type CreatePathRouterOptions,
+  type PathRouter,
+} from "./router/path-router.js";
 export { firstNavPath, matchAppRoute, type AppRoute, type AppRouteNavChild } from "./shell/app-routes.js";
 export {
   fetchSidebarNav,

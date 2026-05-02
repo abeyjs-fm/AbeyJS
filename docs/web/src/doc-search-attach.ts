@@ -3,6 +3,7 @@ import {
   searchDocItems,
   type DocSearchItem,
 } from "./doc-search-index.js";
+import { docsSiteHref } from "./docs-site-url.js";
 
 /** Mounts DOM + search behavior (landing / **`appBarInset`**). Returns **`dispose`** (aborts listeners). */
 export function attachDocSiteSearch(
@@ -62,8 +63,7 @@ export function attachDocSiteSearch(
   const empty = document.createElement("p");
   empty.className = "doc-find__msg";
   empty.hidden = true;
-  empty.innerHTML =
-    'No matches. Try another term or open the <a href="/guides">guides index</a>.';
+  empty.innerHTML = `No matches. Try another term or open the <a href="${docsSiteHref("/guides")}">guides index</a>.`;
 
   panel.append(hitlist, empty);
   wrap.append(form, panel);

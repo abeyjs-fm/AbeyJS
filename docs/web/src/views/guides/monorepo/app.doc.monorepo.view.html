@@ -72,5 +72,96 @@
 <h2>Framework vs docs PRs</h2>
 <p>Publishable runtime change → PR touches <code>packages/*</code> plus ideally a test or minimal repro. Docs-only explanatory change → <code>docs/*.md</code> + regenerate guide HTML.</p>
 <p>If you already read <strong><code>/guides/cli</code></strong>, next jump is often <strong><code>/guides/crud-auto</code></strong> (OpenAPI pipeline) or <strong><code>/guides/vision</code></strong> (product contract).</p>
+<hr>
+<h2>Publishing <code>docs/web</code> to GitHub Pages</h2>
+<p>GitHub Pages for a <strong>project site</strong> serves the SPA under <strong><code>https://&lt;user&gt;.github.io/&lt;repo&gt;/</code></strong>. Assets and the History API pathname include that <strong><code>/&lt;repo&gt;/</code></strong> segment, so the docs app and <strong><code>@abeyjs/view</code></strong> need an explicit base.</p>
+<h3>Repo settings</h3>
+<ol>
+<li><strong>Settings → Pages → Build and deployment</strong></li>
+<li><strong>Source</strong>: <strong>GitHub Actions</strong> (not “Deploy from a branch” unless you intentionally use <code>gh-pages</code>).</li>
+</ol>
+<h3>Workflow in this monorepo</h3>
+<p>File: <strong><code>.github/workflows/docs-github-pages.yml</code></strong></p>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>npm ci</code></td>
+<td>Install workspaces (linked <code>packages/*</code>).</td>
+</tr>
+<tr>
+<td><code>DOCS_SITE_BASE=&quot;/&lt;repo-lowercase&gt;/&quot;</code></td>
+<td>Vite <strong><code>base</code></strong> for <strong><code>docs/web</code></strong> (<code>vite.config.ts</code> reads <strong><code>process.env.DOCS_SITE_BASE</code></strong>; default <strong><code>/</code></strong> when unset → local <strong><code>npm run docs:dev</code></strong> unchanged).</td>
+</tr>
+<tr>
+<td><code>npm run docs:build</code></td>
+<td>Root script → <strong><code>abeyjs-docs-web</code></strong> <strong><code>tsc</code> + <code>vite build</code></strong>.</td>
+</tr>
+<tr>
+<td>Copy <strong><code>index.html</code> → <code>404.html</code></strong></td>
+<td>So deep links (<strong><code>/guides/quick-start</code></strong>, etc.) return the SPA shell; client router resolves the route.</td>
+</tr>
+<tr>
+<td><strong><code>.nojekyll</code></strong></td>
+<td>Disables Jekyll so files GitHub might ignore otherwise are kept.</td>
+</tr>
+</tbody></table>
+<p>Triggers: <strong><code>push</code></strong> to <strong><code>main</code></strong> or <strong><code>master</code></strong>, plus <strong><code>workflow_dispatch</code></strong>. The artifact is deployed with <strong><code>actions/deploy-pages</code></strong>.</p>
+<p>Published URL follows GitHub rules (repo segment is <strong>lowercase</strong> in practice); the workflow lowercases <strong><code>${GITHUB_REPOSITORY##*/}</code></strong> when building <strong><code>DOCS_SITE_BASE</code></strong>.</p>
+<h3><strong><code>@abeyjs/view</code></strong> support (<code>pathnameBase</code>)</h3>
+<p>For any AbeyJs SPA hosted under a subpath (not only this docs site):</p>
+<table>
+<thead>
+<tr>
+<th>Piece</th>
+<th>Behavior</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong><code>MountRoutedAppConfig.pathnameBase</code></strong></td>
+<td>Pass the same string as Vite <strong><code>import.meta.env.BASE_URL</code></strong> (typically ends with <strong><code>/</code></strong>, e.g. <strong><code>/AbeyJs/</code></strong>). Internally <strong><code>normalizeBasename</code></strong> strips trailing slashes where needed for path math.</td>
+</tr>
+<tr>
+<td><strong><code>createPathRouter({ basename })</code></strong></td>
+<td><strong><code>pathname</code></strong> <strong><code>getPath</code></strong> / <strong><code>pushState</code></strong> use app paths (<strong><code>/guides/...</code></strong>) while the browser URL includes the prefix (<strong><code>/{repo}/guides/...</code></strong>).</td>
+</tr>
+<tr>
+<td><strong>Shell sidebar links</strong></td>
+<td><strong><code>href</code></strong> is prefixed so “open in new tab” stays on the deployed site; clicks still <strong><code>navigate</code></strong> with app-relative paths (<strong><code>dataset.abey-path</code></strong> wins).</td>
+</tr>
+<tr>
+<td><strong><code>bootstrapOmegaApp</code> + <code>auth.publicPaths</code></strong></td>
+<td>Public path checks <strong><code>stripBasenameFromPathname</code></strong> against <strong><code>pathnameBase</code></strong>; <strong><code>redirectIfAuthed</code></strong> builds a full prefixed URL.</td>
+</tr>
+</tbody></table>
+<p>Exported helpers (<strong><code>normalizeBasename</code></strong>, <strong><code>withBasename</code></strong>, <strong><code>stripBasenameFromPathname</code></strong>) live in <strong><code>@abeyjs/view</code></strong> for custom glue if needed.</p>
+<h3>Docs-only helpers (<code>docs/web</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong><code>src/docs-site-url.ts</code></strong></td>
+<td>Builds prefixed **<code>href</code>**s and <strong><code>rewriteDocsSiteAnchors</code></strong> on static <strong><code>href=&quot;/...&quot;</code></strong> links in <strong><code>app.docs.home</code></strong> / <strong><code>app.docs.welcome</code></strong> shadow roots when <strong><code>BASE_URL</code> ≠ <code>/</code></strong>. Public welcome search uses <strong><code>docsSiteAssign</code></strong> because there is no shell <strong><code>router</code></strong> yet.</td>
+</tr>
+<tr>
+<td><strong><code>src/main.ts</code></strong></td>
+<td><strong><code>pathnameBase: import.meta.env.BASE_URL</code></strong> on <strong><code>shell</code></strong> so the authenticated docs shell tracks subpath routing.</td>
+</tr>
+</tbody></table>
+<h3>Local production check (optional)</h3>
+<pre><code class="language-bash">npm run docs:build
+npm run docs:preview -w abeyjs-docs-web   # vite preview · dist
+</code></pre>
+<p>Simulating <strong><code>DOCS_SITE_BASE</code></strong> for a subpath build: set the env var <strong>before</strong> <code>npm run docs:build</code> (CI uses Linux; no MSYS quirks). <strong>Git Bash on Windows</strong> can reinterpret values like <strong><code>/MyRepo/</code></strong> as disk paths—in that case preview without subpath or use WSL/Linux for subpath <strong><code>dist</code></strong> verification.</p>
+<h3>Custom domain (@ apex repo)</h3>
+<p>If the site is served at the apex of <strong><code>user.github.io</code></strong> with <strong><code>base: &#39;/&#39;</code></strong>, you do <strong>not</strong> need <strong><code>DOCS_SITE_BASE</code></strong> or <strong><code>pathnameBase</code></strong> overrides beyond defaults.</p>
   </article>
 </section>

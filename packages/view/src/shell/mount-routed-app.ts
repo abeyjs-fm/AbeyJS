@@ -1,4 +1,10 @@
-import { createPathRouter, normalizePathname } from "../router/path-router.js";
+import {
+  createPathRouter,
+  normalizeBasename,
+  normalizePathname,
+  stripBasenameFromPathname,
+  withBasename,
+} from "../router/path-router.js";
 import { firstNavPath, matchAppRoute, type AppRoute, type AppRouteNavChild } from "./app-routes.js";
 
 export type { AppRoute, AppRouteNavChild } from "./app-routes.js";
@@ -56,6 +62,11 @@ export type MountRoutedAppConfig = {
   subBrand?: string;
   variant: ShellVariant;
   routes: AppRoute[];
+  /**
+   * When the SPA is hosted under a subpath (**`/repo/`** on GitHub Pages, Vite **`base`**),
+   * set **`import.meta.env.BASE_URL`** (or the same **`/segment/`** string). Shell links and **`PathRouter`** use it.
+   */
+  pathnameBase?: string;
   /**
    * Dashboard-style chrome: colored logo stripe, rich app bar, icon+text sidebar.
    * Default **`true`** when **`variant === "admin"`**; **`false`** for the slimmer legacy bar only.
@@ -454,6 +465,8 @@ export function mountAppShell(
     nav: NavItem[];
     currentPath: string;
     onNavigate: (path: string) => void;
+    /** Same **`pathnameBase`** as **`MountRoutedAppConfig`** (`import.meta.env.BASE_URL` under GitHub Pages). */
+    pathnameBase?: string;
     /** Default **dashboard** chrome when omitted (**logo stripe**, actions row). */
     dashboardLayout?: boolean;
     logoMark?: string;
@@ -474,6 +487,7 @@ export function mountAppShell(
   setCurrentPath: (path: string) => void;
   dispose: () => void;
 } {
+  const pathnameBaseNorm = normalizeBasename(config.pathnameBase ?? "");
   const isDashboard = config.variant === "admin" && config.dashboardLayout !== false;
   /** Listeners **`document`** de menús app bar (cierra fuera del shell al **`dispose`**). */
   const disposeAppBarExtras: Array<() => void> = [];
@@ -585,7 +599,7 @@ export function mountAppShell(
       const hzNavRow = document.createElement("nav");
       hzNavRow.className = "abey-shell__nav-horizontal";
       hzNavRow.setAttribute("aria-label", "Principal");
-      fillHorizontalNav(hzNavRow, config.nav, config.currentPath, config.onNavigate, {
+      fillHorizontalNav(hzNavRow, config.nav, config.currentPath, config.onNavigate, pathnameBaseNorm, {
         withNavIcons: isDashboard,
       });
       row.appendChild(hzNavRow);
@@ -654,7 +668,7 @@ export function mountAppShell(
       const nav = document.createElement("nav");
       nav.className = "abey-appbar__nav";
       nav.setAttribute("aria-label", "Principal");
-      fillHorizontalNav(nav, config.nav, config.currentPath, config.onNavigate);
+      fillHorizontalNav(nav, config.nav, config.currentPath, config.onNavigate, pathnameBaseNorm);
       appbarIn.appendChild(nav);
     }
   }
@@ -684,7 +698,7 @@ export function mountAppShell(
       sideInner.className = "abey-sidebar__inner";
       const sn = document.createElement("div");
       sn.className = "abey-nav-stack";
-      appendSidebarNav(sn, config.nav, config.currentPath, config.onNavigate, isDashboard);
+      appendSidebarNav(sn, config.nav, config.currentPath, config.onNavigate, pathnameBaseNorm, isDashboard);
       sideInner.appendChild(sn);
       sNav.appendChild(toggle);
       sNav.appendChild(sideInner);
@@ -742,10 +756,25 @@ export function mountAppShell(
       return;
     }
     ev.preventDefault();
-    const path = h.split("?")[0] as string;
-    if (path) {
-      config.onNavigate(path);
+    const fromData = a.dataset.abeyPath?.trim();
+    let appPath: string;
+    if (fromData) {
+      appPath =
+        normalizePathname(fromData.startsWith("/") ? fromData : `/${fromData}`) === ""
+          ? "/"
+          : normalizePathname(fromData.startsWith("/") ? fromData : `/${fromData}`);
+    } else {
+      try {
+        const u = new URL(a.href, window.location.origin);
+        if (u.origin !== window.location.origin) return;
+        appPath = normalizePathname(
+          stripBasenameFromPathname(u.pathname || "/", pathnameBaseNorm || ""),
+        );
+      } catch {
+        return;
+      }
     }
+    config.onNavigate(appPath);
   };
   shellRoot.addEventListener("click", clickOff);
 
@@ -919,6 +948,7 @@ function appendSidebarNav(
   items: NavItem[],
   current: string,
   onNavigate: (p: string) => void,
+  pathnameBaseNorm: string,
   withNavIcons: boolean,
 ): void {
   const cur = normalizePathname(current);
@@ -957,13 +987,13 @@ function appendSidebarNav(
       }
       const subs = document.createElement("div");
       subs.className = "abey-nav-tree__subs";
-      appendSidebarNav(subs, it.children, current, onNavigate, withNavIcons);
+      appendSidebarNav(subs, it.children, current, onNavigate, pathnameBaseNorm, withNavIcons);
       details.appendChild(summary);
       details.appendChild(subs);
       parent.appendChild(details);
     } else {
       parent.appendChild(
-        makeNavLink(it, cur, onNavigate, "abey-nav-link--sidebar", withNavIcons ? { withNavIcons: true } : undefined),
+        makeNavLink(it, cur, onNavigate, "abey-nav-link--sidebar", pathnameBaseNorm, withNavIcons ? { withNavIcons: true } : undefined),
       );
     }
   }
@@ -1016,17 +1046,21 @@ function appendHorizontalPanelNav(
   cur: string,
   currentRaw: string,
   onNavigate: (p: string) => void,
+  pathnameBaseNorm: string,
   withNavIcons: boolean,
 ): void {
   for (const it of items) {
     if (it.children?.length) {
-      panel.appendChild(buildHorizontalNavGroup(it, cur, currentRaw, onNavigate, withNavIcons));
+      panel.appendChild(
+        buildHorizontalNavGroup(it, cur, currentRaw, onNavigate, pathnameBaseNorm, withNavIcons),
+      );
     } else {
       const a = makeNavLink(
         it,
         cur,
         onNavigate,
         "abey-nav-link--horizontal abey-nav-link--hz-drop",
+        pathnameBaseNorm,
         withNavIcons ? { withNavIcons: true } : undefined,
       );
       panel.appendChild(a);
@@ -1039,6 +1073,7 @@ function buildHorizontalNavGroup(
   cur: string,
   currentRaw: string,
   onNavigate: (p: string) => void,
+  pathnameBaseNorm: string,
   withNavIcons: boolean,
 ): HTMLElement {
   const details = document.createElement("details");
@@ -1055,7 +1090,7 @@ function buildHorizontalNavGroup(
   hzRenderSummary(summary, it, withNavIcons);
   const panel = document.createElement("div");
   panel.className = "abey-nav-hz__panel";
-  appendHorizontalPanelNav(panel, it.children ?? [], cur, currentRaw, onNavigate, withNavIcons);
+  appendHorizontalPanelNav(panel, it.children ?? [], cur, currentRaw, onNavigate, pathnameBaseNorm, withNavIcons);
   panel.addEventListener("click", (e) => {
     const t = e.target;
     if (!(t instanceof Element)) return;
@@ -1075,16 +1110,24 @@ function fillHorizontalNav(
   items: NavItem[],
   current: string,
   onNavigate: (p: string) => void,
+  pathnameBaseNorm: string,
   opts?: { withNavIcons?: boolean },
 ): void {
   const cur = normalizePathname(current);
   const withIc = !!opts?.withNavIcons;
   for (const it of items) {
     if (it.children?.length) {
-      el.appendChild(buildHorizontalNavGroup(it, cur, current, onNavigate, withIc));
+      el.appendChild(buildHorizontalNavGroup(it, cur, current, onNavigate, pathnameBaseNorm, withIc));
     } else {
       el.appendChild(
-        makeNavLink(it, cur, onNavigate, "abey-nav-link--horizontal", withIc ? { withNavIcons: true } : undefined),
+        makeNavLink(
+          it,
+          cur,
+          onNavigate,
+          "abey-nav-link--horizontal",
+          pathnameBaseNorm,
+          withIc ? { withNavIcons: true } : undefined,
+        ),
       );
     }
   }
@@ -1131,11 +1174,12 @@ function makeNavLink(
   current: string,
   onNavigate: (p: string) => void,
   extra: string,
+  pathnameBaseNorm: string,
   opts?: { withNavIcons?: boolean },
 ): HTMLAnchorElement {
   const a = document.createElement("a");
   a.className = `abey-nav-link ${extra}`.trim();
-  a.href = it.pathNorm;
+  a.href = pathnameBaseNorm ? withBasename(it.pathNorm, pathnameBaseNorm) : it.pathNorm;
   a.dataset.abeyPath = it.pathNorm;
   if (opts?.withNavIcons) {
     a.classList.add("abey-nav-link--with-icon");
@@ -1241,7 +1285,8 @@ export function mountRoutedApp(
   if (config.routes.length === 0) {
     throw new Error("mountRoutedApp: at least one route is required.");
   }
-  const router = createPathRouter();
+  const pathnameBaseNorm = normalizeBasename(config.pathnameBase ?? "");
+  const router = createPathRouter(pathnameBaseNorm ? { basename: pathnameBaseNorm } : undefined);
   const useDashboard = config.variant === "admin" && config.dashboardLayout !== false;
   const navList: NavItem[] = config.routes
     .filter((r) => r.path !== "*" && r.showInNav !== false && r.label.trim() !== "")
@@ -1306,6 +1351,7 @@ export function mountRoutedApp(
     nav: navList,
     currentPath: startPath,
     onNavigate: (p) => router.navigate(p),
+    pathnameBase: config.pathnameBase,
     dashboardLayout: useDashboard,
     logoMark: config.logoMark,
     brandLogoSrc: config.brandLogoSrc,

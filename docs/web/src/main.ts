@@ -56,6 +56,7 @@ const result = bootstrapOmegaApp(app, {
     rootClassName: "abey abey-app doc-site",
     sidebarMenuMode: "compact",
     /** Search bar shared with the landing page (`attachDocSiteSearch`). */
+    pathnameBase: import.meta.env.BASE_URL,
     appBarInset: docsShellSearchHost,
     /** No demo bell/mail placeholders in the docs shell. */
     appBarActions: [],

@@ -1,0 +1,52 @@
+# Builds `docs/web` and deploys to GitHub Pages (project site: https://<user>.github.io/<repo>/).
+# Enable: Settings → Pages → Build and deployment → Source: **GitHub Actions**.
+
+name: Docs — GitHub Pages
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages-docs
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Build docs (subpath = repo name, lowercase)
+        run: |
+          R=$(echo "${GITHUB_REPOSITORY##*/}" | tr "[:upper:]" "[:lower:]")
+          export DOCS_SITE_BASE="/$R/"
+          npm run docs:build
+          cp docs/web/dist/index.html docs/web/dist/404.html
+          touch docs/web/dist/.nojekyll
+
+      - uses: actions/configure-pages@v4
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/web/dist
+
+      - id: deployment
+        uses: actions/deploy-pages@v4
