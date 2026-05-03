@@ -10,23 +10,23 @@ function deezerRelayEnvBase(): string {
   return raw.length > 0 ? raw.replace(/\/+$/, "") : "";
 }
 
-/** Production build deployed without **`VITE_DEEZER_HTTP_BASE`**: no browser calls to Deezer (CORS); table demo uses **embedded sample rows** (`artist.demo-data`). */
+/**
+ * True when the production bundle was built **without** baking a Worker relay URL.
+ * The client still targets the Deezer API over the network, but the browser will only succeed
+ * if **`VITE_DEEZER_HTTP_BASE`** is set (CORS). Without it, requests hit **`https://api.deezer.com`**
+ * directly and are blocked by CORS.
+ */
 export function isDeezerProdRelayAbsent(): boolean {
   return import.meta.env.PROD && deezerRelayEnvBase() === "";
 }
 
-function productionDeezerRelayMissing(): boolean {
-  return isDeezerProdRelayAbsent();
-}
-
-/** Avoid repeating the offline-catalog notice if the HTTP factory resolves more than once. */
-let loggedDeezerOfflineCatalogNotice = false;
+let loggedDeezerProdCorsHint = false;
 
 /**
- * - **Dev**: Vite proxies `/api/deezer` → `https://api.deezer.com` (`vite.config.ts`).
- * - **Production (GitHub Pages, etc.)**: static hosts cannot proxy `/api/*`. Set
- *   **`VITE_DEEZER_HTTP_BASE`** to a CORS-aware relay URL (deploy `docs/web/edge/deezer-proxy`).
- *   Deezer omits permissive browser CORS — never call **`https://api.deezer.com`** from static prod without that relay.
+ * - **Dev**: Vite proxies **`/api/deezer`** → **`https://api.deezer.com`** (`vite.config.ts`).
+ * - **Production**: set **`VITE_DEEZER_HTTP_BASE`** to the Cloudflare Worker URL (`docs/web/edge/deezer-proxy`).
+ *   If unset, base falls back to **`https://api.deezer.com`** (same host the relay forwards to); that path
+ *   **fails in the browser** without CORS until the secret is configured at build time.
  */
 export function resolveDeezerOmegaHttpBaseUrl(): string {
   const fromEnv = deezerRelayEnvBase();
@@ -36,45 +36,31 @@ export function resolveDeezerOmegaHttpBaseUrl(): string {
   if (import.meta.env.DEV) {
     return "/api/deezer";
   }
-  // Prod without relay: dummy base (`fetch` is stubbed in `registerDeezerHttpModule`).
-  return "";
+  return "https://api.deezer.com";
 }
 
 /**
- * DI for the Deezer-backed table demo (`TOK_DEEZER_HTTP`).
- * @see `resolveDeezerOmegaHttpBaseUrl`
+ * DI for the Deezer-backed table demo (`TOK_DEEZER_HTTP`). Always uses real **`fetch`** against
+ * {@link resolveDeezerOmegaHttpBaseUrl} (no embedded catalog).
  */
 export function registerDeezerHttpModule(c: OmegaContainer, runtime: OmegaRuntime): void {
   c.provideFactory(TOK_DEEZER_HTTP, () => {
-    const stubRelay = productionDeezerRelayMissing();
+    const baseUrl = resolveDeezerOmegaHttpBaseUrl();
     if (
-      stubRelay &&
-      !loggedDeezerOfflineCatalogNotice &&
+      isDeezerProdRelayAbsent() &&
+      !loggedDeezerProdCorsHint &&
       typeof console !== "undefined" &&
-      typeof console.debug === "function"
+      typeof console.warn === "function"
     ) {
-      loggedDeezerOfflineCatalogNotice = true;
-      console.debug(
-        "[abeyjs-docs-web] Deezer demo: no VITE_DEEZER_HTTP_BASE — using offline sample catalog (pagination/search still work). For live API: deploy docs/web/edge/deezer-proxy and set Actions secret VITE_DEEZER_HTTP_BASE.",
+      loggedDeezerProdCorsHint = true;
+      console.warn(
+        "[abeyjs-docs-web] Deezer demo: build has no VITE_DEEZER_HTTP_BASE — requests go to https://api.deezer.com and the browser will block them (CORS). Deploy docs/web/edge/deezer-proxy and set the GitHub Actions secret so the SPA uses your Worker URL.",
       );
     }
-
-    const baseUrl =
-      stubRelay ? "https://deezer-demo-disabled.invalid" : resolveDeezerOmegaHttpBaseUrl();
-
-    const fetchImpl: typeof fetch | undefined = stubRelay
-      ? () =>
-          Promise.reject(
-            new Error(
-              "Deezer demo: configure VITE_DEEZER_HTTP_BASE (Workers relay URL). See docs/web/edge/deezer-proxy/README.md",
-            ),
-          )
-      : undefined;
 
     return createOmegaHttp({
       channel: runtime.channel,
       baseUrl,
-      fetch: fetchImpl,
       source: "deezer-api-docs",
       cache: { enabled: true, ttlMs: 30_000 },
     });
