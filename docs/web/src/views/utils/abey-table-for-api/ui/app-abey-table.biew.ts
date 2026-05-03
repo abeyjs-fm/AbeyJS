@@ -9,24 +9,24 @@ import type { DeezerArtist } from "../model/artist.types.js";
 
 function formatArtistExpression(expr: OmegaFlowExpression): { text: string; state: "idle" | "loading" | "success" | "error" | "info" } {
   const p = expr.payload;
-  if (expr.type === "loading") return { text: "Cargando artistas…", state: "loading" };
-  if (expr.type === "idle") return { text: "Listo", state: "idle" };
+  if (expr.type === "loading") return { text: "Loading artists…", state: "loading" };
+  if (expr.type === "idle") return { text: "Ready", state: "idle" };
   if (expr.type === "error" && p && typeof p === "object" && "message" in p && typeof (p as { message?: unknown }).message === "string") {
     return { text: (p as { message: string }).message, state: "error" };
   }
   if (expr.type === "success" && p && typeof p === "object" && "totalItems" in p) {
     const n = Number((p as { totalItems?: unknown }).totalItems);
     if (Number.isFinite(n)) {
-      return { text: `${n.toLocaleString()} en catálogo`, state: "success" };
+      return { text: `${n.toLocaleString()} in catalog`, state: "success" };
     }
   }
   if (expr.type === "tableSelection") {
     const ids = (p as { selectedIds?: string[] } | undefined)?.selectedIds ?? [];
-    return { text: ids.length ? `${ids.length} seleccionados` : "Sin selección", state: "info" };
+    return { text: ids.length ? `${ids.length} selected` : "None selected", state: "info" };
   }
   if (expr.type === "tableAction") {
     const a = (p as { actionId?: string; rowId?: string } | undefined)?.actionId ?? "?";
-    return { text: `Acción: ${a}`, state: "info" };
+    return { text: `Action: ${a}`, state: "info" };
   }
   return { text: expr.type, state: "info" };
 }
@@ -41,7 +41,7 @@ export class AppAbeyTableElement extends AbeyComponentElement {
   constructor() {
     super();
     this.state = {
-      status: "Listo",
+      status: "Ready",
       intentLoad: ArtistEcosystem.intentLoadTable,
       intentSelection: ArtistEcosystem.intentTableSelection,
       intentAction: ArtistEcosystem.intentTableAction,
