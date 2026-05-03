@@ -1,4 +1,4 @@
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { defineConfig, loadEnv, type Plugin } from "vite";
@@ -89,12 +89,32 @@ function docsSpaHtmlFallbackDirs(): Plugin {
     configResolved(cfg) {
       outDirAbs = path.resolve(cfg.root, cfg.build.outDir);
     },
-    closeBundle() {
-      const indexPath = path.join(outDirAbs, "index.html");
-      const html = readFileSync(indexPath, "utf8");
+    /**
+     * `closeBundle` can run before Vite persists `dist/index.html` (Rollup vs HTML emission order).
+     * `writeBundle` runs after emitted files are finalized; prefer in-memory asset from `bundle`.
+     */
+    writeBundle(outputOptions, bundle) {
+      const dir = outputOptions.dir ?? outDirAbs;
+      const fromBundle = bundle["index.html"];
+      let html: string;
+      if (fromBundle && fromBundle.type === "asset") {
+        const src = fromBundle.source;
+        html =
+          typeof src === "string"
+            ? src
+            : Buffer.from(src).toString("utf8");
+      } else {
+        const indexPath = path.join(dir, "index.html");
+        if (!existsSync(indexPath)) {
+          throw new Error(
+            `[docs-spa-html-fallback-dirs] Missing index.html in bundle and on disk (${indexPath}).`,
+          );
+        }
+        html = readFileSync(indexPath, "utf8");
+      }
       for (const pathname of DOC_SPA_HTML_FALLBACK_PATHS) {
         const relDir = pathname.replace(/^\//, "");
-        const targetDir = path.join(outDirAbs, relDir);
+        const targetDir = path.join(dir, relDir);
         mkdirSync(targetDir, { recursive: true });
         writeFileSync(path.join(targetDir, "index.html"), html, "utf8");
       }

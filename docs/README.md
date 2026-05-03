@@ -12,7 +12,7 @@ The **`*.md` files in this folder** are an **optional source**: the site **does 
 
 1. From the monorepo root: `npm install` if you have not already.
 
-2. After changing the `*.md` files you want reflected: in **`docs/web`** run **`npm run generate:guides-html`** (regenerates each `app.doc.*.view.html`).
+2. After changing the `*.md` files you want reflected: in **`docs/web`** run **`npm run generate:guides-html`** (regenerates each `app.doc.*.view.html`). For **what stays manual vs auto-generated**, see **`docs/web/README.md`** → *Manual vs generated vs reused*.
 
 3. `npm run docs:dev` — Vite on port **5190**.
 

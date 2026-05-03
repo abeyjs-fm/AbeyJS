@@ -2,6 +2,22 @@
 
 Vite SPA for guides, package cards, utilities. Maintainer cheat sheet:
 
+## Manual vs generated vs reused
+
+| Responsibility | Maintainer | Generated / toolchain | Reused shared assets |
+|----------------|------------|------------------------|----------------------|
+| Route **paths**, nav labels/icons, **`pageRoute` / `componentRoute`** loaders (`src/routes.ts`) | ✓ Always | — | `@abeyjs/view` route helpers/types |
+| **Package hub** routes/list (`omega-pkg-routes.ts`) and **utils** routes (`utils-routes.ts`) | ✓ When you add pages | — | — |
+| **Guide OM shell** (`*.view.ts`): imports, `doc-guide.view.css`, colocated CSS | ✓ Always | — | `src/views/guides/shared/doc-guide.view.css` (Markdown prose styling) |
+| Guide **document body** (`app.doc.*.view.html`) | ✓ Either edit HTML **or** author `docs/*.md` | **`npm run generate:guides-html`** overwrites snippet HTML from Markdown | Stable wrapper `<section data-role="doc-guide-root">` emitted by generator |
+| **New guide from Markdown**: map folder ↔ `.md` | ✓ Append one **`rows`** entry in **`scripts/generate-guide-html.mjs`** | Generator writes `*.view.html` | — |
+| **GitHub Pages** deep-link fallbacks (`dist/<path>/index.html`) | — | **`vite-doc-spa-paths.ts`** ← **`npm run docs:spa-paths:sync`** (runs on **`prebuild`**) reads routes from **`abey-spa-paths.config.json`** targets | **`@abeyjs/view`** `abey-sync-spa-paths`; **`vite.config.ts`** copies shell HTML only |
+| **`abey-spa-paths.config.json`** | ✓ Rarely — only when route paths live in **new TS files** the scanner must include (default: `routes.ts`, `omega-pkg-routes.ts`, `utils-routes.ts`) | — | CLI + AST in **`@abeyjs/view`** |
+| **`vite-doc-spa-paths.ts`** | ✗ Never edit | Regenerated output | Imported by **`vite.config.ts`** |
+| **Prod env** (`DOC_SITE_ORIGIN`, `DOCS_SITE_BASE`, Deezer relay URL, CI secrets) | ✓ Repo / Actions | — | **`.env.example`** documents vars |
+
+Summary: paths and components are authored once in **`routes.ts`** (and related route modules); **SPA path list for static hosting is not hand-maintained**. Prose stays in **`docs/*.md`** + **`generate-guide-html` mapping**, or fully hand-written HTML. **`prebuild`** keeps fallbacks aligned with AST-extracted routes.
+
 ## Scripts (`package.json`)
 
 | Script | Purpose |
