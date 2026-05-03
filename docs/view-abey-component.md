@@ -26,7 +26,7 @@ export class AppDashboard extends AbeyComponentElement {
     this.state = {
       title: "Dashboard",
       openPreferences() {
-        channel?.publish?.(/* … */);
+        channel?.publish?.(/* ... */);
       },
     };
     super.connectedCallback();
@@ -89,7 +89,7 @@ Either way in dev something is **`GET`**‑ing an impossible path.
 
 #### What you should do (short checklist)
 
-1. Open **`@AbeyComponent` { … }** for the screen / widget you shipped last.
+1. Open the **`@AbeyComponent`** class for that screen or widget—the decorator carries **selector**, **template**, and **styles**.
 2. If you did **`import x from "*.css?inline"`**, use **`stylesText: [x]`**, **not** **`stylesHrefs`**.
 3. If you meant a **globally linked stylesheet** via **`<link>`**, switch to **`import href from "*.css?url"`** (**or** `new URL(...)`) and keep **`stylesHrefs: [href]`**.
 4. Rebuild / refresh—the bogus requests stop.

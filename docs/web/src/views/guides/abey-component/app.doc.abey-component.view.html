@@ -21,7 +21,7 @@ export class AppDashboard extends AbeyComponentElement {
     this.state = {
       title: &quot;Dashboard&quot;,
       openPreferences() {
-        channel?.publish?.(/* … */);
+        channel?.publish?.(/* ... */);
       },
     };
     super.connectedCallback();
@@ -81,7 +81,7 @@ export class AppDashboard extends AbeyComponentElement {
 </ul>
 <h4>What you should do (short checklist)</h4>
 <ol>
-<li>Open <strong><code>@AbeyComponent</code> { … }</strong> for the screen / widget you shipped last.</li>
+<li>Open the <strong><code>@AbeyComponent</code></strong> class for that screen or widget—the decorator carries <strong>selector</strong>, <strong>template</strong>, and <strong>styles</strong>.</li>
 <li>If you did <strong><code>import x from &quot;*.css?inline&quot;</code></strong>, use <strong><code>stylesText: [x]</code></strong>, <strong>not</strong> <strong><code>stylesHrefs</code></strong>.</li>
 <li>If you meant a <strong>globally linked stylesheet</strong> via <strong><code>&lt;link&gt;</code></strong>, switch to <strong><code>import href from &quot;*.css?url&quot;</code></strong> (<strong>or</strong> <code>new URL(...)</code>) and keep <strong><code>stylesHrefs: [href]</code></strong>.</li>
 <li>Rebuild / refresh—the bogus requests stop.</li>

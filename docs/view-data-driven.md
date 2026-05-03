@@ -33,7 +33,7 @@ Declared **peerDependency** so field validation lines up with **`@abeyjs/validat
 
 ## **`DynamicCrudAgent`** integration pattern
 
-Typical shape: agent registers **`Entity/List`** intents, state exposes **`listView` / `formView`** defs. Your route runs **`mountListViewSync(outlet, { … })`** with the overrides your version expects (**good TS autocomplete** pays off when the API evolves). Broken typings vs runtime ⇒ treat as bug.
+Typical shape: agent registers **`Entity/List`** intents, state exposes **`listView` / `formView`** defs. Your route runs **`mountListViewSync(outlet, { ... })`** with the overrides your version expects (**good TS autocomplete** pays off when the API evolves). Broken typings vs runtime ⇒ treat as bug.
 
 ---
 

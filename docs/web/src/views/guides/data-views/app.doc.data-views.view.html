@@ -54,7 +54,7 @@
 <p>Declared <strong>peerDependency</strong> so field validation lines up with <strong><code>@abeyjs/validation</code></strong>. Install explicitly when bundlers prune dev deps.</p>
 <hr>
 <h2><strong><code>DynamicCrudAgent</code></strong> integration pattern</h2>
-<p>Typical shape: agent registers <strong><code>Entity/List</code></strong> intents, state exposes <strong><code>listView</code> / <code>formView</code></strong> defs. Your route runs <strong><code>mountListViewSync(outlet, { … })</code></strong> with the overrides your version expects (<strong>good TS autocomplete</strong> pays off when the API evolves). Broken typings vs runtime ⇒ treat as bug.</p>
+<p>Typical shape: agent registers <strong><code>Entity/List</code></strong> intents, state exposes <strong><code>listView</code> / <code>formView</code></strong> defs. Your route runs <strong><code>mountListViewSync(outlet, { ... })</code></strong> with the overrides your version expects (<strong>good TS autocomplete</strong> pays off when the API evolves). Broken typings vs runtime ⇒ treat as bug.</p>
 <hr>
 <h2>Manual fallback</h2>
 <p>When defs are not enough (<strong>complex custom column renderers</strong>):</p>
