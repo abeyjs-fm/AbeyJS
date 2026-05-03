@@ -1,43 +1,43 @@
 /**
- * Application paths (leading `/`, no repo basename) copied to `dist/<path>/index.html` after `vite build`,
- * so GitHub Pages returns HTTP 200 on deep links instead of only `404.html` with a 404 status.
- *
- * Full rationale and maintenance rules: `docs/monorepo-desarrollo.md` → **Publishing `docs/web` to GitHub Pages** →
- * **SPA deep links on GitHub Pages (`vite-doc-spa-paths.ts`)**.
- *
- * Keep this list in sync with `getRoutes()` in `src/routes.ts`.
+ * SPA deep-link HTML fallbacks on GitHub Pages (`dist/<path>/index.html` copies via `vite.config.ts`).
+ * 
+ * AUTO-GENERATED — do not edit by hand.
+ * Regenerate: `npm run docs:spa-paths:sync -w abeyjs-docs-web` or `abey-sync-spa-paths` (from `@abeyjs/view`; runs on `prebuild`).
+ * Config: `abey-spa-paths.config.json` in this folder.
  */
 export const DOC_SPA_HTML_FALLBACK_PATHS = [
-  "/panel",
+  "/abey-table",
   "/guides",
-  "/guides/intro",
-  "/guides/quick-start",
-  "/guides/bootstrap-shell",
-  "/guides/routing",
   "/guides/abey-component",
-  "/guides/data-views",
-  "/guides/runtime",
-  "/guides/cli",
-  "/guides/monorepo",
-  "/guides/vision",
   "/guides/abey-templates",
+  "/guides/bootstrap-shell",
+  "/guides/cli",
   "/guides/crud-auto",
-  "/guides/security",
-  "/guides/tables",
-  "/guides/table-flows",
+  "/guides/data-views",
   "/guides/entities-forms",
+  "/guides/intro",
+  "/guides/monorepo",
+  "/guides/quick-start",
+  "/guides/routing",
+  "/guides/runtime",
+  "/guides/security",
+  "/guides/table-flows",
+  "/guides/tables",
+  "/guides/vision",
   "/packages",
+  "/packages/agents",
+  "/packages/cli",
+  "/packages/compiler",
   "/packages/core",
+  "/packages/flows",
+  "/packages/http",
+  "/packages/inspector",
+  "/packages/openapi",
   "/packages/runtime",
   "/packages/state",
-  "/packages/view",
-  "/packages/compiler",
-  "/packages/cli",
-  "/packages/http",
-  "/packages/openapi",
-  "/packages/validation",
   "/packages/uikit",
-  "/packages/agents",
-  "/packages/flows",
-  "/packages/inspector",
+  "/packages/validation",
+  "/packages/view",
+  "/panel",
+  "/utils",
 ] as const satisfies readonly string[];

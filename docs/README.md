@@ -18,11 +18,11 @@ The **`*.md` files in this folder** are an **optional source**: the site **does 
 
 4. `npm run docs:build` / `npm run docs:preview` for the static build (`docs/web/dist`). Env vars used at build-time are **`DOC_SITE_ORIGIN`** (canonical / OG URLs) — see **`docs/web/.env.production`** (upstream default). **`docs/web/.env.example`** only documents variables for forks; it is **not** read by Vite.
 
-**Production deploy (GitHub Pages):** see **`monorepo-desarrollo.md`** → *Publishing `docs/web` to GitHub Pages* (enable **GitHub Actions** as the Pages source, workflow **`.github/workflows/docs-github-pages.yml`**, **`DOCS_SITE_BASE`**, URL **`https://<user>.github.io/<repo>/`**). **New routes:** that section also explains **SPA deep links** and **`docs/web/vite-doc-spa-paths.ts`** — add every new path there so deep URLs return **HTTP 200**, not a spurious **404** before the app loads.
+**Production deploy (GitHub Pages):** see **`monorepo-desarrollo.md`** → *Publishing `docs/web` to GitHub Pages* (enable **GitHub Actions** as the Pages source, workflow **`.github/workflows/docs-github-pages.yml`**, **`DOCS_SITE_BASE`**, URL **`https://<user>.github.io/<repo>/`**). **SPA deep links:** **`vite-doc-spa-paths.ts`** is generated from **`abey-spa-paths.config.json`** on **`prebuild`** (see **`docs/web/README.md`**).
 
 
 
-Site source: **`docs/web/`** (`bootstrapOmegaApp`, OM, **`omega-default.css`** theme + **`doc-shell.css`** + **`doc-guide.view.css`** in each guide’s shadow root).
+Site source: **`docs/web/`** — maintainer cheat sheet: **`docs/web/README.md`** (`bootstrapOmegaApp`, OM, **`omega-default.css`** theme + **`doc-shell.css`** + **`doc-guide.view.css`** in each guide’s shadow root).
 
 
 

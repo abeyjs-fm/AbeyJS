@@ -10,6 +10,7 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
+    "./package.json": "./package.json",
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
@@ -22,9 +23,21 @@
       "types": "./dist/dev/vite-malformed-uri-guard.d.ts",
       "import": "./dist/dev/vite-malformed-uri-guard.js"
     },
+    "./dev/sync-spa-html-fallback-paths": {
+      "types": "./dist/dev/sync-spa-html-fallback-paths.d.ts",
+      "import": "./dist/dev/sync-spa-html-fallback-paths.js"
+    },
+    "./dev/spa-fallback-paths-ast": {
+      "types": "./dist/dev/spa-fallback-paths-ast.d.ts",
+      "import": "./dist/dev/spa-fallback-paths-ast.js"
+    },
     "./theme/omega-default.css": "./theme/omega-default.css"
   },
+  "bin": {
+    "abey-sync-spa-paths": "./bin/abey-sync-spa-paths.js"
+  },
   "files": [
+    "bin",
     "dist",
     "theme"
   ],
@@ -43,6 +56,7 @@
     "@abeyjs/runtime": "0.1.1",
     "@abeyjs/state": "0.1.1",
     "@abeyjs/uikit": "0.1.1",
-    "@abeyjs/validation": "0.1.1"
+    "@abeyjs/validation": "0.1.1",
+    "typescript": "^5.7.0"
   }
 }

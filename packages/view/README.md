@@ -13,6 +13,8 @@ No React/other VDOM dependency — **`StateCell`** + incremental updates or comp
 | **`@abeyjs/view`** | Main barrel — see **`src/index.ts`**. |
 | **`@abeyjs/view/dev/vite-logger`** | Dev-only Vite log tag (**`[abey]`**); not bundled in typical app chunks. |
 | **`@abeyjs/view/dev/vite-malformed-uri-guard`** | Dev-only Vite plugin: answers **400** for illegal **`%`** paths before Vite’s static middleware throws (**`URI malformed`** spam). CLI templates include **`abeyViteMalformedUriGuard()`** by default. |
+| **`@abeyjs/view/dev/sync-spa-html-fallback-paths`** | **`syncSpaHtmlFallbackPaths({…})`** + AST helpers (**`spa-fallback-paths-ast`**) — generate a **`string[]`** of app paths from **`pageRoute` / `componentRoute`** sources for static-host **`index.html`** duplication (GitHub Pages deep links). |
+| **`bin` · `abey-sync-spa-paths`** | JSON-configured CLI (**`abey-sync-spa-paths --config abey-spa-paths.config.json`**). Wire **`prebuild`** in your Vite docs app instead of copying a bespoke script. |
 | **`@abeyjs/view/theme/omega-default.css`** | Default shell / layout tokens (**static** asset). |
 
 **Peer:** **`zod`**, **`vite`** (Vite subpath imports are config-time only).

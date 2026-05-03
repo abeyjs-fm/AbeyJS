@@ -6,6 +6,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "docs:spa-paths:sync": "node scripts/run-abey-sync-spa-paths.mjs",
+    "prebuild": "npm run docs:spa-paths:sync",
     "build": "tsc -p tsconfig.json && vite build",
     "preview": "vite preview",
     "generate:guides-html": "node scripts/generate-guide-html.mjs"

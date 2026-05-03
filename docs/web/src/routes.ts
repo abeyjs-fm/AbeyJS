@@ -9,7 +9,7 @@ import { componentRoute, pageRoute } from "@abeyjs/view";
 import { getOmegaPkgRoutes } from "./omega-pkg-routes.js";
 import { getUtilsRoutes } from "./utils-routes.js";
 
-/** New doc routes: add the same path to `vite-doc-spa-paths.ts` so GitHub Pages serves `…/path/index.html` (HTTP 200). */
+/** SPA fallbacks on static hosts: `abey-spa-paths.config.json` → `abey-sync-spa-paths` (`@abeyjs/view`); refresh with `npm run docs:spa-paths:sync -w abeyjs-docs-web` (runs on `prebuild`). */
 
 /**
  * Sidebar: **Guides** (OM) and **Tools** (`/packages`, one child per `@abeyjs/*` package).

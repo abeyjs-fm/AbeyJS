@@ -1,0 +1,23 @@
+{
+  "output": "vite-doc-spa-paths.ts",
+  "exportName": "DOC_SPA_HTML_FALLBACK_PATHS",
+  "headerComment": [
+    "SPA deep-link HTML fallbacks on GitHub Pages (`dist/<path>/index.html` copies via `vite.config.ts`).",
+    "",
+    "AUTO-GENERATED — do not edit by hand.",
+    "Regenerate: `npm run docs:spa-paths:sync -w abeyjs-docs-web` or `abey-sync-spa-paths` (from `@abeyjs/view`; runs on `prebuild`).",
+    "Config: `abey-spa-paths.config.json` in this folder."
+  ],
+  "files": [
+    { "path": "src/routes.ts", "navChildrenVar": "navChildren" },
+    {
+      "path": "src/omega-pkg-routes.ts",
+      "packageSlugs": {
+        "arrayName": "PKGS",
+        "slugField": "slug",
+        "pathPrefix": "/packages"
+      }
+    },
+    { "path": "src/utils-routes.ts", "pageRouteInlineNavChildren": true }
+  ]
+}
