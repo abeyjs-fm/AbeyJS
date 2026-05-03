@@ -19,6 +19,9 @@ function productionDeezerRelayMissing(): boolean {
   return isDeezerProdRelayAbsent();
 }
 
+/** Avoid repeating the offline-catalog notice if the HTTP factory resolves more than once. */
+let loggedDeezerOfflineCatalogNotice = false;
+
 /**
  * - **Dev**: Vite proxies `/api/deezer` → `https://api.deezer.com` (`vite.config.ts`).
  * - **Production (GitHub Pages, etc.)**: static hosts cannot proxy `/api/*`. Set
@@ -46,10 +49,12 @@ export function registerDeezerHttpModule(c: OmegaContainer, runtime: OmegaRuntim
     const stubRelay = productionDeezerRelayMissing();
     if (
       stubRelay &&
+      !loggedDeezerOfflineCatalogNotice &&
       typeof console !== "undefined" &&
-      typeof console.warn === "function"
+      typeof console.debug === "function"
     ) {
-      console.info(
+      loggedDeezerOfflineCatalogNotice = true;
+      console.debug(
         "[abeyjs-docs-web] Deezer demo: no VITE_DEEZER_HTTP_BASE — using offline sample catalog (pagination/search still work). For live API: deploy docs/web/edge/deezer-proxy and set Actions secret VITE_DEEZER_HTTP_BASE.",
       );
     }

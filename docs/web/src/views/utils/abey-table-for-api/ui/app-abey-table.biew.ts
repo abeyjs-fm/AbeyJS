@@ -52,7 +52,7 @@ export class AppAbeyTableElement extends AbeyComponentElement {
         getRowId: (r: DeezerArtist) => String(r.id),
       } satisfies AbeyTableConfig<DeezerArtist>,
       demoHint: isDeezerProdRelayAbsent()
-        ? "Sample catalog (no Deezer relay on this deployment). Pagination and search use embedded data — set Actions secret VITE_DEEZER_HTTP_BASE after deploying docs/web/edge/deezer-proxy for live API rows."
+        ? "Live rows need the Deezer relay: add GitHub Actions secret VITE_DEEZER_HTTP_BASE (Worker URL from docs/web/edge/deezer-proxy). Static hosts cannot call api.deezer.com from the browser (CORS); without the secret this page uses a tiny embedded sample only."
         : "Try searching for artists and changing pages: each action triggers a remote load.",
       intentLoad: ArtistEcosystem.intentLoadTable,
       intentSelection: ArtistEcosystem.intentTableSelection,
