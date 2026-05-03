@@ -352,6 +352,10 @@
   color: CanvasText;
 }
 
+.abey-artist__flowBanner {
+  margin: 0 0 0.85rem;
+}
+
 .abey-artist__demoHint {
   margin: 0 0 0.75rem;
   font-size: 0.875rem;
@@ -360,7 +364,7 @@
 }
 
 .abey-artist__demoSource {
-  margin: 0 0 1rem;
+  margin: 1.15rem 0 1rem;
   padding: 0.72rem 0.82rem;
   border-radius: 0.55rem;
   font-size: 0.8125rem;

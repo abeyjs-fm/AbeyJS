@@ -14,9 +14,9 @@ I wanted a table with **pagination and server-backed search**, without **`fetch`
 | Pagination / search | Optionally filter client-side (`loadNetwork=false`) | Each **`page`**, **`pageSize`**, or search text change fires **`intentLoad`** with **`query`** |
 | Data contract | Everything in **`AbeyTableConfig`** | **`intent*`** / **`event*`** wired by string into **`semantics`** |
 | Global runtime | Optional | **`bootstrapOmegaApp`** + **`exposeBootstrapRuntime`** ⇒ **`__abeyRuntime`** |
-| Custom element | **`registerAbeyJsUi()`** | Same + **`AbeyTableElement.define("abey-table")`** in **`#wire`** before the tag exists |
+| Custom element | **`registerAbeyJsUi()`** | Same — **`main.ts`** defines **`abey-*`** before routes mount |
 
-You can mix modes: **`#wire`** sets **`getRowId`** and a minimal **`config`** until the first **`eventItems`** lands on the channel.
+Initial **`tableConfig`** (empty rows/columns/actions + **`getRowId`**) is bound in the template (**`[config]="tableConfig"`**). **`#wire`** only subscribes to the flow so **`flowBanner`** / **`flowBannerTone`** stay in sync with expressions.
 
 ## Folder tree (from **`docs/web/src/`**)
 

@@ -4,6 +4,8 @@ The Docs SPA calls `/api/deezer` locally via the Vite dev proxy (`vite.config.ts
 
 [Deezer’s public API](https://developers.deezer.com/) works from curl/servers but not from browsers (no usable `Access-Control-Allow-Origin` for GitHub Pages). This Worker forwards **`GET`** to `https://api.deezer.com` and adds permissive CORS headers.
 
+If **`VITE_DEEZER_HTTP_BASE`** is **not** set at build time, the docs SPA still renders the **`/abey-table`** demo using a **bundled offline catalog** (pagination + search apply locally); the secret + relay only switch rows to live Deezer responses.
+
 ## One-time deploy (maintainer)
 
 1. Install tooling: `npm i -g wrangler` (or use `npx wrangler`).

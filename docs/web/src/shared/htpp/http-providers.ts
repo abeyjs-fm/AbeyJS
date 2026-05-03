@@ -10,9 +10,13 @@ function deezerRelayEnvBase(): string {
   return raw.length > 0 ? raw.replace(/\/+$/, "") : "";
 }
 
-/** Production build deployed without **`VITE_DEEZER_HTTP_BASE`**: skipping network avoids bogus CORS + “HTTP 200 / net::ERR_FAILED” in DevTools. */
-function productionDeezerRelayMissing(): boolean {
+/** Production build deployed without **`VITE_DEEZER_HTTP_BASE`**: no browser calls to Deezer (CORS); table demo uses **embedded sample rows** (`artist.demo-data`). */
+export function isDeezerProdRelayAbsent(): boolean {
   return import.meta.env.PROD && deezerRelayEnvBase() === "";
+}
+
+function productionDeezerRelayMissing(): boolean {
+  return isDeezerProdRelayAbsent();
 }
 
 /**
@@ -45,8 +49,8 @@ export function registerDeezerHttpModule(c: OmegaContainer, runtime: OmegaRuntim
       typeof console !== "undefined" &&
       typeof console.warn === "function"
     ) {
-      console.warn(
-        "[abeyjs-docs-web] Deezer demo: missing VITE_DEEZER_HTTP_BASE. Calls are skipped on this host (browser CORS blocks api.deezer.com). Deploy `docs/web/edge/deezer-proxy`, set Actions secret VITE_DEEZER_HTTP_BASE, redeploy Pages.",
+      console.info(
+        "[abeyjs-docs-web] Deezer demo: no VITE_DEEZER_HTTP_BASE — using offline sample catalog (pagination/search still work). For live API: deploy docs/web/edge/deezer-proxy and set Actions secret VITE_DEEZER_HTTP_BASE.",
       );
     }
 

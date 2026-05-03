@@ -1,5 +1,7 @@
 import type { OmegaHttp } from "@abeyjs/http";
+import { isDeezerProdRelayAbsent } from "../../../../shared/htpp/http-providers.js";
 import type { ArtistPage, ArtistQuery, DeezerArtist } from "../model/artist.types.js";
+import { paginateOfflineDemoCatalog } from "./artist.demo-data.js";
 
 type DeezerListResponse<T> = { data?: T[]; total?: number; next?: string };
 
@@ -7,6 +9,14 @@ export class DeezerArtistRepo {
   constructor(private readonly http: OmegaHttp) {}
 
   async page(input: ArtistQuery): Promise<ArtistPage> {
+    if (isDeezerProdRelayAbsent()) {
+      return paginateOfflineDemoCatalog({
+        page: input.page,
+        pageSize: input.pageSize,
+        query: input.query,
+      });
+    }
+
     const pageSize = Math.max(1, Math.floor(Number(input.pageSize ?? 10)));
     const page = Math.max(1, Math.floor(Number(input.page ?? 1)));
     const query = String(input.query ?? "").trim();

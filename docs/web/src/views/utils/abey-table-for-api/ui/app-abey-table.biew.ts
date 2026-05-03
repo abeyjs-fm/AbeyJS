@@ -1,9 +1,10 @@
 import type { OmegaFlowExpression } from "@abeyjs/flows";
 import { DOM_CHANNEL_FACTORY, DOM_CHANNEL_TOKEN, AbeyComponent, AbeyComponentElement } from "@abeyjs/view";
-import { AbeyTableElement } from "@abeyjs/uikit";
+import type { AbeyTableConfig } from "@abeyjs/uikit";
 import { template } from "./app-abey-table.view.html";
 import abeyTableKitCss from "@abeyjs/uikit/styles/abey-table.css?inline";
 import abeyTableCss from "./app-abey-table.view.css?inline";
+import { isDeezerProdRelayAbsent } from "../../../../shared/htpp/http-providers.js";
 import { ArtistEcosystem } from "../omega/semantics.js";
 import type { DeezerArtist } from "../model/artist.types.js";
 
@@ -41,7 +42,18 @@ export class AppAbeyTableElement extends AbeyComponentElement {
   constructor() {
     super();
     this.state = {
-      status: "Ready",
+      flowBanner: "Ready",
+      flowBannerTone: "idle",
+      tableConfig: {
+        rows: [],
+        columns: [],
+        actions: [],
+        selectable: true,
+        getRowId: (r: DeezerArtist) => String(r.id),
+      } satisfies AbeyTableConfig<DeezerArtist>,
+      demoHint: isDeezerProdRelayAbsent()
+        ? "Sample catalog (no Deezer relay on this deployment). Pagination and search use embedded data — set Actions secret VITE_DEEZER_HTTP_BASE after deploying docs/web/edge/deezer-proxy for live API rows."
+        : "Try searching for artists and changing pages: each action triggers a remote load.",
       intentLoad: ArtistEcosystem.intentLoadTable,
       intentSelection: ArtistEcosystem.intentTableSelection,
       intentAction: ArtistEcosystem.intentTableAction,
@@ -63,24 +75,11 @@ export class AppAbeyTableElement extends AbeyComponentElement {
     const runtime = this.runtime;
     if (!runtime) return;
 
-    AbeyTableElement.define("abey-table");
-    const table = this.querySelector("abey-table") as AbeyTableElement<DeezerArtist> | null;
-    if (table) {
-      table.config = {
-        rows: [],
-        columns: [],
-        actions: [],
-        selectable: true,
-        getRowId: (r) => String(r.id),
-      };
-    }
-
-    const statusChip = this.querySelector("[data-role='artist-status']") as HTMLElement | null;
     const flow = runtime.flow.getFlow(ArtistEcosystem.flowId);
     const unsubExpr = flow?.subscribeExpressions((expr: OmegaFlowExpression) => {
       const { text, state } = formatArtistExpression(expr);
-      (this.state.status as any) = text;
-      if (statusChip) statusChip.dataset.state = state;
+      (this.state.flowBanner as string) = text;
+      (this.state.flowBannerTone as string) = state;
     });
     if (typeof unsubExpr === "function") this.onDestroy(unsubExpr);
   }
