@@ -8,7 +8,7 @@ cd my-app
 npm run dev
 </code></pre>
 <h3>Important <code>init</code> flags</h3>
-<table>
+<div class="doc-md-table-wrap"><table>
 <thead>
 <tr>
 <th>Flag</th>
@@ -41,9 +41,9 @@ npm run dev
 <td></td>
 <td>Skip <code>npm install</code> after scaffolding (<code>SKIP_ABEYJS_SCAFFOLD_INSTALL=1</code> from env does the same).</td>
 </tr>
-</tbody></table>
+</tbody></table></div>
 <h2>Generated repo map (<code>admin</code>)</h2>
-<table>
+<div class="doc-md-table-wrap"><table>
 <thead>
 <tr>
 <th>Typical path</th>
@@ -82,7 +82,7 @@ npm run dev
 <td><code>public/mock-nav.json</code></td>
 <td>Optional dev: <strong><code>{ &quot;items&quot;: [ { path, label, navIconFa?, children? } ] }</code></strong> to test server menu without a backend.</td>
 </tr>
-</tbody></table>
+</tbody></table></div>
 <h2>Must-have imports (<code>main.ts</code>)</h2>
 <ol>
 <li><strong><code>import &quot;/abey-styles.js&quot;</code></strong> — plugin resolves the bundle from <code>abey.json</code>. Skip this <strong>and</strong> expect global OM/UI styles ⇒ broken prod build footgun when copying odd <code>index.html</code>.</li>
@@ -112,7 +112,7 @@ npm run preview # optional: Vite serves dist/
 </code></pre>
 <p>Confirm the browser loads <strong>JS/CSS</strong> from <code>dist</code> (network tab shows <strong>200</strong> on hashed assets—not HTML mis-served as script).</p>
 <h3>Production checklist (AbeyJs)</h3>
-<table>
+<div class="doc-md-table-wrap"><table>
 <thead>
 <tr>
 <th>Requirement</th>
@@ -135,7 +135,7 @@ npm run preview # optional: Vite serves dist/
 <td><strong><code>&quot;experimentalDecorators&quot;: true</code></strong> in <strong><code>tsconfig.json</code></strong> (or rely on the plugin’s esbuild flag)</td>
 <td>Lazy routes <strong><code>import()</code></strong> OM modules; decorators must lower or dynamic import fails (<strong><code>Unexpected token &#39;@&#39;</code></strong>).</td>
 </tr>
-</tbody></table>
+</tbody></table></div>
 <p>Static hosts that only upload <strong><code>dist/</code></strong> do not run Node; <strong><code>VITE_*</code></strong> URLs (API, OpenAPI in templates) must be correct <strong>at build time</strong> in CI—set them in the host’s env or in <strong><code>.env.production</code></strong>.</p>
 <h3>SPA hosting (routing)</h3>
 <p>Your server or CDN must <strong>serve <code>index.html</code> for unknown paths</strong> used by <strong><code>createPathRouter</code> / History API</strong>, while real files (<strong><code>/assets/*.js</code></strong>, <strong><code>favicon</code></strong>, <strong><code>mock-nav.json</code></strong>, …) resolve normally.</p>

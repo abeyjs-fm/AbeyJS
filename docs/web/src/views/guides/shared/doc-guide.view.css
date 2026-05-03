@@ -624,14 +624,40 @@
   );
 }
 
-[data-doc="markdown"] table {
+[data-doc="markdown"] .doc-md-table-wrap {
+  margin: 1.25rem 0;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  border-radius: var(--doc-radius-sm);
+  border: 1px solid var(--doc-divider);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset;
+}
+
+[data-doc="markdown"] .doc-md-table-wrap table {
+  margin: 0;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.91rem;
+  width: max-content;
+  min-width: 100%;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  overflow: visible;
+}
+
+/* Guides generated before `wrapMarkdownTables`: wide tables scroll via :host overflow-x */
+[data-doc="markdown"] > table {
   margin: 1.25rem 0;
   border-collapse: separate;
   border-spacing: 0;
   font-size: 0.91rem;
-  width: 100%;
-  max-width: 100%;
-  overflow: hidden;
+  width: max-content;
+  min-width: 100%;
+  max-width: none;
+  overflow: visible;
   border-radius: var(--doc-radius-sm);
   border: 1px solid var(--doc-divider);
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset;
@@ -772,4 +798,35 @@
 
 [data-role="doc-guide-error"][hidden] {
   display: none;
+}
+
+/* --- Mobile: readable line length, safe areas, swipe tables/code --- */
+@media (max-width: 639px) {
+  :host {
+    padding: 0.85rem max(0.55rem, env(safe-area-inset-left, 0px)) max(2rem, env(safe-area-inset-bottom, 0px))
+      max(0.55rem, env(safe-area-inset-right, 0px));
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  [data-doc="markdown"] {
+    font-size: clamp(0.9375rem, 2.9vw, 1rem);
+    line-height: 1.58;
+  }
+
+  [data-doc="markdown"] .doc-md-table-wrap {
+    margin-inline: 0;
+  }
+
+  [data-doc="markdown"] pre {
+    font-size: max(0.8125rem, 12px);
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  [data-doc="markdown"] h1 {
+    font-size: clamp(1.35rem, 5.2vw, 1.75rem);
+  }
 }

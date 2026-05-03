@@ -2,7 +2,7 @@
   <article data-doc="markdown">
 <p>The repo uses <strong>npm workspaces</strong>: publishable <code>packages/*</code>, demo <code>examples/*</code>, <code>docs/*</code> sources + Vite docs site.</p>
 <h2>Folder map</h2>
-<table>
+<div class="doc-md-table-wrap"><table>
 <thead>
 <tr>
 <th>Folder</th>
@@ -37,9 +37,9 @@
 <td><code>docs/web</code></td>
 <td>Consumable docs SPA (<code>npm run docs:dev</code>).</td>
 </tr>
-</tbody></table>
+</tbody></table></div>
 <h2>Root scripts we use daily</h2>
-<table>
+<div class="doc-md-table-wrap"><table>
 <thead>
 <tr>
 <th>Script</th>
@@ -58,7 +58,7 @@
 <td><code>npm run docs:build</code></td>
 <td>Static output <code>docs/web/dist</code> (GitHub Pages / preview).</td>
 </tr>
-</tbody></table>
+</tbody></table></div>
 <p>Before a release version bump, review <strong><code>build:packages</code></strong> / <strong><code>publish:packages</code></strong> (maintainer sequence).</p>
 <h2>Published <code>dist</code> and Vite sourcemap warnings</h2>
 <p><strong><code>tsconfig.base.json</code></strong> compiles packages with <strong><code>sourceMap: false</code></strong> so published <strong><code>dist/</code></strong> does not include <strong><code>.map</code></strong> (or <strong><code>//# sourceMappingURL</code></strong>) that reference <strong><code>src/</code></strong> missing from the npm tarball — that mismatch is what triggers Vite’s <em>“Sourcemap … points to missing source files”</em>.</p>
@@ -91,7 +91,7 @@
 <p>Alternatively, <a href="https://github.com/actions/configure-pages">actions/configure-pages</a> supports <strong><code>enablement: true</code></strong> with a Personal Access Token (not <strong><code>GITHUB_TOKEN</code></strong>) per that action’s docs; switching <strong>Source → GitHub Actions</strong> in settings is simpler for most repos.</p>
 <h3>Workflow in this monorepo</h3>
 <p>File: <strong><code>.github/workflows/docs-github-pages.yml</code></strong></p>
-<table>
+<div class="doc-md-table-wrap"><table>
 <thead>
 <tr>
 <th>Step</th>
@@ -126,17 +126,17 @@
 <td><strong><code>.nojekyll</code></strong></td>
 <td>Disables Jekyll so files GitHub might ignore otherwise are kept.</td>
 </tr>
-</tbody></table>
+</tbody></table></div>
 <p>Triggers: <strong><code>push</code></strong> to <strong><code>main</code></strong> or <strong><code>master</code></strong>, plus <strong><code>workflow_dispatch</code></strong>. The artifact is deployed with <strong><code>actions/deploy-pages</code></strong>.</p>
 <p>The workflow sets <strong><code>DOCS_SITE_BASE</code></strong> from <strong><code>${GITHUB_REPOSITORY##*/}</code></strong> (exact repository name casing from GitHub).</p>
 <h3>SPA deep links on GitHub Pages (<code>vite-doc-spa-paths.ts</code>)</h3>
 <p>GitHub Pages is a <strong>static file host</strong>: a request for <strong><code>/{repo}/guides/quick-start</code></strong> only succeeds if that path maps to real files under the published <strong><code>dist</code></strong> (for example <strong><code>guides/quick-start/index.html</code></strong> after Vite resolves <strong><code>base</code></strong>). There is <strong>no server-side SPA fallback</strong> that rewrites unknown paths to <strong><code>index.html</code></strong> with <strong>HTTP 200</strong>.</p>
 <p>Without extra files, deep URLs still <em>look</em> workable because the workflow copies <strong><code>index.html</code></strong> to <strong><code>404.html</code></strong>: Pages serves the <strong>same HTML shell</strong>, the client router reads the pathname, and the right guide appears. However the response is often a <strong>real HTTP 404</strong>. That shows up as <strong><code>GET … 404</code></strong> in DevTools on refresh, <strong>open in new tab</strong>, link <strong>prefetch</strong>, or spec rules—and feels like “it fails, then loads.”</p>
-<p>To fix that for <strong>known</strong> routes, <strong><code>docs/web/vite.config.ts</code></strong> registers a small post-build plugin that, after <strong><code>vite build</code></strong>, duplicates the generated root <strong><code>dist/index.html</code></strong> into <strong><code>dist/&lt;app-path&gt;/index.html</code></strong> for every entry in <strong><code>docs/web/vite-doc-spa-paths.ts</code></strong>. Paths are <strong>application paths</strong> (leading <strong><code>/</code></strong>, <strong>no</strong> repo segment): they match <strong><code>getRoutes()</code></strong> in <strong><code>docs/web/src/routes.ts</code></strong> but are <strong>listed separately</strong> because importing <strong><code>routes.ts</code></strong> from <strong><code>vite.config.ts</code></strong> would pull OM / <strong><code>.html</code></strong> view modules without the Abey compiler in the config bundle (<strong>esbuild</strong> loader errors).</p>
-<p><strong>When you add or remove a user-facing docs route</strong>, update <strong><code>getRoutes()</code></strong> and <strong><code>vite-doc-spa-paths.ts</code></strong> together. Omit <strong><code>/</code></strong> (already <strong><code>dist/index.html</code></strong>) and <strong><code>*</code></strong> (in-app fallback only). Unknown URLs continue to rely on <strong><code>404.html</code></strong> plus the shell’s internal not-found page.</p>
+<p>To fix that for <strong>known</strong> routes, <strong><code>docs/web/vite.config.ts</code></strong> registers a small post-build plugin that, after <strong><code>vite build</code></strong>, duplicates the generated root <strong><code>dist/index.html</code></strong> into <strong><code>dist/&lt;app-path&gt;/index.html</code></strong> for every entry in <strong><code>docs/web/vite-doc-spa-paths.ts</code></strong>. Paths are <strong>application paths</strong> (leading <strong><code>/</code></strong>, <strong>no</strong> repo segment). That file is <strong>auto-generated</strong> on <strong><code>prebuild</code></strong> via <strong><code>abey-sync-spa-paths</code></strong> (<strong><code>@abeyjs/view</code></strong>) and <strong><code>docs/web/abey-spa-paths.config.json</code></strong> — AST scans of route sources (<strong>no</strong> OM <strong><code>.html</code></strong> in <strong><code>vite.config</code></strong>, which would break <strong>esbuild</strong> without the Abey plugin).</p>
+<p><strong>When you add or remove a user-facing docs URL</strong>, change those TS route files / <strong><code>files</code></strong> in the JSON as needed; <strong><code>npm run docs:spa-paths:sync -w abeyjs-docs-web</code></strong> (<strong><code>npm run build</code></strong> runs it automatically) refreshes <strong><code>vite-doc-spa-paths.ts</code></strong>. Omit <strong><code>/</code></strong> (already <strong><code>dist/index.html</code></strong>) and <strong><code>*</code></strong> (in-app fallback only). Unknown URLs continue to rely on <strong><code>404.html</code></strong> plus the shell’s internal not-found page.</p>
 <h3><strong><code>@abeyjs/view</code></strong> support (<code>pathnameBase</code>)</h3>
 <p>For any AbeyJs SPA hosted under a subpath (not only this docs site):</p>
-<table>
+<div class="doc-md-table-wrap"><table>
 <thead>
 <tr>
 <th>Piece</th>
@@ -159,10 +159,10 @@
 <td><strong><code>bootstrapOmegaApp</code> + <code>auth.publicPaths</code></strong></td>
 <td>Public path checks <strong><code>stripBasenameFromPathname</code></strong> against <strong><code>pathnameBase</code></strong>; <strong><code>redirectIfAuthed</code></strong> builds a full prefixed URL.</td>
 </tr>
-</tbody></table>
+</tbody></table></div>
 <p>Exported helpers (<strong><code>normalizeBasename</code></strong>, <strong><code>withBasename</code></strong>, <strong><code>stripBasenameFromPathname</code></strong>) live in <strong><code>@abeyjs/view</code></strong> for custom glue if needed.</p>
 <h3>Docs-only helpers (<code>docs/web</code>)</h3>
-<table>
+<div class="doc-md-table-wrap"><table>
 <thead>
 <tr>
 <th>File</th>
@@ -183,7 +183,7 @@
 </tr>
 <tr>
 <td><strong><code>vite-doc-spa-paths.ts</code></strong></td>
-<td>Canonical list of SPA paths for <strong><code>docs-spa-html-fallback-dirs</code></strong> in <strong><code>vite.config.ts</code></strong>: duplicate <strong><code>index.html</code></strong> per path after build (see <strong>SPA deep links</strong> above). <strong><code>src/routes.ts</code></strong> references this file when defining new routes.</td>
+<td><strong>Generated</strong> SPA path list for <strong><code>docs-spa-html-fallback-dirs</code></strong> (<strong><code>abey-sync-spa-paths</code></strong>, <strong><code>abey-spa-paths.config.json</code></strong>, <strong><code>prebuild</code></strong>). Do not edit by hand.</td>
 </tr>
 <tr>
 <td><strong><code>.env.production</code></strong></td>
@@ -193,7 +193,7 @@
 <td><strong><code>.env.example</code></strong></td>
 <td><strong>Documentation only</strong>: Vite does <strong>not</strong> load it. Describes the same vars for forks and contributors (placeholder <strong><code>OWNER</code>/<code>REPO</code></strong>), explains why it exists (<strong><code>.gitignore</code></strong> hides <strong><code>.env</code></strong>*), and points readers to <strong><code>monorepo-desarrollo.md</code></strong>. Use it as the template when creating <strong><code>.env.production</code></strong> / <strong><code>.env.development</code></strong> in a fork rather than guessing variable names from <strong><code>vite.config.ts</code></strong>.</td>
 </tr>
-</tbody></table>
+</tbody></table></div>
 <h3>Local production check (optional)</h3>
 <pre><code class="language-bash">npm run docs:build
 npm run docs:preview -w abeyjs-docs-web   # vite preview · dist

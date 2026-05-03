@@ -29,7 +29,7 @@ export default defineConfig({
 <p><strong>Optional YAML frontmatter</strong> <code>---</code> … <code>---</code> with <code>@Component({ selector, styles, state?, aot? })</code>. Default <code>aot</code> <strong>true</strong> with qualifying HTML tries AOT <code>createElement</code>; otherwise falls back to <code>compiledTemplate</code> parse.</p>
 <p><strong>Hard limit:</strong> expressions are <strong>opaque strings</strong> to the compiler—<strong>no</strong> template typecheck yet.</p>
 <h2>Compiled module exports</h2>
-<table>
+<div class="doc-md-table-wrap"><table>
 <thead>
 <tr>
 <th>Symbol</th>
@@ -52,7 +52,7 @@ export default defineConfig({
 <td>Custom element class</td>
 <td>If frontmatter defines <code>@Component</code>.</td>
 </tr>
-</tbody></table>
+</tbody></table></div>
 <h2>TypeScript project typings</h2>
 <p>In <code>src/vite-env.d.ts</code> (or similar):</p>
 <pre><code class="language-ts">declare module &quot;*.view.html&quot; {

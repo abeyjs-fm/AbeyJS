@@ -2,7 +2,7 @@
   <article data-doc="markdown">
 <p>What <strong><code>@abeyjs/cli</code></strong> publishes as stable contract. Flags missing here but shown in <strong><code>--help</code></strong> → <strong>trust the binary</strong> — we aim to avoid desync. <strong>Live implementation:</strong> <code>packages/cli/src/cli.ts</code>.</p>
 <h2>Install and how you invoke it</h2>
-<table>
+<div class="doc-md-table-wrap"><table>
 <thead>
 <tr>
 <th>Setup</th>
@@ -21,7 +21,7 @@
 <td><strong>One-off</strong> — no entry in <code>package.json</code></td>
 <td><code>npx @abeyjs/cli …</code></td>
 </tr>
-</tbody></table>
+</tbody></table></div>
 <p><strong>Important:</strong> <code>--template</code> must be followed by the <strong>template name</strong>, not another flag. Prefer <code>--template admin</code> or <code>--template=admin</code> or the shorthand <strong><code>--admin</code></strong>. <strong><code>--template --admin</code></strong> was previously misread — it is accepted now (second token is normalized), but <strong><code>abeyjs init appadmin --template admin</code></strong> remains the canonical form.</p>
 <p><strong>Global examples</strong></p>
 <pre><code class="language-bash">abeyjs --help
@@ -36,7 +36,7 @@ npx abeyjs generate views
 <h2>Project commands</h2>
 <h3><code>new</code> · <code>init</code> · <code>create</code> (aliases)</h3>
 <p>Scaffold folder with Vite + TS + OM plugin.</p>
-<table>
+<div class="doc-md-table-wrap"><table>
 <thead>
 <tr>
 <th>Flag</th>
@@ -55,11 +55,11 @@ npx abeyjs generate views
 <td><code>--skip-install</code></td>
 <td>Skip <strong><code>npm install</code></strong>. Env <strong><code>SKIP_ABEYJS_SCAFFOLD_INSTALL=1</code></strong> mirrors post-CI behavior.</td>
 </tr>
-</tbody></table>
+</tbody></table></div>
 <h2>OpenAPI wiring</h2>
 <h3><code>abeyjs add openapi &lt;dir&gt;</code></h3>
 <p>Inserts Vite proxies (<code>/api</code>, <code>/swagger</code> typical), <code>.env.example</code>, hooks markers <strong><code>ABEYJS-OPENAPI-WIRE</code></strong> in setup/routes when detected.</p>
-<table>
+<div class="doc-md-table-wrap"><table>
 <thead>
 <tr>
 <th>Flag</th>
@@ -78,10 +78,10 @@ npx abeyjs generate views
 <td><code>--skip-install</code></td>
 <td>Skip <code>npm install</code> after patching.</td>
 </tr>
-</tbody></table>
+</tbody></table></div>
 <h3><code>abeyjs connect &lt;url-or-local-swagger-path&gt;</code></h3>
 <p>Produces <strong><code>.abeyjs/connect.json</code></strong> + <strong><code>abeyjs.connect.yml</code></strong>: contract metadata for later generators.</p>
-<table>
+<div class="doc-md-table-wrap"><table>
 <thead>
 <tr>
 <th>Flag</th>
@@ -96,13 +96,13 @@ npx abeyjs generate views
 <td><code>--insecure</code></td>
 <td>Accept untrusted TLS (dev).</td>
 </tr>
-</tbody></table>
+</tbody></table></div>
 <p>TTY mode classifies entities <strong>crud</strong> / <strong>action</strong> / <strong>service</strong> / skip interactively.</p>
 <p><strong>Often required</strong> before <strong><code>generate views</code></strong>.</p>
 <h2>Generators</h2>
 <h3><code>abeyjs generate views</code></h3>
 <p>Emit OM views + TS from connected contract.</p>
-<table>
+<div class="doc-md-table-wrap"><table>
 <thead>
 <tr>
 <th>Flag</th>
@@ -117,10 +117,10 @@ npx abeyjs generate views
 <td><code>--scaffold minimal</code> · <code>full</code></td>
 <td>Or legacy <strong><code>--full-scaffold</code></strong>.</td>
 </tr>
-</tbody></table>
+</tbody></table></div>
 <h3><code>abeyjs generate ecosystem &lt;PascalName&gt;</code></h3>
 <p>Vertical slice (<strong>domain/logic folder</strong> + <strong><code>ui/</code></strong>) plus example tick.</p>
-<table>
+<div class="doc-md-table-wrap"><table>
 <thead>
 <tr>
 <th>Flag</th>
@@ -139,7 +139,7 @@ npx abeyjs generate views
 <td><code>--show-nav</code> / <code>--no-show-nav</code></td>
 <td>Add visible <strong><code>componentRoute</code></strong> in admin sidebar template.</td>
 </tr>
-</tbody></table>
+</tbody></table></div>
 <h3><code>abeyjs codegen &lt;spec.yaml&gt;</code> / <code>&lt;spec.json&gt;</code> <code>-o &lt;dir&gt;</code></h3>
 <p><strong>openapi-typescript</strong> → path types + <strong><code>omegaSetup.generated.ts</code></strong> stub (does not replace domain logic). Useful typing baseline for huge OpenAPI.</p>
 <h2>AbeyJs monorepo utility (core dev)</h2>

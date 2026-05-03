@@ -410,3 +410,72 @@
 .abey-artist__table {
   padding: 0;
 }
+
+/* --- Mobile & narrow viewports (docs site + phones) --- */
+.abey-artist__tableScroll {
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  margin: 0 -0.15rem;
+  padding: 0 0.15rem 0.25rem;
+}
+
+.abey-artist__tableScroll:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--abey-accent, #6366f1) 55%, transparent);
+  outline-offset: 3px;
+}
+
+@media (max-width: 560px) {
+  .abey-artist {
+    --abey-artist-gutter: clamp(0.55rem, 2.5vw, 0.85rem);
+    padding: 0.85rem max(var(--abey-artist-gutter), env(safe-area-inset-left, 0px)) max(1.15rem, env(safe-area-inset-bottom, 0px)) max(var(--abey-artist-gutter), env(safe-area-inset-right, 0px));
+  }
+
+  .abey-artist__doc {
+    padding: 0.75rem max(0.5rem, calc(env(safe-area-inset-left) * 0.5)) 0.95rem;
+    border-radius: 0.65rem;
+  }
+
+  .abey-artist__tabList {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    gap: 0.25rem;
+    padding: 0.3rem;
+    scroll-snap-type: x proximity;
+  }
+
+  .abey-artist__tabTab {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+    min-height: 2.75rem;
+    padding: 0.45rem 0.7rem;
+    font-size: 0.8rem;
+  }
+
+  .abey-artist__tabPanels {
+    padding: 0.65rem max(0.45rem, env(safe-area-inset-left)) 0.85rem max(0.45rem, env(safe-area-inset-right));
+    min-height: 5rem;
+  }
+
+  .abey-artist__pre,
+  .abey-artist__demoSource .abey-artist__preTree {
+    font-size: max(0.68rem, 12px);
+    max-height: min(50vh, 18rem);
+  }
+
+  .abey-artist__docMono {
+    font-size: max(0.75rem, 12px);
+    padding: 0.55rem 0.6rem;
+  }
+
+  .abey-artist__demoSource {
+    padding: 0.6rem max(0.5rem, env(safe-area-inset-left)) 0.7rem max(0.5rem, env(safe-area-inset-right));
+  }
+
+  .abey-artist__demoTitle,
+  .abey-artist__docTitle {
+    line-height: 1.2;
+  }
+}

@@ -1,210 +1,420 @@
-<section class="abey-artist" data-role="artist-root">
-  <div class="abey-artist__demo">
-    <h2 class="abey-artist__demoTitle">Live example</h2>
-    <p class="abey-artist__demoHint">Try searching for artists and changing pages: each action triggers a remote load.</p>
-
-    <abey-table selectable loadNetwork="true" flow="true" intentload="{{ intentLoad }}"
-      intentselection="{{ intentSelection }}" intentaction="{{ intentAction }}" eventcolumns="{{ eventColumns }}"
-      eventactions="{{ eventActions }}" eventitems="{{ eventItems }}" pageSizes="10,20,30" pageSize="10" page="1">
-      <template data-abey-cell="name">
-        <div style="display:flex;align-items:center;gap:10px">
-          <img data-abey-if="picture_small" src="{{ picture_small }}" alt="{{ name }}" width="28" height="28"
-            style="border-radius:999px;object-fit:cover" />
-          <span>{{ name }}</span>
-        </div>
-      </template>
-
-      <template data-abey-cell="link">
-        <a data-abey-if="link" href="{{ link }}" target="_blank" rel="noreferrer">Open</a>
-      </template>
-    </abey-table>
-  </div>
-
-  <article class="abey-artist__doc" aria-labelledby="abey-table-doc-title">
-    <h2 id="abey-table-doc-title" class="abey-artist__docTitle">How remote data feeding works</h2>
-    <p class="abey-artist__docLead">
-      The table does not <code>fetch</code> on its own: in <strong>flow</strong> mode it asks the runtime for data with an
-      <strong>intent</strong>;
-      your agent (or slice) answers by emitting events with columns, actions, and items. Pagination, page size, and
-      search fire that intent again with <code>page</code>, <code>pageSize</code>, and <code>query</code>.
-      Use the tabs to explore each piece.
-    </p>
-
-    <div class="abey-artist__tabs">
-      <input type="radio" name="abey-artist-doc-tab" id="abey-doc-tab-summary" class="abey-artist__tabRadio" checked>
-      <input type="radio" name="abey-artist-doc-tab" id="abey-doc-tab-markup" class="abey-artist__tabRadio">
-      <input type="radio" name="abey-artist-doc-tab" id="abey-doc-tab-events" class="abey-artist__tabRadio">
-      <input type="radio" name="abey-artist-doc-tab" id="abey-doc-tab-omega" class="abey-artist__tabRadio">
-      <input type="radio" name="abey-artist-doc-tab" id="abey-doc-tab-more" class="abey-artist__tabRadio">
-
-      <div class="abey-artist__tabList" role="tablist" aria-label="Guide sections">
-        <label id="lbl-abey-doc-tab-summary" for="abey-doc-tab-summary" class="abey-artist__tabTab"
-          role="tab">Summary</label>
-        <label id="lbl-abey-doc-tab-markup" for="abey-doc-tab-markup" class="abey-artist__tabTab"
-          role="tab">Markup</label>
-        <label id="lbl-abey-doc-tab-events" for="abey-doc-tab-events" class="abey-artist__tabTab"
-          role="tab">Events</label>
-        <label id="lbl-abey-doc-tab-omega" for="abey-doc-tab-omega" class="abey-artist__tabTab" role="tab">Omega</label>
-        <label id="lbl-abey-doc-tab-more" for="abey-doc-tab-more" class="abey-artist__tabTab" role="tab">More</label>
-      </div>
-
-      <div class="abey-artist__tabPanels">
-        <section class="abey-artist__tabPanel abey-artist__tabPanel--summary" role="tabpanel"
-          aria-labelledby="lbl-abey-doc-tab-summary">
-          <div class="abey-artist__docTools">
-            <h3 class="abey-artist__docH3">Pieces that fit together</h3>
-            <ul class="abey-artist__docList">
-              <li><code>&lt;abey-table&gt;</code> + <code>flow</code>, <code>loadNetwork</code>, intent names and
-                event names.</li>
-              <li><code>bootstrapOmegaApp</code> + <code>globalThis.__abeyRuntime</code> (via
-                <code>exposeBootstrapRuntime</code>).
-              </li>
-              <li><code>registerAbeyJsUi()</code> or <code>AbeyTableElement.define("abey-table")</code> before the
-                custom element enters the DOM.</li>
-              <li>Agent + <code>behavior</code> (intent &rarr; action rules) + <code>channel.emit</code> to topics the
-                table listens to.</li>
-              <li>HTTP repo (e.g. <code>DeezerArtistRepo</code>) called from the agent, not from the template.
-              </li>
-            </ul>
-          </div>
-          <div class="abey-artist__docFlow">
-            <h3 class="abey-artist__docH3">Flow in one sentence</h3>
-            <p class="abey-artist__docMono">
-              UI: user changes page or searches &rarr; table <code>dispatch</code>es
-              <code>Artist/TableLoad</code> with payload &rarr; behavior routes to <code>loadTable</code> &rarr; agent
-              hits the API
-              &rarr; <code>emit(eventTableColumns | eventTableActions | eventTableItems)</code> &rarr; table updates
-              rows and total.
-            </p>
-          </div>
-        </section>
-
-        <section class="abey-artist__tabPanel abey-artist__tabPanel--markup" role="tabpanel"
-          aria-labelledby="lbl-abey-doc-tab-markup">
-          <h3 class="abey-artist__docH3">Markup (this demo)</h3>
-          <p class="abey-artist__docP">
-            <code>flow="true"</code> attaches the channel. <code>loadNetwork="true"</code> means rows and total come from
-            the server:
-            rows are not re-filtered locally. <code>intent*</code> and <code>event*</code> must match strings from your
-            <code>semantics</code> (here <code>ArtistEcosystem</code>).
-          </p>
-          <pre class="abey-artist__pre" tabindex="0"><code>&lt;abey-table
-  selectable
-  loadNetwork="true"
-  flow="true"
-  intentload="{{ intentLoad }}"
-  intentselection="{{ intentSelection }}"
-  intentaction="{{ intentAction }}"
-  eventcolumns="{{ eventColumns }}"
-  eventactions="{{ eventActions }}"
-  eventitems="{{ eventItems }}"
-  pageSizes="10,20,30"
-  pageSize="10"
-  page="1"
-&gt;
-  &lt;template data-abey-cell="name"&gt; ... &lt;/template&gt;
-&lt;/abey-table&gt;</code></pre>
-        </section>
-
-        <section class="abey-artist__tabPanel abey-artist__tabPanel--events" role="tabpanel"
-          aria-labelledby="lbl-abey-doc-tab-events">
-          <h3 class="abey-artist__docH3">What to emit</h3>
-          <p class="abey-artist__docP">
-            Publish columns and actions once per session or every load depending on your model. For items, include
-            <code>items</code>, <code>totalItems</code>, <code>page</code>, and <code>pageSize</code> so the pager stays
-            in sync with the data.
-          </p>
-          <pre class="abey-artist__pre" tabindex="0"><code>emit(eventItems, {
-  items: [...],
-  totalItems: 123,
-  page: 1,
-  pageSize: 10
-});</code></pre>
-        </section>
-
-        <section class="abey-artist__tabPanel abey-artist__tabPanel--omega" role="tabpanel"
-          aria-labelledby="lbl-abey-doc-tab-omega">
-          <h3 class="abey-artist__docH3">Agent and Omega registration</h3>
-          <p class="abey-artist__docP">
-            In <code>onAction("loadTable", payload)</code>, read <code>payload.page</code>, <code>payload.pageSize</code>,
-            <code>payload.query</code>. Intents are wired with <code>runtime.onIntent(...)</code> and
-            <code>ArtistBehavior</code> translates the intent name to an action (
-            <code>Artist/TableLoad</code> &rarr; <code>loadTable</code>).
-          </p>
-          <pre class="abey-artist__pre" tabindex="0"><code>// omega/register.ts — installArtistOmega(runtime)
-runtime.onIntent(ArtistEcosystem.intentLoadTable, (payload) =&gt; {
-  void runtime.flow.handleIntent(
-    intentOf(ArtistEcosystem.intentLoadTable, payload),
-    { source: "artist-ecosystem" },
-  );
-});</code></pre>
-        </section>
-
-        <section class="abey-artist__tabPanel abey-artist__tabPanel--more" role="tabpanel"
-          aria-labelledby="lbl-abey-doc-tab-more">
-          <h3 class="abey-artist__docH3">Search</h3>
-          <p class="abey-artist__docP">
-            The toolbar search reloads once the text stabilizes (debounced; tune via
-            <code>AbeyTableElement.searchDebounceMs</code>), on blur, outside click, or Enter when a pending dispatch was
-            queued.
-            Optionally use a separate intent (<code>intentsearch="..."</code>) to decouple search from table load.
-          </p>
-          <div class="abey-artist__docPaths">
-            <p><strong>Where the full sample lives (from the AbeyJs repo root):</strong></p>
-            <ul class="abey-artist__docPathList">
-              <li>
-                Public org referenced by the project:
-                <a href="https://github.com/abeyjs-fm" target="_blank"
-                  rel="noreferrer"><code>https://github.com/abeyjs-fm</code></a>
-              </li>
-              <li>Folder: <code>docs/web/src/views/utils/abey-table-for-api/</code></li>
-              <li>View + table: <code>ui/app-abey-table.biew.ts</code>, <code>ui/app-abey-table.view.html</code>,
-                <code>ui/app-abey-table.view.css</code>
-              </li>
-              <li>Omega: <code>omega/register.ts</code>, <code>omega/agent.ts</code>,
-                <code>omega/behavior.ts</code>, <code>omega/flow.ts</code>, <code>omega/semantics.ts</code>
-              </li>
-              <li>API: <code>data/artist.repo.ts</code> and <code>model/artist.types.ts</code></li>
-              <li>Checklist: <code>docs/web/src/views/utils/abey-table-for-api/README.md</code></li>
-              <li>Docs app wiring: <code>docs/web/src/omegaSetup.ts</code>,
-                <code>docs/web/src/main.ts</code>, routes in <code>docs/web/src/utils-routes.ts</code> and
-                <code>docs/web/src/routes.ts</code> (path <code>/abey-table</code>)
-              </li>
-            </ul>
-            <p>General docs: <code>docs/abey-table.md</code> and <code>docs/abey-table-flows.md</code>.</p>
-          </div>
-        </section>
-      </div>
-    </div>
-    <br>
-    <div class="abey-artist__demoSource">
-      <p class="abey-artist__demoSourceIntro">
-        <strong>AbeyJs repository (GitHub):</strong>
-        <a href="https://github.com/abeyjs-fm/AbeyJS/tree/main/docs/web/src/views/utils/abey-table-for-api" target="_blank" rel="noreferrer">https://github.com/abeyjs-fm</a>
-        (official org). Tree paths below are relative to your monorepo clone root.
-      </p>
-      <p class="abey-artist__demoSourceIntro"><strong>Full sample and docs app wiring:</strong></p>
-      <pre class="abey-artist__pre abey-artist__preTree" tabindex="0"><code>docs/web/src/
-├── main.ts                               # registerAbeyJsUi + bootstrap Omega
-├── omegaSetup.ts                         # calls installArtistOmega
-├── utils-routes.ts                       # path /abey-table
-├── routes.ts                             # path /abey-table
-└── views/utils/abey-table-for-api/       # demo + checklist
-    ├── README.md
-    ├── ui/
-    │   ├── app-abey-table.biew.ts        # component + #wire
-    │   ├── app-abey-table.view.html      # this template
-    │   └── app-abey-table.view.css
-    ├── omega/
-    │   ├── semantics.ts
-    │   ├── behavior.ts
-    │   ├── agent.ts
-    │   ├── flow.ts
-    │   └── register.ts                   # export installArtistOmega
-    ├── data/
-    │   └── artist.repo.ts
-    └── model/
-        └── artist.types.ts</code></pre>
-    </div>
-  </article>
-</section>
+<section class="abey-artist" data-role="artist-root">
+
+  <div class="abey-artist__demo">
+
+    <h2 class="abey-artist__demoTitle">Live example</h2>
+
+    <p class="abey-artist__demoHint">Try searching for artists and changing pages: each action triggers a remote load.</p>
+
+    <div class="abey-artist__tableScroll" role="region" aria-label="Artist table demo">
+    <abey-table selectable loadNetwork="true" flow="true" intentload="{{ intentLoad }}"
+
+      intentselection="{{ intentSelection }}" intentaction="{{ intentAction }}" eventcolumns="{{ eventColumns }}"
+
+      eventactions="{{ eventActions }}" eventitems="{{ eventItems }}" pageSizes="10,20,30" pageSize="10" page="1">
+
+      <template data-abey-cell="name">
+
+        <div style="display:flex;align-items:center;gap:10px">
+
+          <img data-abey-if="picture_small" src="{{ picture_small }}" alt="{{ name }}" width="28" height="28"
+
+            style="border-radius:999px;object-fit:cover" />
+
+          <span>{{ name }}</span>
+
+        </div>
+
+      </template>
+
+
+
+      <template data-abey-cell="link">
+
+        <a data-abey-if="link" href="{{ link }}" target="_blank" rel="noreferrer">Open</a>
+
+      </template>
+
+    </abey-table>
+    </div>
+
+  </div>
+
+
+
+  <article class="abey-artist__doc" aria-labelledby="abey-table-doc-title">
+
+    <h2 id="abey-table-doc-title" class="abey-artist__docTitle">How remote data feeding works</h2>
+
+    <p class="abey-artist__docLead">
+
+      The table does not <code>fetch</code> on its own: in <strong>flow</strong> mode it asks the runtime for data with an
+
+      <strong>intent</strong>;
+
+      your agent (or slice) answers by emitting events with columns, actions, and items. Pagination, page size, and
+
+      search fire that intent again with <code>page</code>, <code>pageSize</code>, and <code>query</code>.
+
+      Use the tabs to explore each piece.
+
+    </p>
+
+
+
+    <div class="abey-artist__tabs">
+
+      <input type="radio" name="abey-artist-doc-tab" id="abey-doc-tab-summary" class="abey-artist__tabRadio" checked>
+
+      <input type="radio" name="abey-artist-doc-tab" id="abey-doc-tab-markup" class="abey-artist__tabRadio">
+
+      <input type="radio" name="abey-artist-doc-tab" id="abey-doc-tab-events" class="abey-artist__tabRadio">
+
+      <input type="radio" name="abey-artist-doc-tab" id="abey-doc-tab-omega" class="abey-artist__tabRadio">
+
+      <input type="radio" name="abey-artist-doc-tab" id="abey-doc-tab-more" class="abey-artist__tabRadio">
+
+
+
+      <div class="abey-artist__tabList" role="tablist" aria-label="Guide sections">
+
+        <label id="lbl-abey-doc-tab-summary" for="abey-doc-tab-summary" class="abey-artist__tabTab"
+
+          role="tab">Summary</label>
+
+        <label id="lbl-abey-doc-tab-markup" for="abey-doc-tab-markup" class="abey-artist__tabTab"
+
+          role="tab">Markup</label>
+
+        <label id="lbl-abey-doc-tab-events" for="abey-doc-tab-events" class="abey-artist__tabTab"
+
+          role="tab">Events</label>
+
+        <label id="lbl-abey-doc-tab-omega" for="abey-doc-tab-omega" class="abey-artist__tabTab" role="tab">Omega</label>
+
+        <label id="lbl-abey-doc-tab-more" for="abey-doc-tab-more" class="abey-artist__tabTab" role="tab">More</label>
+
+      </div>
+
+
+
+      <div class="abey-artist__tabPanels">
+
+        <section class="abey-artist__tabPanel abey-artist__tabPanel--summary" role="tabpanel"
+
+          aria-labelledby="lbl-abey-doc-tab-summary">
+
+          <div class="abey-artist__docTools">
+
+            <h3 class="abey-artist__docH3">Pieces that fit together</h3>
+
+            <ul class="abey-artist__docList">
+
+              <li><code>&lt;abey-table&gt;</code> + <code>flow</code>, <code>loadNetwork</code>, intent names and
+
+                event names.</li>
+
+              <li><code>bootstrapOmegaApp</code> + <code>globalThis.__abeyRuntime</code> (via
+
+                <code>exposeBootstrapRuntime</code>).
+
+              </li>
+
+              <li><code>registerAbeyJsUi()</code> or <code>AbeyTableElement.define("abey-table")</code> before the
+
+                custom element enters the DOM.</li>
+
+              <li>Agent + <code>behavior</code> (intent &rarr; action rules) + <code>channel.emit</code> to topics the
+
+                table listens to.</li>
+
+              <li>HTTP repo (e.g. <code>DeezerArtistRepo</code>) called from the agent, not from the template.
+
+              </li>
+
+            </ul>
+
+          </div>
+
+          <div class="abey-artist__docFlow">
+
+            <h3 class="abey-artist__docH3">Flow in one sentence</h3>
+
+            <p class="abey-artist__docMono">
+
+              UI: user changes page or searches &rarr; table <code>dispatch</code>es
+
+              <code>Artist/TableLoad</code> with payload &rarr; behavior routes to <code>loadTable</code> &rarr; agent
+
+              hits the API
+
+              &rarr; <code>emit(eventTableColumns | eventTableActions | eventTableItems)</code> &rarr; table updates
+
+              rows and total.
+
+            </p>
+
+          </div>
+
+        </section>
+
+
+
+        <section class="abey-artist__tabPanel abey-artist__tabPanel--markup" role="tabpanel"
+
+          aria-labelledby="lbl-abey-doc-tab-markup">
+
+          <h3 class="abey-artist__docH3">Markup (this demo)</h3>
+
+          <p class="abey-artist__docP">
+
+            <code>flow="true"</code> attaches the channel. <code>loadNetwork="true"</code> means rows and total come from
+
+            the server:
+
+            rows are not re-filtered locally. <code>intent*</code> and <code>event*</code> must match strings from your
+
+            <code>semantics</code> (here <code>ArtistEcosystem</code>).
+
+          </p>
+
+          <pre class="abey-artist__pre" tabindex="0"><code>&lt;abey-table
+
+  selectable
+
+  loadNetwork="true"
+
+  flow="true"
+
+  intentload="{{ intentLoad }}"
+
+  intentselection="{{ intentSelection }}"
+
+  intentaction="{{ intentAction }}"
+
+  eventcolumns="{{ eventColumns }}"
+
+  eventactions="{{ eventActions }}"
+
+  eventitems="{{ eventItems }}"
+
+  pageSizes="10,20,30"
+
+  pageSize="10"
+
+  page="1"
+
+&gt;
+
+  &lt;template data-abey-cell="name"&gt; ... &lt;/template&gt;
+
+&lt;/abey-table&gt;</code></pre>
+
+        </section>
+
+
+
+        <section class="abey-artist__tabPanel abey-artist__tabPanel--events" role="tabpanel"
+
+          aria-labelledby="lbl-abey-doc-tab-events">
+
+          <h3 class="abey-artist__docH3">What to emit</h3>
+
+          <p class="abey-artist__docP">
+
+            Publish columns and actions once per session or every load depending on your model. For items, include
+
+            <code>items</code>, <code>totalItems</code>, <code>page</code>, and <code>pageSize</code> so the pager stays
+
+            in sync with the data.
+
+          </p>
+
+          <pre class="abey-artist__pre" tabindex="0"><code>emit(eventItems, {
+
+  items: [...],
+
+  totalItems: 123,
+
+  page: 1,
+
+  pageSize: 10
+
+});</code></pre>
+
+        </section>
+
+
+
+        <section class="abey-artist__tabPanel abey-artist__tabPanel--omega" role="tabpanel"
+
+          aria-labelledby="lbl-abey-doc-tab-omega">
+
+          <h3 class="abey-artist__docH3">Agent and Omega registration</h3>
+
+          <p class="abey-artist__docP">
+
+            In <code>onAction("loadTable", payload)</code>, read <code>payload.page</code>, <code>payload.pageSize</code>,
+
+            <code>payload.query</code>. Intents are wired with <code>runtime.onIntent(...)</code> and
+
+            <code>ArtistBehavior</code> translates the intent name to an action (
+
+            <code>Artist/TableLoad</code> &rarr; <code>loadTable</code>).
+
+          </p>
+
+          <pre class="abey-artist__pre" tabindex="0"><code>// omega/register.ts — installArtistOmega(runtime)
+
+runtime.onIntent(ArtistEcosystem.intentLoadTable, (payload) =&gt; {
+
+  void runtime.flow.handleIntent(
+
+    intentOf(ArtistEcosystem.intentLoadTable, payload),
+
+    { source: "artist-ecosystem" },
+
+  );
+
+});</code></pre>
+
+        </section>
+
+
+
+        <section class="abey-artist__tabPanel abey-artist__tabPanel--more" role="tabpanel"
+
+          aria-labelledby="lbl-abey-doc-tab-more">
+
+          <h3 class="abey-artist__docH3">Search</h3>
+
+          <p class="abey-artist__docP">
+
+            The toolbar search reloads once the text stabilizes (debounced; tune via
+
+            <code>AbeyTableElement.searchDebounceMs</code>), on blur, outside click, or Enter when a pending dispatch was
+
+            queued.
+
+            Optionally use a separate intent (<code>intentsearch="..."</code>) to decouple search from table load.
+
+          </p>
+
+          <div class="abey-artist__docPaths">
+
+            <p><strong>Where the full sample lives (from the AbeyJs repo root):</strong></p>
+
+            <ul class="abey-artist__docPathList">
+
+              <li>
+
+                Public org referenced by the project:
+
+                <a href="https://github.com/abeyjs-fm" target="_blank"
+
+                  rel="noreferrer"><code>https://github.com/abeyjs-fm</code></a>
+
+              </li>
+
+              <li>Folder: <code>docs/web/src/views/utils/abey-table-for-api/</code></li>
+
+              <li>View + table: <code>ui/app-abey-table.biew.ts</code>, <code>ui/app-abey-table.view.html</code>,
+
+                <code>ui/app-abey-table.view.css</code>
+
+              </li>
+
+              <li>Omega: <code>omega/register.ts</code>, <code>omega/agent.ts</code>,
+
+                <code>omega/behavior.ts</code>, <code>omega/flow.ts</code>, <code>omega/semantics.ts</code>
+
+              </li>
+
+              <li>API: <code>data/artist.repo.ts</code> and <code>model/artist.types.ts</code></li>
+
+              <li>Checklist: <code>docs/web/src/views/utils/abey-table-for-api/README.md</code></li>
+
+              <li>Docs app wiring: <code>docs/web/src/omegaSetup.ts</code>,
+
+                <code>docs/web/src/main.ts</code>, routes in <code>docs/web/src/utils-routes.ts</code> and
+
+                <code>docs/web/src/routes.ts</code> (path <code>/abey-table</code>)
+
+              </li>
+
+            </ul>
+
+            <p>General docs: <code>docs/abey-table.md</code> and <code>docs/abey-table-flows.md</code>.</p>
+
+          </div>
+
+        </section>
+
+      </div>
+
+    </div>
+
+    <br>
+
+    <div class="abey-artist__demoSource">
+
+      <p class="abey-artist__demoSourceIntro">
+
+        <strong>AbeyJs repository (GitHub):</strong>
+
+        <a href="https://github.com/abeyjs-fm/AbeyJS/tree/main/docs/web/src/views/utils/abey-table-for-api" target="_blank" rel="noreferrer">https://github.com/abeyjs-fm</a>
+
+        (official org). Tree paths below are relative to your monorepo clone root.
+
+      </p>
+
+      <p class="abey-artist__demoSourceIntro"><strong>Full sample and docs app wiring:</strong></p>
+
+      <pre class="abey-artist__pre abey-artist__preTree" tabindex="0"><code>docs/web/src/
+
+├── main.ts                               # registerAbeyJsUi + bootstrap Omega
+
+├── omegaSetup.ts                         # calls installArtistOmega
+
+├── utils-routes.ts                       # path /abey-table
+
+├── routes.ts                             # path /abey-table
+
+└── views/utils/abey-table-for-api/       # demo + checklist
+
+    ├── README.md
+
+    ├── ui/
+
+    │   ├── app-abey-table.biew.ts        # component + #wire
+
+    │   ├── app-abey-table.view.html      # this template
+
+    │   └── app-abey-table.view.css
+
+    ├── omega/
+
+    │   ├── semantics.ts
+
+    │   ├── behavior.ts
+
+    │   ├── agent.ts
+
+    │   ├── flow.ts
+
+    │   └── register.ts                   # export installArtistOmega
+
+    ├── data/
+
+    │   └── artist.repo.ts
+
+    └── model/
+
+        └── artist.types.ts</code></pre>
+
+    </div>
+
+  </article>
+
+</section>
+

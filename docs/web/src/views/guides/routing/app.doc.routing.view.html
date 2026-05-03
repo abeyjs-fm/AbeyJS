@@ -5,7 +5,7 @@
 <hr>
 <h2>Row contract (<code>AppRoute</code>)</h2>
 <p>Authoritative fields live in <strong><code>packages/view/src/shell/app-routes.ts</code></strong>:</p>
-<table>
+<div class="doc-md-table-wrap"><table>
 <thead>
 <tr>
 <th>Member</th>
@@ -40,7 +40,7 @@
 <td><code>navIcon?</code> · <code>navIconFa?</code></td>
 <td>Tiny text icon legacy vs Font Awesome class (<strong>bring FA CSS</strong> when using FA).</td>
 </tr>
-</tbody></table>
+</tbody></table></div>
 <p><strong>Rules not spelled out only in typings:</strong></p>
 <ul>
 <li>Duplicate <code>path</code> rows ⇒ last wins if merge duplicates accidentally—treat paths as unique keys.</li>
@@ -49,7 +49,7 @@
 </ul>
 <hr>
 <h2>Exported helpers</h2>
-<table>
+<div class="doc-md-table-wrap"><table>
 <thead>
 <tr>
 <th>Helper</th>
@@ -64,9 +64,9 @@
 <td><strong><code>pageRoute(path, nav, spec)</code></strong></td>
 <td>Declarative text page via <strong><code>buildPageView</code></strong>: no raw user HTML.<strong><code>PageViewSpec</code></strong>: safe headings/leads.<strong>Good for docs/CMS you control</strong>.</td>
 </tr>
-</tbody></table>
+</tbody></table></div>
 <p>For declarative list/form mounts, <strong><code>mount</code></strong> calls <strong><code>mountListViewSync</code></strong>, <strong><code>mountFormView</code></strong>, etc. (see <strong><code>/guides/data-views</code></strong>).</p>
-<table>
+<div class="doc-md-table-wrap"><table>
 <thead>
 <tr>
 <th>Pattern</th>
@@ -81,7 +81,7 @@
 <td><strong><code>componentRoute</code></strong></td>
 <td>Standard product screen (<strong>most admin time</strong>).</td>
 </tr>
-</tbody></table>
+</tbody></table></div>
 <hr>
 <h2><strong><code>navChildren</code></strong> example</h2>
 <p>Concept:</p>

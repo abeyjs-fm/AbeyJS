@@ -52,3 +52,12 @@
   margin-left: 0;
   margin-right: 0;
 }
+
+/* Narrow / mobile: tighter outlet + safe areas (notched devices, PWA) */
+@media (max-width: 639px) {
+  .doc-site.abey-shell-app .abey-shell--dashboard .abey-outlet {
+    padding: 0.95rem max(0.65rem, env(safe-area-inset-left, 0px)) max(1.35rem, env(safe-area-inset-bottom, 0px)) max(0.65rem, env(safe-area-inset-right, 0px));
+    box-sizing: border-box;
+    -webkit-overflow-scrolling: touch;
+  }
+}

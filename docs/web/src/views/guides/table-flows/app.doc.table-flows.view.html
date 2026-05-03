@@ -2,6 +2,14 @@
   <article data-doc="markdown">
 <p>When the table must <strong>use the runtime channel</strong> (columns and actions arrive on the channel; user actions return as intents), enable flow mode. Pattern used in demos where an agent publishes <code>tableColumns</code> / <code>tableItems</code> and the grid fires <code>intentload</code> on pagination without every screen calling <code>fetch</code> directly.</p>
 <p>This doc covers <strong>only</strong> DOM contract / attributes / expected payloads; flow logic lives in your domain/agent modules beside the OM views.</p>
+<h2>Prerequisites: <code>globalThis.__abeyRuntime</code></h2>
+<p><strong>Flow mode</strong> subscribes to <strong><code>runtime.channel.onAll</code></strong> and emits intents via <strong><code>runtime.dispatch</code></strong> (see <strong><code>#attachFlow</code></strong> in <strong><code>@abeyjs/uikit</code></strong> <strong><code>abey-table</code></strong>). The element resolves <strong><code>OmegaRuntime</code></strong> by walking <strong><code>globalThis</code></strong> from <strong><code>runtimepath</code></strong> (default <strong><code>&quot;__abeyRuntime&quot;</code></strong>).</p>
+<ol>
+<li><strong>Bootstrap:</strong> call <strong><code>bootstrapOmegaApp</code></strong> with <strong><code>createOmega</code></strong> from your <strong><code>omegaSetup</code></strong>. That path runs <strong><code>exposeBootstrapRuntime</code></strong>, which assigns <strong><code>globalThis.__abeyRuntime</code></strong> (and default <strong><code>__abeyDi.channel</code></strong> when missing). No extra <strong><code>main.ts</code></strong> assignment is required for standard <strong>empty</strong> / <strong>admin</strong> templates.</li>
+<li><strong>Custom element:</strong> call <strong><code>registerAbeyJsUi()</code></strong> (or <strong><code>AbeyTableElement.define(&quot;abey-table&quot;)</code></strong>) before the table appears in the DOM — globals alone do not register the tag.</li>
+<li><strong>Public-only pages:</strong> if the user never hits the routed shell bootstrap, <strong><code>__abeyRuntime</code></strong> may stay unset until the app mounts — the table will not attach <strong><code>channel</code></strong> listeners until <strong><code>exposeBootstrapRuntime</code></strong> has run.</li>
+</ol>
+<p>Detailed overview of <strong><code>runtimepath</code></strong> / <strong><code>exposeBootstrapRuntime</code></strong>: <strong><code>docs/abey-table.md</code></strong> § <em>Omega runtime on <code>globalThis</code></em>.</p>
 <h2>Flow mode (<code>flow=&quot;true&quot;</code>)</h2>
 <p><code>flow=&quot;true&quot;</code> turns on:</p>
 <ul>

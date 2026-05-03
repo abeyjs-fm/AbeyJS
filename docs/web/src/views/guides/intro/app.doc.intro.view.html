@@ -10,7 +10,7 @@
 </ul>
 <p>The extended product vision and CRUD/OpenAPI map live under <strong><code>/guides/vision</code></strong> and <strong><code>/guides/crud-auto</code></strong>; here we only state the technical map.</p>
 <h2>What it solves (mental checklist)</h2>
-<table>
+<div class="doc-md-table-wrap"><table>
 <thead>
 <tr>
 <th>Layer</th>
@@ -33,7 +33,7 @@
 <td>Tooling</td>
 <td><code>abeyjs</code> CLI for init, Swagger connect, codegen, ecosystems.</td>
 </tr>
-</tbody></table>
+</tbody></table></div>
 <h2>What it deliberately is <em>not</em></h2>
 <ul>
 <li>Not React Hooks rebranded: <strong>no</strong> Fiber or global virtual-tree reconciler.</li>
@@ -41,7 +41,7 @@
 <li>The <strong>DSL</strong> like <code>model X / view auto</code> shown in some vision sketches as a <em>future meta-language</em> <strong>is not</strong> supported syntax—the practical path is OpenAPI + TS registration.</li>
 </ul>
 <h2>Monorepo packages (quick reference)</h2>
-<table>
+<div class="doc-md-table-wrap"><table>
 <thead>
 <tr>
 <th>Package</th>
@@ -92,13 +92,13 @@
 <td><code>@abeyjs/agents</code> / <code>@abeyjs/flows</code></td>
 <td>Optional orchestration pieces (the CLI can scaffold an example slice).</td>
 </tr>
-</tbody></table>
+</tbody></table></div>
 <h2>When AbeyJs fits—and when it does not</h2>
 <p><strong>It fits</strong> when you want end-to-end TypeScript, custom elements as UI units, admin/operations apps where <strong>OpenAPI</strong> or Zod defs can feed lists/forms, and one place for <strong>navigation analytics</strong> (<code>omega/nav:changed</code>). <strong>Look elsewhere</strong> if the team wants JSX with a mature React-only ecosystem, or an SSR-first framework with batteries included on day zero without touching the server.</p>
 <h2>From template to runtime (single linear chain)</h2>
 <p>OM HTML writes nodes → the component or screen updates <strong><code>state</code></strong> / signals → if needed, <strong><code>dispatch(intentOf(...))</code></strong> → a registrar (<strong><code>omegaSetup</code></strong> or plugin) handles it → publishes events on the <strong>channel</strong> → the view (or another layer) subscribes and repaints only the bound parts.</p>
 <h2>Glossary (terms used across this docs site)</h2>
-<table>
+<div class="doc-md-table-wrap"><table>
 <thead>
 <tr>
 <th>Term</th>
@@ -121,7 +121,7 @@
 <td><strong><code>AppRoute</code></strong></td>
 <td>Row in the flat routes table: <code>path</code>, <code>mount(outlet)</code>, <code>label</code>/<code>navChildren</code>/FA icons.</td>
 </tr>
-</tbody></table>
+</tbody></table></div>
 <h2>Suggested reading order</h2>
 <p>If you are opening the docs site cold, follow <strong><code>/guides/quick-start</code></strong> → <strong><code>/guides/bootstrap-shell</code></strong> → <strong><code>/guides/routing</code></strong> → <strong><code>/guides/abey-component</code></strong>. The <strong><code>/guides/runtime</code></strong> chapter and CLI can slot in after you have a compiling screen; <strong><code>/guides/vision</code></strong>, OpenAPI, and tables assume that map is clear.</p>
 <p>Next: <strong><code>/guides/quick-start</code></strong>.</p>

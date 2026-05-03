@@ -21,7 +21,7 @@ export class AppDashboard extends AbeyComponentElement {
     this.state = {
       title: &quot;Dashboard&quot;,
       openPreferences() {
-        channel?.publish?.(/* ... */);
+        channel?.publish?.(/* … */);
       },
     };
     super.connectedCallback();
@@ -32,7 +32,7 @@ export class AppDashboard extends AbeyComponentElement {
 <p>Binder code consults <strong><code>DOM_CHANNEL_TOKEN</code></strong> to publish intents without importing global <strong><code>OmegaRuntime</code></strong>. Omit provider ⇒ advanced bindings fail. <strong>Admin</strong> templates include default—keep until you inject <strong><code>runtime.channel</code></strong> via custom factory.</p>
 <hr>
 <h2>Styles: <strong><code>stylesText</code></strong> vs <strong><code>stylesHrefs</code></strong> (Vite)</h2>
-<table>
+<div class="doc-md-table-wrap"><table>
 <thead>
 <tr>
 <th>Field</th>
@@ -53,8 +53,8 @@ export class AppDashboard extends AbeyComponentElement {
 <td><strong><code>href</code></strong> for a <strong>real CSS URL</strong></td>
 <td><strong><code>mountModuleStyles</code></strong> attaches <strong><code>&lt;link rel=&quot;stylesheet&quot;&gt;</code></strong> (extra network fetch in dev)</td>
 </tr>
-</tbody></table>
-<p><strong>Trap — do not mix:</strong> If you <strong><code>import blob from &quot;...css?inline&quot;</code></strong> and assign it to <strong><code>stylesHrefs</code></strong>, the runtime sets <strong><code>&lt;link href=&quot;...&quot;&gt;</code> to the stylesheet source text</strong>, not a path. The browser then issues nonsense requests whose path looks like URL-encoded CSS (e.g. <strong><code>.abey-artist %7B ...</code></strong>).</p>
+</tbody></table></div>
+<p><strong>Trap — do not mix:</strong> If you <strong><code>import blob from &quot;...css?inline&quot;</code></strong> and assign it to <strong><code>stylesHrefs</code></strong>, the runtime sets <strong><code>&lt;link href=&quot;…&quot;&gt;</code> to the stylesheet source text</strong>, not a path. The browser then issues nonsense requests whose path looks like URL-encoded CSS (e.g. <strong><code>.abey-artist %7B …</code></strong>).</p>
 <p>In development, <strong><code>decodeURI</code></strong> on that URL can fail (<strong>“URI malformed”</strong>); <strong><code>abeyViteMalformedUriGuard</code></strong> (see <strong><code>@abeyjs/view/dev/vite-malformed-uri-guard</code></strong>) answers <strong>400</strong>—that symptom usually means <strong><code>?inline</code></strong> was wired into <strong><code>stylesHrefs</code></strong>.</p>
 <p><strong>Fix:</strong> <strong><code>stylesText: [sheet]</code></strong> when using <strong><code>?inline</code></strong>; <strong><code>stylesHrefs: [href]</code></strong> only with <strong><code>?url</code></strong> (or another real URL).</p>
 <h3>What users actually see before fixing it</h3>
@@ -63,7 +63,7 @@ export class AppDashboard extends AbeyComponentElement {
 <p>Repeated one-line warns (same URL may be suppressed for ~12s):</p>
 <pre><code>[abey/vite] Malformed request URL — answered 400 (no Internal Server Error).
   /.abey-artist %20%7B %20 ...
-  (Repeats throttled ... per distinct URL)
+  (Repeats throttled … per distinct URL)
 </code></pre>
 <p>(or the Spanish‑locale variant: <strong><code>[abey/vite] URL mal formada — respondiendo 400</code></strong>)</p>
 <p>This is <strong>not random noise</strong>: the path snippet often <strong>starts like a CSS class</strong> (<code>.something</code>) and <strong><code>%7B</code></strong> is <strong><code>{</code></strong>—decoded bits look like stylesheet content.</p>
@@ -71,7 +71,7 @@ export class AppDashboard extends AbeyComponentElement {
 <pre><code>Malformed URI sequence in request URL
 [vite] Internal server error: URI malformed
     at decodeURI (&lt;anonymous&gt;)
-    at viteServeStaticMiddleware (...deps...js:35435)
+    at viteServeStaticMiddleware (…deps…js:35435)
 </code></pre>
 <p>Either way in dev something is <strong><code>GET</code></strong>‑ing an impossible path.</p>
 <h4>Browser</h4>
@@ -81,14 +81,14 @@ export class AppDashboard extends AbeyComponentElement {
 </ul>
 <h4>What you should do (short checklist)</h4>
 <ol>
-<li>Open the <strong><code>@AbeyComponent</code></strong> decorator configuration for the screen / widget you shipped last.</li>
+<li>Open <strong><code>@AbeyComponent</code> { … }</strong> for the screen / widget you shipped last.</li>
 <li>If you did <strong><code>import x from &quot;*.css?inline&quot;</code></strong>, use <strong><code>stylesText: [x]</code></strong>, <strong>not</strong> <strong><code>stylesHrefs</code></strong>.</li>
 <li>If you meant a <strong>globally linked stylesheet</strong> via <strong><code>&lt;link&gt;</code></strong>, switch to <strong><code>import href from &quot;*.css?url&quot;</code></strong> (<strong>or</strong> <code>new URL(...)</code>) and keep <strong><code>stylesHrefs: [href]</code></strong>.</li>
 <li>Rebuild / refresh—the bogus requests stop.</li>
 </ol>
 <p>Guide reference: <strong><code>/guides/abey-component</code></strong> · also <strong><code>mountModuleStyles</code></strong> in <strong><code>packages/view/README.md</code></strong> (URLs only).</p>
 <h4>Resumen para quien llega desde el navegador o la consola (<strong>ES</strong>)</h4>
-<table>
+<div class="doc-md-table-wrap"><table>
 <thead>
 <tr>
 <th>Qué aparece</th>
@@ -98,15 +98,15 @@ export class AppDashboard extends AbeyComponentElement {
 </thead>
 <tbody><tr>
 <td><strong>400 · URL mal formada</strong> en dev</td>
-<td>El servidor rechazó un path con <code>%...</code> ilegal; muchas veces es <strong>CSS puesto donde iba una URL</strong>.</td>
+<td>El servidor rechazó un path con <code>%…</code> ilegal; muchas veces es <strong>CSS puesto donde iba una URL</strong>.</td>
 <td><strong><code>?inline</code></strong> → campo <strong><code>stylesText</code></strong>; <strong><code>?url</code></strong> / URL real → <strong><code>stylesHrefs</code></strong>.</td>
 </tr>
 <tr>
-<td><strong><code>[abey/vite] URL mal formada</code></strong> y un path tipo <strong><code>.algo %7B ...</code></strong></td>
+<td><strong><code>[abey/vite] URL mal formada</code></strong> y un path tipo <strong><code>.algo %7B …</code></strong></td>
 <td>Mismo problema: contenido CSS en <strong><code>href</code></strong> de un <strong><code>&lt;link&gt;</code></strong>.</td>
 <td>Igual que arriba: no mezcles <strong><code>stylesHrefs</code></strong> con texto de <strong><code>?inline</code></strong>.</td>
 </tr>
-</tbody></table>
+</tbody></table></div>
 <hr>
 <h2><code>state</code> vs class fields</h2>
 <p>Prefer <strong><code>state</code> flat bag</strong> flagged in template:</p>
@@ -115,7 +115,7 @@ export class AppDashboard extends AbeyComponentElement {
 <li>Binder batches microtask updates.<strong>Deep nesting</strong> OK via path watchers.</li>
 </ul>
 <p>Common mistakes:</p>
-<table>
+<div class="doc-md-table-wrap"><table>
 <thead>
 <tr>
 <th>Mistake</th>
@@ -138,7 +138,7 @@ export class AppDashboard extends AbeyComponentElement {
 <td>Template imports without <strong><code>abeyVitePlugin</code></strong> order</td>
 <td>Broken chunk.<strong>Plugin order matters.</strong></td>
 </tr>
-</tbody></table>
+</tbody></table></div>
 <hr>
 <h2><strong><code>componentRoute</code></strong></h2>
 <p><strong><code>selector</code> must match exactly</strong>:</p>

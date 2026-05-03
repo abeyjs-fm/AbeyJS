@@ -32,6 +32,7 @@ abey-table .tableScroll {
     max-height: var(--abey-table-body-max-height);
     overflow: auto;
     overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
     scrollbar-width: thin;
     scrollbar-color: var(--abey-table-scrollbar-thumb) var(--abey-table-scrollbar-track)
 }
@@ -500,5 +501,49 @@ abey-table .abey-table-skeletonBar {
     abey-table .abey-table-skeletonBar {
         animation: none;
         opacity: .85
+    }
+}
+
+@media (max-width: 639px) {
+    abey-table {
+        --abey-table-body-max-height: min(52vh, 420px);
+        --abey-table-wrap-max-height: min(64vh, 560px)
+    }
+
+    abey-table .toolbar {
+        flex-wrap: wrap;
+        justify-content: stretch;
+        align-items: stretch;
+        gap: 10px;
+        padding: 10px 12px
+    }
+
+    abey-table .search {
+        width: 100%;
+        min-width: 0;
+        order: -1
+    }
+
+    abey-table .footer {
+        flex-wrap: wrap;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 10px 12px
+    }
+
+    abey-table .footerLeft,
+    abey-table .footerRight {
+        flex: 1 1 auto;
+        min-width: 0
+    }
+
+    abey-table .footerRight {
+        flex-wrap: wrap;
+        justify-content: flex-end
+    }
+
+    abey-table th,
+    abey-table td {
+        padding: 10px 10px
     }
 }

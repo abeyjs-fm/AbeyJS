@@ -14,7 +14,7 @@
 <p>Feature checklist (table 1–15) and status <strong>in code today</strong>: <strong><code>/guides/crud-auto</code></strong> (same as <code>docs/crud-automatico-omegax.md</code> in the repo).</p>
 <hr>
 <h2>1. Requirement ↔ implementation matrix</h2>
-<table>
+<div class="doc-md-table-wrap"><table>
 <thead>
 <tr>
 <th>Requirement</th>
@@ -102,7 +102,7 @@
 <td>Product/ops</td>
 <td>Pagination, caching, etc.—not all in core.</td>
 </tr>
-</tbody></table>
+</tbody></table></div>
 <p><strong>Discovery gap we closed:</strong> discovery used to be rigid without <code>/{id}</code> on items; specs can define item paths and get/put/patch/delete so the agent completes update/delete when appropriate.</p>
 <hr>
 <h2>2. HTML: safe by default, explicit risk</h2>
@@ -133,7 +133,7 @@
 <p><code>runtime.registerPlugin({ id, install })</code> — <code>install</code> returns optional teardown; runtime <code>disposeAll</code> runs them. No component tree required—hook <code>channel</code> or <code>onIntent</code> alone.</p>
 <hr>
 <h2>6. Packages (summary)</h2>
-<table>
+<div class="doc-md-table-wrap"><table>
 <thead>
 <tr>
 <th>Package</th>
@@ -164,7 +164,7 @@
 <td><code>@abeyjs/cli</code></td>
 <td>Init, connect, codegen, generators.</td>
 </tr>
-</tbody></table>
+</tbody></table></div>
 <p>Ready examples: monorepo <code>examples/</code> folder.</p>
 <p>Next on the web: <strong><code>/guides/abey-templates</code></strong> or <strong><code>/guides/crud-auto</code></strong> depending on OM syntax vs OpenAPI pipeline.</p>
   </article>

@@ -1,7 +1,36 @@
 <section data-role="doc-guide-root">
   <article data-doc="markdown">
 <p>Use this web component for a <strong>dense grid</strong> product-console style (row selection, action menu, pagination) <strong>without</strong> full <code>mountListViewSync</code> for a mock or live catalog. Plays with the rest of AbeyJs: drive from plain TS state or wire the runtime in <strong>flow</strong> mode (see <strong><code>/guides/table-flows</code></strong>).</p>
-<p>Register the class once at startup (<code>AbeyTableElement.define(&quot;abey-table&quot;)</code>)—the kit does not assume the custom element already exists.</p>
+<p>Register the class once at startup (<code>AbeyTableElement.define(&quot;abey-table&quot;)</code>)—the kit does not assume the custom element already exists. Prefer <strong><code>registerAbeyJsUi()</code></strong> from <strong><code>@abeyjs/view</code></strong> in <strong><code>main.ts</code></strong> so all <strong><code>abey-*</code></strong> primitives (including <strong><code>abey-table</code></strong>) define together.</p>
+<h3>Omega runtime on <code>globalThis</code> (flow mode and intents)</h3>
+<p>In <strong>flow</strong> mode (and whenever the grid calls <strong><code>dispatch</code></strong> on the OM runtime), <strong><code>abey-table</code></strong> looks up <strong><code>OmegaRuntime</code></strong> from <strong><code>globalThis</code></strong> using the <strong><code>runtime-path</code></strong> attribute (DOM: <strong><code>runtimepath</code></strong>). Default path is <strong><code>&quot;__abeyRuntime&quot;</code></strong> — i.e. <strong><code>globalThis.__abeyRuntime</code></strong>.</p>
+<p><strong><code>bootstrapOmegaApp(root, { createOmega, … })</code></strong> (see <strong><code>packages/view</code> README</strong>) resolves <strong><code>createOmega()</code></strong> then calls <strong><code>exposeBootstrapRuntime</code></strong>, which sets <strong><code>globalThis.__abeyRuntime</code></strong> and (<strong>if absent</strong>) <strong><code>globalThis.__abeyDi.channel</code></strong>. That avoids repeating glue in each app’s <strong><code>main.ts</code></strong>.</p>
+<p><strong>Separate concerns:</strong></p>
+<div class="doc-md-table-wrap"><table>
+<thead>
+<tr>
+<th>Requirement</th>
+<th>Responsibility</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Custom element <strong><code>abey-table</code></strong> exists</td>
+<td><strong><code>registerAbeyJsUi()</code></strong> / <strong><code>AbeyTableElement.define</code></strong> once at startup</td>
+</tr>
+<tr>
+<td><strong><code>globalThis.__abeyRuntime</code></strong> set</td>
+<td><strong><code>bootstrapOmegaApp</code></strong> + <strong><code>createOmega</code></strong> ( <strong><code>exposeBootstrapRuntime</code></strong> )</td>
+</tr>
+<tr>
+<td>Columns / items / intents</td>
+<td>Your OM handlers, <strong><code>channel.publish</code></strong>, slice installers</td>
+</tr>
+<tr>
+<td>Styles</td>
+<td>Document / light DOM: <strong><code>abey.json</code></strong> → <strong><code>styles</code></strong> or <strong><code>import &quot;@abeyjs/uikit/styles/abey-table.css&quot;</code></strong> at app entry. Inside <strong><code>@AbeyComponent</code></strong> (shadow root), global sheets <strong>do not</strong> reach <strong><code>&lt;abey-table&gt;</code></strong>: add <strong><code>import tableCss from &quot;.../abey-table.css?inline&quot;</code></strong> to <strong><code>stylesText</code></strong> on that component.</td>
+</tr>
+</tbody></table></div>
+<p>If <strong><code>#getRuntime()</code></strong> returns <strong><code>null</code></strong> (empty table chrome, <strong><code>channel</code></strong> never attaches), <strong><code>createOmega</code></strong> is missing, bootstrap never ran yet, or you are on a <strong>public-only</strong> page that never mounts the routed shell—in those cases <strong><code>globalThis.__abeyRuntime</code></strong> stays unset until the main app bootstrap completes.</p>
 <h2>What you get out of the box</h2>
 <p>Table web component with:</p>
 <ul>

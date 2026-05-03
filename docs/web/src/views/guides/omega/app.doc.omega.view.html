@@ -2,7 +2,7 @@
   <article data-doc="markdown">
 <p>The <strong>AbeyJS runtime</strong> is the object you typically create once (type <strong><code>OmegaRuntime</code></strong> from <code>@abeyjs/runtime</code>) in <strong><code>omegaSetup.ts</code></strong> and share (channel + dispatch + optional plugin registry). The runtime should feel <strong>familiar</strong> if you know CQRS-lite buses: nominal typed intents from <strong><code>@abeyjs/core</code></strong> and follow-up effects via <strong><code>channel.publish</code></strong>.</p>
 <h2>Live pieces inside the process</h2>
-<table>
+<div class="doc-md-table-wrap"><table>
 <thead>
 <tr>
 <th>Concept</th>
@@ -33,7 +33,7 @@
 <td><strong><code>StateCell</code> / state</strong></td>
 <td>state package / OpenAPI agent view slices</td>
 </tr>
-</tbody></table>
+</tbody></table></div>
 <p><strong>Do not confuse:</strong> <strong><code>dispatch</code> ≠ HTTP</strong>. HTTP belongs in agents using <strong><code>OmegaHttp</code></strong>. Intents are the <strong>first link</strong> client-side after user input.</p>
 <hr>
 <h2>Recommended cycle (UI → server → DOM)</h2>
@@ -44,6 +44,11 @@
 <li>OM view / reactive list / form subscriber updates local model.</li>
 </ol>
 <p>This makes intent <strong>replay</strong> in tests easy with a fake channel. It also isolates HTTP in the agent when OpenAPI evolves.</p>
+<hr>
+<h2>Browser globals (<code>exposeBootstrapRuntime</code>)</h2>
+<p>In Vite/browser apps that use <strong><code>bootstrapOmegaApp</code></strong> with <strong><code>createOmega</code></strong>, <strong><code>@abeyjs/view</code></strong> calls <strong><code>exposeBootstrapRuntime(runtime)</code></strong> after the shell resolves the <strong><code>OmegaRuntime</code></strong>. That sets <strong><code>globalThis.__abeyRuntime</code></strong> and (<strong>if unset</strong>) <strong><code>globalThis.__abeyDi.channel</code></strong> to a getter that forwards to <strong>`runtime.channel</strong>.</p>
+<p><strong>Why:</strong> several DOM layers (<strong><code>abey-table</code></strong>, <strong><code>abey-widget</code></strong>, <strong><code>abey-form</code></strong>, <strong><code>@AbeyComponent</code></strong>) default to reading <strong><code>OmegaRuntime</code></strong> from <strong><code>globalThis</code></strong> via a dotted path (<strong><code>runtimepath</code></strong> / <strong><code>runtime-path</code></strong>, default <strong><code>&quot;__abeyRuntime&quot;</code></strong>), so lazy chunks and kit elements still find the same bus without threading <strong><code>runtime</code></strong> through every constructor.</p>
+<p><strong>Not covered by this helper:</strong> registering <strong><code>abey-*</code></strong> custom elements (<strong><code>registerAbeyJsUi()</code></strong> in <strong><code>main.ts</code></strong>), providing DI tokens on <strong><code>OmegaContainer</code></strong>, or publishing table columns/items on the channel — those stay in your <strong><code>omegaSetup</code></strong> and slice code. See <strong><code>docs/abey-table.md</code></strong> for a checklist when <strong><code>abey-table</code></strong> stays empty in flow mode.</p>
 <hr>
 <h2>Intent naming</h2>
 <p>We prefer <strong><code>PascalDomain</code></strong> + verb for readability in logs:</p>
@@ -63,7 +68,7 @@
 <p>When you need the broader <strong>product vision</strong> doc, read <strong><code>/guides/vision</code></strong> in addition to this technical page.</p>
 <hr>
 <h2>Team debugging tips</h2>
-<table>
+<div class="doc-md-table-wrap"><table>
 <thead>
 <tr>
 <th>Symptom</th>
@@ -82,7 +87,7 @@
 <td>Stale UI</td>
 <td>View subscribed to the right agent cells (see <code>examples/crud-app</code>).</td>
 </tr>
-</tbody></table>
+</tbody></table></div>
 <p>For telemetry across integrations use shell <strong><code>omega/nav:changed</code></strong> in addition to domain intents.</p>
 <hr>
 <h2><code>OmegaContainer: missing provider for token &quot;abeyjs:…&quot;</code></h2>

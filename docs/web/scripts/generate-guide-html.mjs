@@ -19,6 +19,35 @@ function stripLeadingH1(md) {
   return md.replace(/^\s*#\s+.+\r?\n+/, "").trimStart();
 }
 
+/** Scroll wide GFM tables horizontally without `display: block` on `<table>` (keeps sticky thead). */
+function wrapMarkdownTables(html) {
+  const re = /<table\b[^>]*>|<\/table\s*>/gi;
+  let depth = 0;
+  let out = "";
+  let last = 0;
+  let m;
+  while ((m = re.exec(html)) !== null) {
+    out += html.slice(last, m.index);
+    const tag = m[0];
+    if (/^<\/table/i.test(tag)) {
+      if (depth > 0) {
+        depth -= 1;
+        out += "</table>";
+        if (depth === 0) out += "</div>";
+      } else {
+        out += tag;
+      }
+    } else {
+      if (depth === 0) out += '<div class="doc-md-table-wrap">';
+      depth += 1;
+      out += tag;
+    }
+    last = re.lastIndex;
+  }
+  out += html.slice(last);
+  return out;
+}
+
 /** [carpetaGuía, ficheroMarkdown] */
 const rows = [
   ["intro", "intro-abeyjs.md"],
@@ -42,7 +71,9 @@ const rows = [
 for (const [folder, mdName] of rows) {
   const mdPath = join(DOC_ROOT, mdName);
   const md = readFileSync(mdPath, "utf8");
-  const inner = String(await marked.parse(stripLeadingH1(md))).trim();
+  const inner = wrapMarkdownTables(
+    String(await marked.parse(stripLeadingH1(md))).trim(),
+  );
   const outDir = join(DOC_WEB, "src", "views", "guides", folder);
   mkdirSync(outDir, { recursive: true });
   const outfile = join(outDir, `app.doc.${folder}.view.html`);
