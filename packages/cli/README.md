@@ -1,131 +1,146 @@
 # `@abeyjs/cli`
 
-Command-line entry point for **scaffolding**, **OpenAPI wiring**, and **code generation** around AbeyJs apps. The published binary is `abeyjs` (see `package.json` `"bin"`).
+**`abeyjs`** — scaffolding, OpenAPI **connect**/**codegen**, patches to existing Vite apps, and **Omega** vertical-slice generators.
+
+Runtime behaviour (CRUD agents, HTTP, mounted views) stays in **`@abeyjs/openapi`**, **`@abeyjs/http`**, **`@abeyjs/view`**; this package is the **tooling** you run in CI or locally.
+
+**Binary:** **`abeyjs`** (`package.json` → `"bin"` → `dist/cli.js`).
+
+**Peer:** **`typescript`** `>=5` (for codegen that shells to project TS / expectations in templates).
 
 ---
 
-## Commands
-
-### `abeyjs new | create | init <folder>`
-
-Copies a Vite + TypeScript starter into `<folder>`.
-
-| Flag | Values | Notes |
-|------|--------|--------|
-| `--template` | `admin`, `abeyjs`, `minimal` | `minimal` is a tiny package skeleton with only `@abeyjs/core`. |
-| `--shell` | `dashboard`, `appbar` | Applies only to `--template admin`. |
-| `--skip-install` | — | Skip the automatic `npm install` after the template is written. |
-
-Runs **`npm install`** in the new project folder by default (omit with **`--skip-install`** or **`SKIP_ABEYJS_SCAFFOLD_INSTALL=1`**).
-
-**Deploy:** the template is a Vite SPA—**`npm run build`** emits **`dist/`** for static hosting. AbeyJs-specific production notes (**`/abey-styles.js`**, SPA fallback, **`base`** + **`shell.pathnameBase`**) live in **`[docs/quick-start.md](../../docs/quick-start.md#deploy-your-app-production)`**.
-
-### `abeyjs add openapi <folder>`
-
-Patches an existing AbeyJs + Vite app **without** requiring a prior `connect`. Implementation: **`src/openapi-add-wires.ts`** (`addOpenapiToApp`). After patching **`package.json`**, the CLI runs **`npm install`** in that folder unless you pass **`--skip-install`** or set **`SKIP_ABEYJS_SCAFFOLD_INSTALL=1`**.
-
-| Addition | Purpose |
-|----------|---------|
-| `package.json` | Adds **`@abeyjs/openapi`**, **`@abeyjs/http`** dependencies. |
-| `vite.config.ts` | Proxies **`^/api`** and **`/swagger`** to **`--proxy`** (`changeOrigin`, `secure: false`), tagged comment `abeyjs-openapi-proxy`. |
-| `.env.example` | Hint variables for proxy / API base (`ABEYJS_*` conventions used by templates). |
-| **`omegaSetup` / routes** | Stubs **`initOpenApi`** / **`/crud-api`** when missing (marker **`ABEYJS-OPENAPI-WIRE`** avoids duplicate edits). |
-
-| Flag | Default |
-|------|---------|
-| `--proxy` | `https://127.0.0.1:7019` |
-| `--openapi-path` | `/swagger/v1/swagger.json` |
-| `--skip-install` | — | Skip **`npm install`** after updating **`package.json`**. |
-
-Runtime CRUD wiring still uses **`@abeyjs/openapi`** (`discover*` / `registerOpenApi*` / **`mountOpenApiCrudView`**) — see **`packages/openapi/README.md`**.
-
-### `abeyjs connect <swagger-url> [--target <dir>] [--insecure]`
-
-Produces the **design-time contract** consumed by **`abeyjs generate views`**. Implementation: **`src/openapi-connect.ts`** (`runConnect`).
-
-| Artifact | Contents |
-|----------|----------|
-| **`.abeyjs/connect.json`** | **`ConnectContract`** — version stamp, **`source`** (`swaggerUrl`, **`fetchedAt`** ISO), **`entities[]`** with models, **`CrudEndpoints`**, pagination hints (**`openapi-config.writeConnectContract`**). |
-| **`abeyjs.connect.yml`** | Parallel **YAML** tuned for codegen: widgets, combo **`options.endpoint`**, per-entity route/menu labels (**`openapi-config.ensureYamlConfig`**). |
-
-Loads spec via **`fetch`** (URLs) or **`readFile`** + **`JSON.parse`** (paths). **`--insecure`** only affects HTTPS fetches (`NODE_TLS_REJECT_UNAUTHORIZED` rollback in **`finally`**).
-
-Interactive **TTY**: prompts **`crud` | `action` | `service` | `skip`** per entity (**`askEntityTypes`**).
-
-**Discovery & types:** **`src/openapi-contract.ts`** — **`buildConnectContract`**, **`EntityContract`**, **`ConnectContract`**, heuristic pagination inference from query params / response envelopes.
-
-### `abeyjs generate views [--target <dir>] [--scaffold minimal|full]`
-
-Reads **`.abeyjs/connect.json`** (+ YAML overrides) and materializes OM / TS scaffolding. **`--scaffold full`** emits extra slices (`src/app`, `src/ui`, use cases, …). Logic: **`src/openapi-generate-views.ts`** (**`runGenerateViewsWithOptions`**, **`listCrudCandidates`**).
-
-Requires a successful **`connect`** (`connect.json` present with entities).
-
-### `abeyjs generate ecosystem <Name> [--feature-root <path>] [--target <dir>] [--show-nav|--no-show-nav]`
-
-Creates a **vertical slice** (feature folder) with a working sample: tick intent → agent → flow → channel event → UI update.
-
-| Flag | Purpose |
-|------|---------|
-| `--target` | App root (must contain `src/`). Defaults to `.`; resolved with the same rules as other commands (`INIT_CWD`, etc.). |
-| `--feature-root` | Where to create the folder (relative to `--target` unless absolute). Default: `src/<kebab>` or, if you ran the CLI **from inside** `src/foo`, `src/foo/<kebab>`. Must stay under `src/`. |
-| `--show-nav` / `--no-show-nav` | Emit `showInNav: false` on the generated `componentRoute` nav object when hidden (`--hide-nav` is an alias for `--no-show-nav`). If neither flag is passed: **TTY** asks in Spanish/English; **non-interactive** defaults to visible (same as `--show-nav`). |
-
-**Emitted tree** (implementation: `src/generate-ecosystem.ts`):
-
-| Path | Role |
-|------|------|
-| `omega/semantics.ts` | Intent names, agent/flow ids, `omega/ecosystem/<kebab>/…` event strings. |
-| `omega/behavior.ts` | Starter rule mapping `Tick` intent → agent reaction. |
-| `omega/agent.ts` | Stateful agent; ticks increment `viewState` and publish `eventTicked`. |
-| `omega/flow.ts` | Listens for tick intent and `eventTicked`, emits UI expressions. |
-| `omega/register.ts` | **`install<Name>Omega(runtime)`** — registers agent, flow, `onIntent` → `handleIntent`. |
-| `ui/app.<kebab>.view.ts` | `@AbeyComponent`: **`import { template }`** from **`.view.html`** (OM) + **`stylesText`** from **`.view.css?inline`**; dispatches tick intent. |
-| `ui/app.<kebab>.view.html` | Tiny template with `(click)` binding. |
-| `ui/app.<kebab>.view.css` | Estilos del bloque (misma convención de nombres que **views/home** en admin). |
-| `model/`, `data/` | Empty stubs for DTOs and data access. |
-
-**Auto-wiring** (best effort, only if files exist):
-
-1. **`omegaSetup.ts`** (`src/` or project root): inserts `import { install… }` and `install…(runtime)` after `registerModule(registerCommon)`, else after `createOmegaRuntime()`, else before `return { runtime }`.
-2. **`routes.ts`**: inserts `componentRoute('/<kebab>', …)` importing `ui/app.<kebab>.view.ts` **before** the 404 `pageRoute`, and adds `componentRoute` import from `@abeyjs/view` when needed. Nav metadata respects **`showInNav`** (prompt or flags).
-
-Generated UI follows the **admin** stack: OM **`.view.html`** + **`stylesText`** / **`?inline`** (requires **`abeyVitePlugin`** in `vite.config.ts`).
-
-Full behaviour, option types, and JSDoc live in **`src/generate-ecosystem.ts`** (`runGenerateEcosystem`, `normalizeEcosystemPascal`, `buildEcosystemWireInstructions`).
+## Install & run
 
 ```bash
-cd my-app
-node packages/cli/dist/cli.js generate ecosystem Billing --target .
-# from inside src/features (default folder becomes src/features/<kebab>):
-cd src/features && node ../../../packages/cli/dist/cli.js generate ecosystem Reports --target ../..
+# latest global
+npm i -g @abeyjs/cli
+
+# project devDependency (npx)
+npm i -D @abeyjs/cli
+npx abeyjs --help
+```
+
+```bash
+# from monorepo source (maintainers)
+npm run build -w @abeyjs/cli
+node packages/cli/dist/cli.js help
 ```
 
 ---
 
-### `abeyjs codegen <spec.json|yaml> -o <dir>`
+## Command map
 
-Runs **`openapi-typescript`** into **`--out`** and writes **`omegaSetup.generated.ts`** stubs with path hints. Independent of **`connect`** / **`generate views`** (typed **`paths`** only, no CRUD UI).
+| Command | Role |
+|---------|------|
+| **`abeyjs new` / `create` / `init`** | Copy a Vite + TS template into `<folder>`. |
+| **`abeyjs add openapi`** | Patch an existing app (`package.json`, **`vite.config`** proxy, stubs) — no prior **`connect`**. |
+| **`abeyjs connect`** | Fetch OpenAPI → **`.abeyjs/connect.json`** + **`abeyjs.connect.yml`** for **`generate views`**. |
+| **`abeyjs generate views`** | OM/TS scaffolding from **`connect.json`**. |
+| **`abeyjs generate ecosystem`** (`g ecosystem`) | Sample vertical slice (intent → agent → flow → UI). |
+| **`abeyjs codegen`** | **`openapi-typescript`** + **`omegaSetup.generated.ts`** stubs (typed paths only; not full CRUD UI). |
+| **`abeyjs help`**, **`abeyjs version`**, **`abeyjs -v`** / **`--version`** | Usage text; full env report vs semver only. |
 
-### `abeyjs help`
-
-Prints built-in usage text.
+Long-form prose for flags and workflows: **`docs/cli-reference.md`** (monorepo root).
 
 ---
 
-## Environment quirks
+## `abeyjs new | create | init <folder>`
 
-- **`npm_config_target`**, **`npm_config_proxy`**, **`npm_config_openapi_path`**: respected when npm passes config through scripts.
-- **`INIT_CWD`**: used to resolve relative paths the same way npm scripts would from a workspace root.
+Copies **`packages/cli/templates/`** (or codegen for **`minimal`**) into **`<folder>`**.
+
+| Flag | Values | Notes |
+|------|--------|-------|
+| **`--template`** | **`admin`**, **`empty`**, **`abeyjs`**, **`minimal`** | **`minimal`** = tiny **`@abeyjs/core`**-only skeleton (no template dir). **`empty`** / **`abeyjs`** use the **`empty`** template layout. |
+| **`--shell`** | **`dashboard`**, **`appbar`** | Only **`--template admin`**. |
+| **`--skip-install`** | — | Skip **`npm install`** after scaffold. Same as env **`SKIP_ABEYJS_SCAFFOLD_INSTALL=1`**. |
+
+Default: runs **`npm install`** in the new folder.
+
+**Production deploy** (SPA **`base`**, shell **`pathnameBase`**, styles bundle): **`docs/quick-start.md`** → *Deploy your app (production)*.
 
 ---
 
-## Templates
+## `abeyjs add openapi <folder>`
 
-**`packages/cli/templates/`** contains **`admin`** and **`empty`** (Vite + OM starter; **`abeyjs`** / **`empty`** CLI flags copy this folder). **`minimal`** is generated in code — no template directory.
+Patches **`package.json`** (adds **`@abeyjs/openapi`**, **`@abeyjs/http`**), **`vite.config.ts`** (**`^/api`**, **`/swagger`** proxy, comment **`abeyjs-openapi-proxy`**), **`.env.example`**, optional **`omegaSetup` / `/crud-api`** stubs (marker **`ABEYJS-OPENAPI-WIRE`** avoids duplicates).
 
-Layout, shell flags, and post-copy patches: **`templates/README.md`** in this package.
+| Flag | Default |
+|------|---------|
+| **`--proxy`** | `https://127.0.0.1:7019` |
+| **`--openapi-path`** | `/swagger/v1/swagger.json` |
+| **`--skip-install`** | — |
 
-After **`abeyjs new`**, the CLI may adjust **`package.json` `name`**, emit root **`README.txt`**, and (**`admin` + `--shell appbar`**) flip **`dashboardLayout`** in **`src/main.ts`**.
+See **`packages/openapi/README.md`** for **`mountOpenApiCrudView`**, **`discover*`**, **`registerOpenApi*`**.
+
+---
+
+## `abeyjs connect <swagger-url> [--target <dir>] [--insecure]`
+
+Produces design-time artefacts:
+
+| File | Contents |
+|------|-----------|
+| **`.abeyjs/connect.json`** | **`ConnectContract`** — source URL, **`entities[]`**, CRUD-ish endpoints, pagination hints (**`openapi-config.writeConnectContract`**). |
+| **`abeyjs.connect.yml`** | Human-editable overrides (**`openapi-config.ensureYamlConfig`**). |
+
+Loads URL via **`fetch`** or local JSON. **`--insecure`** temporarily relaxes TLS for **`fetch`** (restored in **`finally`**).
+
+**TTY:** per-entity **`crud` | `action` | `service` | `skip`**.
+
+Internals: **`src/openapi-connect.ts`**, **`src/openapi-contract.ts`** (**`buildConnectContract`**).
+
+---
+
+## `abeyjs generate views [--target <dir>] [--scaffold minimal|full]`
+
+Reads **`.abeyjs/connect.json`** (+ YAML). **`full`** emits extra layering (**`src/app`**, **`src/ui`**, etc.). Requires a prior successful **`connect`**.
+
+Implementation: **`src/openapi-generate-views.ts`**.
+
+---
+
+## `abeyjs generate ecosystem <Name> [--feature-root <path>] [--target <dir>] [--show-nav|--no-show-nav]`
+
+Emits **`omega/`** semantics, behaviour, agent, flow, **`register.ts`**; **`ui/app.<kebab>.*`** OM views; stubs **`model/`**, **`data/`**; best-effort patches **`omegaSetup.ts`** and **`routes.ts`**.
+
+| Flag | Notes |
+|------|-------|
+| **`--target`** | App root (**`src/`** must exist). **`INIT_CWD`** / cwd resolution applies. |
+| **`--feature-root`** | Relative (or absolute) feature parent; stays under **`src/`**. Default **`src/<kebab>`** or cwd-relative when run inside **`src/foo`**. |
+| **`--show-nav` / `--no-show-nav`** | **`--hide-nav`** ≡ **`--no-show-nav`**. Non-interactive default: visible nav. |
+
+Details: **`src/generate-ecosystem.ts`** (`runGenerateEcosystem`, …).
+
+---
+
+## `abeyjs codegen <spec.json|yaml> -o|--out <dir>`
+
+Runs **`openapi-typescript`** and writes **`omegaSetup.generated.ts`** path hints — **independent** of **`connect`** / **`generate views`**.
+
+---
+
+## Environment & npm oddities
+
+- **`npm_config_target`**, **`npm_config_proxy`**, **`npm_config_openapi_path`**: honoured when npm passes flags into scripts.
+- **`INIT_CWD`**: aligns relative paths with how **`npm`** runs workspaces.
+- **Install banners** (`preinstall` / `postinstall`): **`SKIP_ABEYJS_INSTALL_MSG=1`** or **`CI=true`** silence them.
+
+---
+
+## Templates (`packages/cli/templates/`)
+
+Source trees for **`admin`**, **`empty`**. **`templates/README.md`** in this package explains layout / shell patching.
+
+---
+
+## Related packages (not this CLI)
+
+| Package | Responsibility |
+|---------|----------------|
+| **`@abeyjs/openapi`** | Runtime CRUD discovery, **`mountOpenApiCrudView`**. |
+| **`@abeyjs/view`** | **`bootstrapOmegaApp`**, **`registerAbeyJsUi()`**, routed shell. |
+| **`@abeyjs/compiler`** | **`abeyVitePlugin`** in generated **`vite.config`**. |
 
 ---
 
@@ -134,13 +149,3 @@ After **`abeyjs new`**, the CLI may adjust **`package.json` `name`**, emit root 
 ```bash
 npm run build -w @abeyjs/cli
 ```
-
-Run the compiled CLI:
-
-```bash
-node packages/cli/dist/cli.js help
-```
-
-### Install messages (`npm i` / `npm i -g`)
-
-`preinstall` / `postinstall` print a short banner (like many CLIs): “installing…”, then **global** vs **local** and suggested commands. To skip (CI or noisy workspace reinstalls): set **`SKIP_ABEYJS_INSTALL_MSG=1`** or rely on **`CI=true`**.

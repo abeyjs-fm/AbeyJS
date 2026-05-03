@@ -23,6 +23,10 @@
       "types": "./dist/dev/vite-malformed-uri-guard.d.ts",
       "import": "./dist/dev/vite-malformed-uri-guard.js"
     },
+    "./dev/vite-docs-static-site": {
+      "types": "./dist/dev/vite-docs-static-site.d.ts",
+      "import": "./dist/dev/vite-docs-static-site.js"
+    },
     "./dev/sync-spa-html-fallback-paths": {
       "types": "./dist/dev/sync-spa-html-fallback-paths.d.ts",
       "import": "./dist/dev/sync-spa-html-fallback-paths.js"

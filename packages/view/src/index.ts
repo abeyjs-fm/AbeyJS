@@ -3,7 +3,7 @@
  * **`mountList*` / `mountForm*`** (data-driven defs), **`AbeyComponent`**, templates, DOM DI, **signals**, safe HTML.
  *
  * Register UI tags once: **`registerAbeyJsUi()`**. Theme: **`@abeyjs/view/theme/omega-default.css`**.
- * Dev-only: **`@abeyjs/view/dev/vite-logger`**, **`@abeyjs/view/dev/vite-malformed-uri-guard`**. Full tour: **`README.md`**.
+ * Dev-only: **`@abeyjs/view/dev/vite-logger`**, **`@abeyjs/view/dev/vite-malformed-uri-guard`**, **`@abeyjs/view/dev/vite-docs-static-site`**. Full tour: **`README.md`**.
  */
 export type {
   DataViewDef,
