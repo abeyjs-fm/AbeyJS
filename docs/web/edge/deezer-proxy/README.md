@@ -4,7 +4,7 @@ The Docs SPA calls `/api/deezer` locally via the Vite dev proxy (`vite.config.ts
 
 [Deezer’s public API](https://developers.deezer.com/) works from curl/servers but not from browsers (no usable `Access-Control-Allow-Origin` for GitHub Pages). This Worker forwards **`GET`** to `https://api.deezer.com` and adds permissive CORS headers.
 
-If **`VITE_DEEZER_HTTP_BASE`** is **not** set at build time, the **`/abey-table`** page still tries **`fetch`** against **`https://api.deezer.com`**, but the browser will **fail** those calls (same-origin/CORS rules). Baking the Worker URL fixes it.
+If **`VITE_DEEZER_HTTP_BASE`** is **not** set at build time, the **`/abey-table`** demo does **not** call Deezer from the browser (avoids pointless CORS errors); wire the Worker URL via secret or **`docs/web/.env.production`** so **`fetch`** hits your relay instead.
 
 ## One-time deploy (maintainer)
 
@@ -18,4 +18,4 @@ Add a repository **Actions secret** named **`VITE_DEEZER_HTTP_BASE`** with the W
 
 The **`Docs — GitHub Pages`** workflow exports it so `vite build` bakes `import.meta.env.VITE_DEEZER_HTTP_BASE` into the Deezer Omega HTTP module.
 
-Forks without the secret see failing network loads until they deploy their own Worker and set the secret (or use **`npm run dev`** with the Vite **`/api/deezer`** proxy locally).
+Forks without the secret see empty/error loads until they deploy their own Worker and set the secret — or **`npm run dev`** with the Vite **`/api/deezer`** proxy locally — or bake **`VITE_DEEZER_HTTP_BASE`** in **`.env.production`** before **`vite build`**.

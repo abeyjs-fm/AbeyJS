@@ -52,7 +52,7 @@ export class AppAbeyTableElement extends AbeyComponentElement {
         getRowId: (r: DeezerArtist) => String(r.id),
       } satisfies AbeyTableConfig<DeezerArtist>,
       demoHint: isDeezerProdRelayAbsent()
-        ? "This prod build has no VITE_DEEZER_HTTP_BASE — the demo still calls Deezer over the network, but the browser blocks direct api.deezer.com (CORS). Deploy docs/web/edge/deezer-proxy and set that URL as the GitHub Actions secret so requests go through your Worker."
+        ? "This prod build has no VITE_DEEZER_HTTP_BASE — Deezer loads are disabled until you set the Workers relay URL (GitHub Actions secret for CI, or VITE_DEEZER_HTTP_BASE in docs/web/.env.production for a local production build). See docs/web/edge/deezer-proxy/README.md."
         : "Try searching for artists and changing pages: each action triggers a remote load.",
       intentLoad: ArtistEcosystem.intentLoadTable,
       intentSelection: ArtistEcosystem.intentTableSelection,

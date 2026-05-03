@@ -11,22 +11,23 @@ function deezerRelayEnvBase(): string {
 }
 
 /**
- * True when the production bundle was built **without** baking a Worker relay URL.
- * The client still targets the Deezer API over the network, but the browser will only succeed
- * if **`VITE_DEEZER_HTTP_BASE`** is set (CORS). Without it, requests hit **`https://api.deezer.com`**
- * directly and are blocked by CORS.
+ * Prod build baked **without** a Worker relay URL (`VITE_DEEZER_HTTP_BASE` empty): the SPA cannot call
+ * `https://api.deezer.com` from `github.io` (CORS). Requests are deferred until relay is configured.
  */
 export function isDeezerProdRelayAbsent(): boolean {
   return import.meta.env.PROD && deezerRelayEnvBase() === "";
 }
 
-let loggedDeezerProdCorsHint = false;
+function productionDeezerRelayMissing(): boolean {
+  return isDeezerProdRelayAbsent();
+}
+
+let loggedDeezerRelayHint = false;
 
 /**
- * - **Dev**: Vite proxies **`/api/deezer`** → **`https://api.deezer.com`** (`vite.config.ts`).
- * - **Production**: set **`VITE_DEEZER_HTTP_BASE`** to the Cloudflare Worker URL (`docs/web/edge/deezer-proxy`).
- *   If unset, base falls back to **`https://api.deezer.com`** (same host the relay forwards to); that path
- *   **fails in the browser** without CORS until the secret is configured at build time.
+ * - **Dev**: Vite **`/api/deezer`** proxy → **`api.deezer.com`** (`vite.config.ts`).
+ * - **Production**: **`VITE_DEEZER_HTTP_BASE`** = Cloudflare Worker URL (`docs/web/edge/deezer-proxy`), via
+ *   Actions secret or **`docs/web/.env.production`** before **`vite build`**.
  */
 export function resolveDeezerOmegaHttpBaseUrl(): string {
   const fromEnv = deezerRelayEnvBase();
@@ -36,31 +37,44 @@ export function resolveDeezerOmegaHttpBaseUrl(): string {
   if (import.meta.env.DEV) {
     return "/api/deezer";
   }
-  return "https://api.deezer.com";
+  return "";
+}
+
+/** Message when prod has no relay; avoids firing a doomed `fetch` to Deezer (CORS noise). */
+export function deezerRelayConfigurationError(): Error {
+  return new Error(
+    "Deezer table demo: set VITE_DEEZER_HTTP_BASE to your Workers relay URL (docs/web/edge/deezer-proxy). See GitHub Actions secret or docs/web/.env.production.",
+  );
 }
 
 /**
- * DI for the Deezer-backed table demo (`TOK_DEEZER_HTTP`). Always uses real **`fetch`** against
- * {@link resolveDeezerOmegaHttpBaseUrl} (no embedded catalog).
+ * DI for the Deezer-backed table demo (`TOK_DEEZER_HTTP`).
+ * Prod without **`VITE_DEEZER_HTTP_BASE`** skips real HTTP until configured (see {@link deezerRelayConfigurationError}).
  */
 export function registerDeezerHttpModule(c: OmegaContainer, runtime: OmegaRuntime): void {
   c.provideFactory(TOK_DEEZER_HTTP, () => {
-    const baseUrl = resolveDeezerOmegaHttpBaseUrl();
+    const stubRelay = productionDeezerRelayMissing();
     if (
-      isDeezerProdRelayAbsent() &&
-      !loggedDeezerProdCorsHint &&
+      stubRelay &&
+      !loggedDeezerRelayHint &&
       typeof console !== "undefined" &&
-      typeof console.warn === "function"
+      typeof console.debug === "function"
     ) {
-      loggedDeezerProdCorsHint = true;
-      console.warn(
-        "[abeyjs-docs-web] Deezer demo: build has no VITE_DEEZER_HTTP_BASE — requests go to https://api.deezer.com and the browser will block them (CORS). Deploy docs/web/edge/deezer-proxy and set the GitHub Actions secret so the SPA uses your Worker URL.",
+      loggedDeezerRelayHint = true;
+      console.debug(
+        "[abeyjs-docs-web] Deezer demo: no VITE_DEEZER_HTTP_BASE in this prod build — table loads are skipped until the Worker URL is set (GH Actions secret or docs/web/.env.production). See docs/web/edge/deezer-proxy/README.md.",
       );
     }
+
+    const baseUrl = stubRelay ? "https://abey-docs-deezer-not-configured.invalid" : resolveDeezerOmegaHttpBaseUrl();
+    const fetchImpl: typeof fetch | undefined = stubRelay
+      ? () => Promise.reject(deezerRelayConfigurationError())
+      : undefined;
 
     return createOmegaHttp({
       channel: runtime.channel,
       baseUrl,
+      fetch: fetchImpl,
       source: "deezer-api-docs",
       cache: { enabled: true, ttlMs: 30_000 },
     });
