@@ -1,6 +1,6 @@
 /*
  * AbeyJs Docs — site-specific look (brand, shell halos, viewport scrollbar, `pageRoute` views).
- * Loaded after omega-default + `doc-shell.css` (template / prose tokens).
+ * Loaded after default theme CSS (`omega-default.css`) + `doc-shell.css` (template / prose tokens).
  */
 
 :root {
@@ -188,7 +188,7 @@ html:has(.doc-site:not(.abey--dark)) body::-webkit-scrollbar-button {
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
-/* Larger mark in docs (**Abey / JS**, “docs”) — sidebar, compact, and other default Omega modes. */
+/* Larger mark in docs (**Abey / JS**, “docs”) — sidebar, compact, and other default shell modes. */
 .doc-site.abey-shell-app
   .abey-appbar--dashboard
   .abey-appbar__mark-heading
@@ -210,7 +210,7 @@ html:has(.doc-site:not(.abey--dark)) body::-webkit-scrollbar-button {
 }
 
 /*
- * Horizontal: Omega adds jewel grid (::before) + title/subtitle → “step” feel and double badge.
+ * Horizontal: default chrome adds jewel grid (::before) + title/subtitle → “step” feel and double badge.
  * In docs we want plain aligned text only (AbeyJs + docs).
  */
 .doc-site.abey-shell-app
@@ -305,21 +305,32 @@ html:has(.doc-site:not(.abey--dark)) body::-webkit-scrollbar-button {
   box-shadow: 0 0 0 1px color-mix(in srgb, var(--abey-accent) 16%, transparent);
 }
 
+/* Ítems inactivos: sin fondo de omega-default `:hover`/`:focus` ni halo doc previo */
 .doc-site.abey-shell-app.abey--dark
   .abey-shell--dashboard
-  .abey-sidebar--dashboard {
-  background:
-    linear-gradient(
-      178deg,
-      color-mix(in srgb, var(--abey-surface) 65%, #020617) 0%,
-      var(--abey-surface, #111827) 22%
-    ),
-    var(--abey-surface);
-  border-right: 1px solid
-    color-mix(in srgb, var(--abey-accent) 12%, var(--abey-border));
-  box-shadow:
-    12px 0 48px rgba(0, 0, 0, 0.38),
-    inset -1px 0 0 rgba(255, 255, 255, 0.05);
+  .abey-sidebar
+  .abey-nav-link--sidebar:not(.abey-nav-link--active):not([aria-current="page"]):hover,
+.doc-site.abey-shell-app.abey--dark
+  .abey-shell--dashboard
+  .abey-sidebar
+  .abey-nav-link--sidebar:not(.abey-nav-link--active):not([aria-current="page"]):focus-visible,
+.doc-site.abey-shell-app.abey--dark
+  .abey-shell--dashboard
+  .abey-sidebar
+  .abey-nav-link--sidebar:not(.abey-nav-link--active):not([aria-current="page"]):focus {
+  background: transparent;
+  box-shadow: none;
+}
+
+.doc-site.abey-shell-app.abey--dark
+  .abey-shell--dashboard
+  .abey-sidebar
+  .abey-nav-tree__summary:hover,
+.doc-site.abey-shell-app.abey--dark
+  .abey-shell--dashboard
+  .abey-sidebar
+  .abey-nav-tree__summary:focus {
+  background: transparent;
 }
 
 .doc-site.abey-shell-app.abey--dark main.abey-outlet.abey-outlet--dashboard {
@@ -353,7 +364,7 @@ html:has(.doc-site:not(.abey--dark)) body::-webkit-scrollbar-button {
 }
 
 .doc-site.abey-shell-app.abey--dark .abey-nav-tree__summary-ic {
-  background: color-mix(in srgb, var(--abey-accent) 14%, transparent);
+  background: transparent;
   color: var(--abey-text);
 }
 
@@ -425,8 +436,12 @@ html:has(.doc-site:not(.abey--dark)) body::-webkit-scrollbar-button {
     0 0 20px color-mix(in srgb, var(--abey-accent) 18%, transparent);
 }
 
-.doc-site.abey-shell-app.abey--dark .abey-nav-link__ic {
-  background: color-mix(in srgb, var(--abey-accent) 15%, transparent);
+.doc-site.abey-shell-app.abey--dark
+  .abey-sidebar
+  .abey-nav-link--with-icon:not(.abey-nav-link--active):not([aria-current="page"])
+  .abey-nav-link__ic {
+  background: transparent;
+  box-shadow: none;
 }
 
 .doc-site.abey-shell-app.abey--dark .abey-nav-link--active .abey-nav-link__ic,
@@ -442,7 +457,7 @@ html:has(.doc-site:not(.abey--dark)) body::-webkit-scrollbar-button {
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
-/* Light mode: doc with a bit of “glass” over Omega (light theme persistence unchanged) */
+/* Light mode: doc with a bit of “glass” over shell theme (light theme persistence unchanged) */
 
 .doc-site.abey-shell-app:not(.abey--dark)
   main.abey-outlet.abey-outlet--dashboard {
@@ -601,7 +616,7 @@ html:has(.doc-site:not(.abey--dark)) body::-webkit-scrollbar-button {
   border-left-style: dashed;
 }
 
-/* pageRoute (`/guides`, `/omega`, 404): full main width; omega-default could win cascade at ~40rem */
+/* pageRoute (`/guides`, `/packages`, 404): full main width; omega-default could win cascade at ~40rem */
 .doc-site.abey-shell-app main.abey-outlet .abey-page-hero {
   width: 100%;
   max-width: none;

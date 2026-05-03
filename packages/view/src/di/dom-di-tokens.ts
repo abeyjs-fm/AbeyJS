@@ -2,7 +2,7 @@ export const DOM_CHANNEL_TOKEN = "channel";
 
 /**
  * Default factory path used by `<abey-provide token="channel" use-factory="...">`.
- * It is provided by the app bootstrap (e.g. `examples/MyMiusic/src/main.ts`).
+ * **`bootstrapOmegaApp`** wires **`globalThis.__abeyDi.channel`** when **`createOmega`** runs.
  */
 export const DOM_CHANNEL_FACTORY = "__abeyDi.channel";
 

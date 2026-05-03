@@ -11,10 +11,11 @@ No React/other VDOM dependency — **`StateCell`** + incremental updates or comp
 | Path | Purpose |
 |------|---------|
 | **`@abeyjs/view`** | Main barrel — see **`src/index.ts`**. |
-| **`@abeyjs/view/dev/vite-logger`** | Dev-only Vite instrumentation (not bundled in typical app chunks). |
+| **`@abeyjs/view/dev/vite-logger`** | Dev-only Vite log tag (**`[abey]`**); not bundled in typical app chunks. |
+| **`@abeyjs/view/dev/vite-malformed-uri-guard`** | Dev-only Vite plugin: answers **400** for illegal **`%`** paths before Vite’s static middleware throws (**`URI malformed`** spam). CLI templates include **`abeyViteMalformedUriGuard()`** by default. |
 | **`@abeyjs/view/theme/omega-default.css`** | Default shell / layout tokens (**static** asset). |
 
-**Peer:** **`zod`** (schemas for form surfaces re-exported from **`@abeyjs/uikit`**).
+**Peer:** **`zod`**, **`vite`** (Vite subpath imports are config-time only).
 
 **Depends on:** **`@abeyjs/core`**, **`@abeyjs/runtime`**, **`@abeyjs/state`**, **`@abeyjs/uikit`**, **`@abeyjs/validation`**.
 
@@ -22,7 +23,7 @@ No React/other VDOM dependency — **`StateCell`** + incremental updates or comp
 
 ## Bootstrap & shell
 
- **`bootstrapOmegaApp(root, config)`** (`bootstrap/omega-bootstrap.ts`) — optional **auth** branch for **public paths**, then **`mountRoutedApp`** + resolves **`OmegaRuntime`** from **`createOmega`**. Publishes **`omega/nav:changed`** on navigation (**`source: abey-router`**). Apps should import **`@abeyjs/view/theme/omega-default.css`** (not auto-injected).
+ **`bootstrapOmegaApp(root, config)`** (`bootstrap/omega-bootstrap.ts`) — optional **auth** branch for **public paths**, then **`mountRoutedApp`** + **`resolveBootstrapRuntime(createOmega)`** + **`exposeBootstrapRuntime`**. The latter assigns **`globalThis.__abeyRuntime`** and (**if missing**) **`globalThis.__abeyDi.channel`** so **`abey-table`** / **`abey-widget`** / **`@AbeyComponent`** (default **`runtimepath` → `__abeyRuntime`**) and **`getBootstrapRuntime()`** work without bespoke **`main.ts`** glue. **`registerAbeyJsUi()`** is still separate (custom element definitions). Publishes **`omega/nav:changed`** on navigation (**`source: abey-router`**). Apps should import **`@abeyjs/view/theme/omega-default.css`** (not auto-injected).
 
  **`mountRoutedApp`** / **`mountAppShell`** — admin / landing / **blank** variants, sidebar + **`main.abey-outlet`**, **`PathRouter`** via **`history`**. Admin (**`variant: "admin"`**) defaults to **dark** chrome (**`appearance`** **`"dark"`**); use **`appearance: "light"`** for claro inicial, ☀️/🌙 in the app bar to toggle, **`ABEY_SHELL_APPEARANCE_STORAGE_KEY`** (**`persistAppearance`** default **`true`**) persists choice.
 
@@ -46,7 +47,7 @@ No React/other VDOM dependency — **`StateCell`** + incremental updates or comp
 
 ## `@AbeyComponent` & OM templates
 
- **`AbeyComponent`**, **`defineAbeyComponent`**, **`AbeyComponentElement`** — custom elements with **`template`**, optional **`stylesHrefs`** (async **`<link>`**), optional **`stylesText`** (raw CSS, e.g. Vite **`import sheet from "./x.css?inline"`** → **open Shadow DOM** + **`<style>`**, styles ship in the same chunk as the component), DOM-DI **`providers`**, **`runtimepath`**. Reactive **`state`** drives **`bindAbeyTemplate`**.
+ **`AbeyComponent`**, **`defineAbeyComponent`**, **`AbeyComponentElement`** — custom elements with **`template`**, optional **`stylesHrefs`** (URLs for **`<link rel="stylesheet">`** — use Vite **`?url`** / **`new URL(…)`**), optional **`stylesText`** (raw CSS, e.g. **`import sheet from "./x.css?inline"`** → shadow **`<style>`**, same chunk as the component). **Do not** pass **`?inline`** strings through **`stylesHrefs`** or the browser will request garbage paths (dev **`URI malformed`**). Reactive **`state`** drives **`bindAbeyTemplate`**.
 
  **`componentRoute`** with **`load()`** leaves the outlet empty by default; set **`showLoading: true`** to show “Cargando…” while the chunk loads.
 

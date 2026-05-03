@@ -55,7 +55,7 @@ Full normative rules: **`/guides/security`**. Operational summary:
 
 ---
 
-## 3. CSS: Omega theme coexistence
+## 3. CSS: AbeyJS default theme coexistence
 
 - Standard entry: `import "@abeyjs/view/theme/omega-default.css"` — `--abey-*` vars, BEM `abey-` prefix.
 - Your CSS (Tailwind, modules, …) lives by import order and specificity.

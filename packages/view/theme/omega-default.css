@@ -50,6 +50,8 @@ body {
   font-family: var(--abey-font-sans);
   font-size: 15px;
   line-height: 1.5;
+  /* Native checkbox / radio / select track OS dark UI with `accent-color` + `--abey-*` (inherited into Shadow DOM). */
+  color-scheme: light;
 }
 
 .abey *,
@@ -74,6 +76,7 @@ body {
   --abey-error-bg: rgba(127, 29, 29, 0.35);
   --abey-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
   --abey-shadow-lg: 0 12px 32px -10px rgba(0, 0, 0, 0.55);
+  color-scheme: dark;
 }
 
 .abey-app {
@@ -947,7 +950,7 @@ button.abey-select-clear:disabled {
 }
 
 .abey-input[aria-invalid="true"]:focus {
-  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.25);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--abey-error) 45%, transparent);
 }
 
 .abey-input:read-only {
@@ -957,6 +960,49 @@ button.abey-select-clear:disabled {
 }
 
 .abey-input:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  background: var(--abey-surface-elev);
+}
+
+/*
+ * Native <select> outside the combo overlay (toolbar, templates, demos).
+ * Combo search field already uses `.abey-input`; this covers plain <select>.
+ */
+.abey select {
+  display: block;
+  max-width: 100%;
+  margin-top: 0;
+  padding: 0.55rem 0.75rem;
+  font: inherit;
+  font-size: 0.9375rem;
+  line-height: 1.45;
+  color: var(--abey-text);
+  background-color: var(--abey-surface);
+  border: 1px solid var(--abey-border);
+  border-radius: var(--abey-radius-sm);
+  accent-color: var(--abey-accent);
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.abey select:hover:not(:disabled) {
+  border-color: var(--abey-border-strong);
+}
+
+.abey select:focus {
+  outline: none;
+  border-color: var(--abey-accent);
+  box-shadow: 0 0 0 3px var(--abey-focus);
+}
+
+.abey select:focus-visible {
+  outline: none;
+  border-color: var(--abey-accent);
+  box-shadow: 0 0 0 3px var(--abey-focus);
+}
+
+.abey select:disabled {
   opacity: 0.55;
   cursor: not-allowed;
   background: var(--abey-surface-elev);
@@ -1557,20 +1603,6 @@ html {
     linear-gradient(180deg, var(--abey-bg) 0%, var(--abey-surface-elev) 100%);
 }
 
-.abey-shell--dashboard .abey-sidebar--dashboard {
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--abey-surface) 94%, rgba(226, 232, 240, 0.5)) 0%, var(--abey-surface, #fff) 18%), var(--abey-surface, #fff);
-  border-right: 1px solid color-mix(in srgb, var(--abey-border) 94%, transparent);
-  box-shadow: 6px 0 32px rgba(15, 23, 42, 0.06), inset -1px 0 0 rgba(255, 255, 255, 0.45);
-}
-
-.abey-shell-app.abey--dark .abey-shell--dashboard .abey-sidebar--dashboard {
-  background:
-    linear-gradient(165deg, color-mix(in srgb, var(--abey-surface-elev) 88%, transparent) 0%, var(--abey-surface) 42%), var(--abey-surface);
-  border-right-color: color-mix(in srgb, var(--abey-border) 75%, transparent);
-  box-shadow: 8px 0 36px rgba(0, 0, 0, 0.32), inset -1px 0 0 rgba(255, 255, 255, 0.04);
-}
-
 .abey-shell--dashboard .abey-sidebar--dashboard .abey-nav-link--sidebar {
   padding: 0.55rem 0.72rem;
 }
@@ -1743,7 +1775,22 @@ html {
 }
 
 .abey-shell--dashboard .abey-sidebar .abey-nav-tree__summary-ic {
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+  box-shadow: none;
+}
+
+/*
+ * Sidebar columna oscura del sidebar: igual que el lienzo (`--abey-bg`), no `--abey-surface-elev`,
+ * para no crear una segunda franja versus la marca/logo y el omega-default.dashboard.
+ */
+ .doc-site.abey-shell-app.abey--dark .abey-shell__body > .abey-sidebar.abey-sidebar--dashboard {
+  background: var(--abey-bg);
+  border-right: 1px solid color-mix(in srgb, var(--abey-border) 85%, transparent);
+  box-shadow: none;
+}
+
+.doc-site.abey-shell-app.abey--dark .abey-shell__body > .abey-sidebar.abey-sidebar--dashboard .abey-sidebar__nav,
+.doc-site.abey-shell-app.abey--dark .abey-shell__body > .abey-sidebar.abey-sidebar--dashboard .abey-sidebar__inner {
+  background: transparent;
 }
 
 .abey-sidebar__toggle {
@@ -2025,7 +2072,7 @@ html {
   width: 1.82rem;
   height: 1.82rem;
   font-size: 1.05rem;
-  background: rgba(37, 99, 235, 0.1);
+  background: transparent;
 }
 
 .abey-sidebar .abey-nav-link--with-icon .abey-nav-link__ic i {
@@ -2048,7 +2095,7 @@ html {
   height: 1.82rem;
   font-size: 1.02rem;
   color: var(--abey-text);
-  background: rgba(37, 99, 235, 0.1);
+  background: transparent;
 }
 
 .abey-sidebar .abey-nav-tree__summary-ic i {
@@ -2056,16 +2103,25 @@ html {
 }
 
 .abey.abey--dark .abey-sidebar .abey-nav-tree__summary-ic {
-  background: rgba(56, 189, 248, 0.1);
+  background: transparent;
   color: color-mix(in srgb, var(--abey-accent) 45%, var(--abey-text));
-}
-
-.abey.abey--dark .abey-sidebar .abey-nav-link--with-icon .abey-nav-link__ic {
-  background: rgba(56, 189, 248, 0.1);
 }
 
 .abey.abey--dark .abey-sidebar .abey-nav-link--with-icon:not(.abey-nav-link--active):not([aria-current="page"]) .abey-nav-link__ic {
   color: color-mix(in srgb, var(--abey-accent) 55%, var(--abey-text));
+}
+
+/* Sidebar: selección sí conserva fondo en el chip (modo dashboard refuerza más abajo). */
+.abey-sidebar .abey-nav-link--with-icon.abey-nav-link--active .abey-nav-link__ic,
+.abey-sidebar .abey-nav-link--with-icon[aria-current="page"] .abey-nav-link__ic {
+  background: rgba(37, 99, 235, 0.16);
+  color: var(--abey-accent);
+}
+
+.abey.abey--dark .abey-sidebar .abey-nav-link--with-icon.abey-nav-link--active .abey-nav-link__ic,
+.abey.abey--dark .abey-sidebar .abey-nav-link--with-icon[aria-current="page"] .abey-nav-link__ic {
+  background: color-mix(in srgb, var(--abey-accent) 28%, transparent);
+  color: var(--abey-accent);
 }
 
 .abey-nav-link--with-icon.abey-nav-link--sidebar.abey-nav-link--active .abey-nav-link__txt,
@@ -2352,12 +2408,13 @@ a.abey-welcome-tile:focus {
 .abey-screen-toolbar__select,
 .abey-screen-toolbar__search {
   border: 1px solid var(--abey-border);
-  background: #fff;
+  background: var(--abey-surface);
   color: var(--abey-text);
   border-radius: 8px;
   height: 1.95rem;
   padding: 0 0.55rem;
   font-size: 0.75rem;
+  accent-color: var(--abey-accent);
 }
 
 .abey-screen-toolbar__search {

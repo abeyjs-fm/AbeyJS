@@ -18,6 +18,10 @@
       "types": "./dist/dev/abey-vite-logger.d.ts",
       "import": "./dist/dev/abey-vite-logger.js"
     },
+    "./dev/vite-malformed-uri-guard": {
+      "types": "./dist/dev/vite-malformed-uri-guard.d.ts",
+      "import": "./dist/dev/vite-malformed-uri-guard.js"
+    },
     "./theme/omega-default.css": "./theme/omega-default.css"
   },
   "files": [
@@ -28,6 +32,7 @@
     "build": "tsc -p tsconfig.json"
   },
   "peerDependencies": {
+    "vite": "^5.0.0 || ^6.0.0",
     "zod": "^3.24.0"
   },
   "devDependencies": {

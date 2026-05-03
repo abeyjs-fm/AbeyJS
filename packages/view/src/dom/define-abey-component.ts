@@ -13,6 +13,11 @@ const ABEY_SHADOW_INNER = "[data-abey-component-inner]";
 export type AbeyComponentMeta = {
   selector: string;
   template: string;
+  /**
+   * Stylesheet **URLs** only (Vite: `import href from "./view.css?url"` or `new URL("./view.css", import.meta.url).href`).
+   * Passed to **`mountModuleStyles`** as **`<link href>`** values. **Never** use **`?inline`** text here — browsers
+   * will request nonsensical paths and dev servers may log **`URI malformed`**.
+   */
   stylesHrefs?: string[];
   /**
    * Raw CSS strings (e.g. `import sheet from "./view.css?inline"` in Vite). When non-empty, the template is

@@ -7,11 +7,12 @@ import type {
 } from "@abeyjs/view";
 import { componentRoute, pageRoute } from "@abeyjs/view";
 import { getOmegaPkgRoutes } from "./omega-pkg-routes.js";
+import { getUtilsRoutes } from "./utils-routes.js";
 
 /** New doc routes: add the same path to `vite-doc-spa-paths.ts` so GitHub Pages serves `…/path/index.html` (HTTP 200). */
 
 /**
- * Sidebar: **Guides** (OM) and **Tools** (`/omega`, one child per `@abeyjs/*` package).
+ * Sidebar: **Guides** (OM) and **Tools** (`/packages`, one child per `@abeyjs/*` package).
  */
 export function getRoutes(): AppRoute[] {
   const navChildren: NonNullable<ComponentRouteNav["navChildren"]> = [
@@ -42,8 +43,8 @@ export function getRoutes(): AppRoute[] {
       navIconFa: "fa-solid fa-table-list",
     },
     {
-      path: "/guides/omega",
-      label: "Omega runtime",
+      path: "/guides/runtime",
+      label: "AbeyJS runtime",
       navIconFa: "fa-solid fa-bolt",
     },
     {
@@ -121,12 +122,24 @@ export function getRoutes(): AppRoute[] {
         lead: "Written from the framework maintainer’s perspective: what actually exists in the code, explicit limits (e.g. CRUD/OpenAPI without a fantasy DSL), and clear pointers when something only lives in the monorepo. Most pages are generated from Markdown under `/docs/*.md` with `npm run generate:guides-html` (folder `docs/web`).",
         bullets: [
           "Basics 1–4: intro, first project, full shell (options table + menu API), flat routing and navChildren.",
-          "5–6: OM components and data-driven mounts. 7–9: Omega, CLI, repo. 10–16: product vision, compiler, pragmatic CRUD, security, tables and entities with decorators.",
+          "5–6: OM components and data-driven mounts. 7–9: AbeyJS runtime, CLI, repo. 10–16: product vision, compiler, pragmatic CRUD, security, tables and entities with decorators.",
         ],
       } satisfies PageViewSpec,
     ),
 
     ...getOmegaPkgRoutes(),
+    // Utils routes
+    getUtilsRoutes(),
+    
+    componentRoute(
+      "/abey-table",
+      {
+        label: "",
+        title: "abey-table · AbeyJs Docs",
+        showInNav: false,
+      } satisfies ComponentRouteNav,
+      { selector: "app-abey-table", load: () => import("./views/utils/abey-table-for-api/ui/app-abey-table.biew.js") },
+    ),
 
     componentRoute(
       "/guides/intro",
@@ -142,6 +155,7 @@ export function getRoutes(): AppRoute[] {
         > => import("./views/guides/intro/app.doc.intro.view.js"),
       } satisfies ComponentRouteSpec,
     ),
+
     componentRoute(
       "/guides/quick-start",
       {
@@ -219,10 +233,10 @@ export function getRoutes(): AppRoute[] {
       } satisfies ComponentRouteSpec,
     ),
     componentRoute(
-      "/guides/omega",
+      "/guides/runtime",
       {
         label: "",
-        title: "Omega overview · AbeyJs Docs",
+        title: "AbeyJS runtime · AbeyJs Docs",
         showInNav: false,
       } satisfies ComponentRouteNav,
       {
@@ -379,3 +393,4 @@ export function getRoutes(): AppRoute[] {
     ),
   ];
 }
+

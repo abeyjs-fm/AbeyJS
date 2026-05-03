@@ -1,10 +1,13 @@
 import "/abey-styles.js";
-import { bootstrapOmegaApp } from "@abeyjs/view";
+import { bootstrapOmegaApp, registerAbeyJsUi } from "@abeyjs/view";
 import "@abeyjs/view/theme/omega-default.css";
+
+/** Needed for `abey-table` / `abey-*` under lazy OM routes (`OmegaRuntime` path + DOM-DI factory). */
+registerAbeyJsUi();
 /** Layout tokens (prose + outlet sizing); branding and `pageRoute` chrome: doc-site-appearance. */
-import "./styles/doc-shell.css";
-import "./styles/doc-site-appearance.css";
-import "./styles/doc-find.css";
+import "./shared/styles/doc-shell.css";
+import "./shared/styles/doc-site-appearance.css";
+import "./shared/styles/doc-find.css";
 import { attachDocSiteSearch } from "./doc-search-attach.js";
 import { installDocsSiteRootAnchorGuard } from "./docs-site-url.js";
 import { createOmega } from "./omegaSetup.js";

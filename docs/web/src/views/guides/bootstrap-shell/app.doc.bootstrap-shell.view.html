@@ -1,6 +1,6 @@
 <section data-role="doc-guide-root">
   <article data-doc="markdown">
-<p><code>bootstrapOmegaApp</code> is the entry when building an Omega SPA: wraps <strong><code>mountRoutedApp</code></strong>, publishes navigation to the channel on route changes, optional public branch before loading authenticated chrome.</p>
+<p><code>bootstrapOmegaApp</code> is the entry when building an AbeyJs SPA: wraps <strong><code>mountRoutedApp</code></strong>, publishes navigation to the channel on route changes, optional public branch before loading authenticated chrome.</p>
 <p>Interior order:</p>
 <ol>
 <li><strong><code>auth</code></strong> (optional): URL hits <strong><code>publicPaths</code></strong> <em>and</em> user not authenticated ⇒ run <strong><code>mountPublic(root)</code></strong>, <strong>skip</strong> dashboard. Authenticated user on public URL ⇒ <strong><code>location.replace</code></strong> to <strong><code>redirectIfAuthed</code></strong> (default <strong><code>/home</code></strong>).</li>
@@ -52,7 +52,7 @@
 <tr>
 <td><code>dashboardLayout</code></td>
 <td><code>boolean?</code></td>
-<td>Default <strong><code>true</code></strong> when <code>variant === &#39;admin&#39;</code>; Omega dashboard density vs lighter bar (<code>false</code>).</td>
+<td>Default <strong><code>true</code></strong> when <code>variant === &#39;admin&#39;</code>; admin-shell density vs lighter bar (<code>false</code>).</td>
 </tr>
 <tr>
 <td><code>appearance</code></td>

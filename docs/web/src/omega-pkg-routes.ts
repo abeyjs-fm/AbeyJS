@@ -8,7 +8,12 @@ type OmegaPkgMeta = {
   spec: PageViewSpec;
 };
 
+/**
+ * Sidebar **Tools**: one entry per `@abeyjs/*` package. Order mirrors how the stack is usually learned:
+ * messaging & state → runtime & behavior primitives → presentation & authoring → schemas & HTTP/OpenAPI → dev-only.
+ */
 const PKGS: OmegaPkgMeta[] = [
+  // --- Messaging & observable state ---
   {
     slug: "core",
     npm: "@abeyjs/core",
@@ -16,7 +21,7 @@ const PKGS: OmegaPkgMeta[] = [
     title: "@abeyjs/core",
     spec: {
       heading: "@abeyjs/core",
-      cardTitle: "Omega bus primitives",
+      cardTitle: "AbeyJS bus primitives",
       lead:
         "Lowest layer, no UI: nominal intents (`intentOf`), coherent event/agent/flow naming (`omegaIntentName*`), pub/sub channel (`createChannel`), correlation (`createCorrelationId`), and failure types (`OmegaFailure`). Almost every package depends on this transitively so the browser speaks one language.",
       bullets: [
@@ -29,29 +34,7 @@ const PKGS: OmegaPkgMeta[] = [
         "Read the header of packages/core/src/index.ts and README.md for the full export map without guessing.",
       ],
       footnote:
-        "Guides: Introduction (/guides/intro), Omega runtime (/guides/omega). Prefer `intentOf` over ad-hoc intent strings in the UI.",
-    },
-  },
-  {
-    slug: "runtime",
-    npm: "@abeyjs/runtime",
-    iconFa: "fa-solid fa-bolt",
-    title: "@abeyjs/runtime",
-    spec: {
-      heading: "@abeyjs/runtime",
-      cardTitle: "createOmegaRuntime and the browser process",
-      lead:
-        "Typical single `OmegaRuntime` instance: combines `@abeyjs/core` + `@abeyjs/flows` (OmegaFlowManager, intent pipeline, tracing), optional lightweight container (`OmegaContainer`, omegaToken), and URL/history ↔ intent bridging (`url-bridge`). Anything that lives for the SPA session (registered agents, plugin install/dispose) goes through here after omegaSetup.ts.",
-      bullets: [
-        "Install: npm install @abeyjs/runtime. Code: packages/runtime. Entry points: createOmegaRuntime, OmegaRuntime.",
-        "`OmegaPlugin` / `OmegaModule`: extend lifecycle without touching views; ordered teardown when the user leaves or on unload.",
-        "CRUD-friendly HTTP client and OpenAPI discovery live in other packages; the runtime only executes intents those register.",
-        "`intentFromQuery`, `startUrlIntentSync`, `setPath`: deep-linking and address-bar sync without a second ad-hoc router.",
-        "Flows emit received/handled/failed intents (CHANNEL_INTENT_* in @abeyjs/flows) you can watch in inspector or traces.",
-        "One omegaSetup.ts per app: register handlers, openapi cruds, theme, then bootstrapOmegaApp wires view + a ready runtime.",
-      ],
-      footnote:
-        "Guide: Omega (/guides/omega). Even if you only touch views, knowing dispatch vs channel helps debug “my intent never arrives”.",
+        "Guides: Introduction (/guides/intro), AbeyJS runtime (/guides/runtime). Prefer `intentOf` over ad-hoc intent strings in the UI.",
     },
   },
   {
@@ -73,9 +56,77 @@ const PKGS: OmegaPkgMeta[] = [
         "OpenAPI/agents can write current-list cells after each HTTP so the table redraws without the view calling APIs.",
       ],
       footnote:
-        "Guides: Omega (/guides/omega), Lists / forms data-driven (/guides/data-views). `@abeyjs/view` depends on state transitively for integrations.",
+        "Guides: AbeyJS runtime (/guides/runtime), Lists / forms data-driven (/guides/data-views). `@abeyjs/view` depends on state transitively for integrations.",
     },
   },
+  // --- Session composition & behavior engine ---
+  {
+    slug: "runtime",
+    npm: "@abeyjs/runtime",
+    iconFa: "fa-solid fa-bolt",
+    title: "@abeyjs/runtime",
+    spec: {
+      heading: "@abeyjs/runtime",
+      cardTitle: "AbeyJS runtime factory (`createOmegaRuntime`)",
+      lead:
+        "Typical single `OmegaRuntime` instance: combines `@abeyjs/core` + `@abeyjs/flows` (OmegaFlowManager, intent pipeline, tracing), optional lightweight container (`OmegaContainer`, omegaToken), and URL/history ↔ intent bridging (`url-bridge`). Anything that lives for the SPA session (registered agents, plugin install/dispose) goes through here after omegaSetup.ts.",
+      bullets: [
+        "Install: npm install @abeyjs/runtime. Code: packages/runtime. Entry points: createOmegaRuntime, OmegaRuntime.",
+        "`OmegaPlugin` / `OmegaModule`: extend lifecycle without touching views; ordered teardown when the user leaves or on unload.",
+        "CRUD-friendly HTTP client and OpenAPI discovery live in other packages; the runtime only executes intents those register.",
+        "`intentFromQuery`, `startUrlIntentSync`, `setPath`: deep-linking and address-bar sync without a second ad-hoc router.",
+        "Flows emit received/handled/failed intents (CHANNEL_INTENT_* in @abeyjs/flows) you can watch in inspector or traces.",
+        "One omegaSetup.ts per app: register handlers, openapi cruds, theme, then bootstrapOmegaApp wires view + a ready runtime.",
+      ],
+      footnote:
+        "Guide: AbeyJS runtime (/guides/runtime). Even if you only touch views, knowing dispatch vs channel helps debug “my intent never arrives”.",
+    },
+  },
+  {
+    slug: "flows",
+    npm: "@abeyjs/flows",
+    iconFa: "fa-solid fa-diagram-project",
+    title: "@abeyjs/flows",
+    spec: {
+      heading: "@abeyjs/flows",
+      cardTitle: "Flow manager, pipelines, and snapshots",
+      lead:
+        "Flow engine: `createOmegaFlowManager`, intent pipelines (`OmegaIntentHandlerPipeline*`), reducer facades (`Omega`, `OmegaIntentReducer`), navigational state (`OmegaFlowState`), workflow steps (`OmegaWorkflowFlow`), and snapshot helpers (`omegaAppSnapshot*`) for tooling and recovery. Binds runtime to repeatable rules on CH_INTENT_RECEIVED/etc. without sprawling view hardcoding.",
+      bullets: [
+        "Install: `@abeyjs/flows` is pulled by `@abeyjs/runtime`; few apps import it unless extending pipelines.",
+        "`OmegaFlow`: declarative slice of an in-browser state machine with known steps/handlers before the server.",
+        "`navigationIntentEvent` and channel hooks tie URL history to flows without duplicated branches.",
+        "`OmegaIntentHandlerContext`: same shape handlers see after dispatch—handy when “handler doesn’t match type”.",
+        "Snapshots (`omegaFlowSnapshot*`): checkpoints in localStorage/session or exported diagnostics.",
+        "Flow-reactive tables (abey-table docs) expect intent names aligned with registrations or events look “lost”.",
+      ],
+      footnote:
+        "Guides: AbeyJS runtime (/guides/runtime), Tables / flows (/guides/table-flows). Dense package—start with `omega-flow-manager` + README before refactoring large view handlers.",
+    },
+  },
+  {
+    slug: "agents",
+    npm: "@abeyjs/agents",
+    iconFa: "fa-solid fa-robot",
+    title: "@abeyjs/agents",
+    spec: {
+      heading: "@abeyjs/agents",
+      cardTitle: "AbeyJS agents and rule-driven behavior",
+      lead:
+        "`OmegaAgent`, `OmegaStatefulAgent`, optional inbox (`OmegaAgentInbox`), protocol helpers, and behavior engine (`OmegaAgentBehaviorEngine` + rules/reactions). For cases where stray intents aren’t enough: encapsulate local transitions and reproducible side effects while isolating OM templates.",
+      bullets: [
+        "Install: npm install @abeyjs/agents. Consumes `@abeyjs/core` channels/events without DOM coupling.",
+        "`OmegaStatefulAgent`: bundles StateCell-like internals plus its own intents from ecosystem scaffolding.",
+        "`OmegaAgentBehaviorRule` / Reaction: declarative “when this message/event arrives, run handler” without god classes per slice.",
+        "Protocol/message types steer async collaboration between agents inside the browser process.",
+        "Not microservices—only models front/backend cooperation via intents + HTTP where you define it.",
+        "Coming from DynamicCrudAgent? Compare—the openapi agent already covers a lot of CRUD; generic agents are custom workflows sharing intents.",
+      ],
+      footnote:
+        "Main guide: AbeyJS runtime (/guides/runtime). `abeyjs generate ecosystem` gives skeletons you import and adapt without rewriting the vertical.",
+    },
+  },
+  // --- DOM shell, authoring, scaffolding ---
   {
     slug: "view",
     npm: "@abeyjs/view",
@@ -135,7 +186,7 @@ const PKGS: OmegaPkgMeta[] = [
         "Global: npm install -g @abeyjs/cli or npx abeyjs <cmd> inside the workspace.",
         "`abeyjs init`: admin|abeyjs|minimal templates; flags like --shell pick chrome variants wired in main.om.",
         "`abeyjs connect` (+ generate views/codegen where applicable): pulls swagger, registers intents, CRUD-ish view scaffolding close to spec.",
-        "`abeyjs generate ecosystem VerticalName`: omega/+ ui skeleton when you previously copied examples/mi-admin by hand.",
+        "`abeyjs generate ecosystem VerticalName`: domain logic folder + **`ui/`** skeleton when you previously copied **`examples/mi-admin`** by hand.",
         "Keeps vite.config sane when you forgot abey-plugin or local openapi paths—still audit CORS proxies; CLI does not fix the server.",
         "After scaffold, from the new folder run npm install, npm run dev, open the template’s first route for a smoke test.",
       ],
@@ -143,50 +194,7 @@ const PKGS: OmegaPkgMeta[] = [
         "Guides: CLI (/guides/cli), Quick start (/guides/quick-start). If codegen failed, attach swagger URL and exact command before a bug report—without that we barely reproduce.",
     },
   },
-  {
-    slug: "http",
-    npm: "@abeyjs/http",
-    iconFa: "fa-solid fa-globe",
-    title: "@abeyjs/http",
-    spec: {
-      heading: "@abeyjs/http",
-      cardTitle: "createOmegaHttp on fetch",
-      lead:
-        "JSON-focused client around `fetch`: emit `CH_HTTP_REQUEST`, `CH_HTTP_RESPONSE`, `CH_HTTP_ERROR` on the Omega channel to trace traffic before handlers. Supports interceptors, optional GET cache options, mutation-driven invalidation when live table views chain on the same client. Primary API story is in the package README.",
-      bullets: [
-        "Install: npm install @abeyjs/http. Core API: createOmegaHttp, OmegaHttp type.",
-        "get/post JSON and PATCH/DELETE variants aligned with what agents call after openapi registration.",
-        "Does not change server policy or CORS—you still use Vite `server.proxy` or a gateway like any modern SPA.",
-        "Good for mocking: intercept requests or use MSW; the channel exposes payloads without scattered console.log.",
-        "Typical integration: runtime + openapi agent share optional OmegaHttp configured once from omegaSetup.",
-        "Caches and invalidation: read README—defaults affect staleness when listing large collections.",
-      ],
-      footnote:
-        "Guides: Automatic CRUD (/guides/crud-auto), product vision (/guides/vision). Live channel traces: combine with flows + inspector where enabled.",
-    },
-  },
-  {
-    slug: "openapi",
-    npm: "@abeyjs/openapi",
-    iconFa: "fa-solid fa-file-code",
-    title: "@abeyjs/openapi",
-    spec: {
-      heading: "@abeyjs/openapi",
-      cardTitle: "CRUD discovery + DynamicCrudAgent",
-      lead:
-        "Reads an OpenAPI document to infer collection/item pairs, register dynamic List/Show/Create/Update/Delete intents, and reusable CRUD agents (`DynamicCrudAgent`). Provides `mountOpenApiCrudView` when you want a bundled list+form/trace view without rewriting everything in OM from scratch.",
-      bullets: [
-        "Install: npm install @abeyjs/openapi + transitive peers (@abeyjs/http, runtime).",
-        "Common APIs: discoverFirstCrud, discoverAllCrud, registerOpenApiCrud, registerOpenApiAllCrud, registerWithDiscovered.",
-        "`jsonObjectSchemaToZod` / `guessRowKeyFromSchema`: align server contracts with `@abeyjs/validation` and tables when schemas are sane.",
-        "HTTP stays in @abeyjs/http; openapi only registers intents and agent behavior in runtime.",
-        "If paths don’t match discover-crud heuristics, you can register intents manually and reuse data-driven views from @abeyjs/view alone.",
-        "CLI codegen often emits stubs calling these registrars with baseUrl and Bearer pulled from bootstrapOmegaApp.",
-      ],
-      footnote:
-        "Guides: CRUD (/guides/crud-auto), product vision (/guides/vision). Read README before pasting generated views—field overrides are subtle but powerful.",
-    },
-  },
+  // --- Forms/tables schemas, widgets, backend integration ---
   {
     slug: "validation",
     npm: "@abeyjs/validation",
@@ -232,49 +240,50 @@ const PKGS: OmegaPkgMeta[] = [
     },
   },
   {
-    slug: "agents",
-    npm: "@abeyjs/agents",
-    iconFa: "fa-solid fa-robot",
-    title: "@abeyjs/agents",
+    slug: "http",
+    npm: "@abeyjs/http",
+    iconFa: "fa-solid fa-globe",
+    title: "@abeyjs/http",
     spec: {
-      heading: "@abeyjs/agents",
-      cardTitle: "OmegaAgent stack and rule-driven behavior",
+      heading: "@abeyjs/http",
+      cardTitle: "`createOmegaHttp`: traced JSON client",
       lead:
-        "`OmegaAgent`, `OmegaStatefulAgent`, optional inbox (`OmegaAgentInbox`), protocol helpers, and behavior engine (`OmegaAgentBehaviorEngine` + rules/reactions). For cases where stray intents aren’t enough: encapsulate local transitions and reproducible side effects while isolating OM templates.",
+        "JSON-focused client around `fetch`: emit `CH_HTTP_REQUEST`, `CH_HTTP_RESPONSE`, `CH_HTTP_ERROR` on the runtime channel to trace traffic before handlers. Supports interceptors, optional GET cache options, mutation-driven invalidation when live table views chain on the same client. Primary API story is in the package README.",
       bullets: [
-        "Install: npm install @abeyjs/agents. Consumes `@abeyjs/core` channels/events without DOM coupling.",
-        "`OmegaStatefulAgent`: bundles StateCell-like internals plus its own intents from ecosystem scaffolding.",
-        "`OmegaAgentBehaviorRule` / Reaction: declarative “when this message/event arrives, run handler” without god classes per slice.",
-        "Protocol/message types steer async collaboration between agents inside the browser process.",
-        "Not microservices—only models front/backend cooperation via intents + HTTP where you define it.",
-        "Coming from DynamicCrudAgent? Compare—the openapi agent already covers a lot of CRUD; generic agents are custom workflows sharing intents.",
+        "Install: npm install @abeyjs/http. Core API: createOmegaHttp, OmegaHttp type.",
+        "get/post JSON and PATCH/DELETE variants aligned with what agents call after openapi registration.",
+        "Does not change server policy or CORS—you still use Vite `server.proxy` or a gateway like any modern SPA.",
+        "Good for mocking: intercept requests or use MSW; the channel exposes payloads without scattered console.log.",
+        "Typical integration: runtime + openapi agent share optional OmegaHttp configured once from omegaSetup.",
+        "Caches and invalidation: read README—defaults affect staleness when listing large collections.",
       ],
       footnote:
-        "Main guide: Omega runtime (/guides/omega). `abeyjs generate ecosystem` gives skeletons you import and adapt without rewriting the vertical.",
+        "Guides: Automatic CRUD (/guides/crud-auto), product vision (/guides/vision). Live channel traces: combine with flows + inspector where enabled.",
     },
   },
   {
-    slug: "flows",
-    npm: "@abeyjs/flows",
-    iconFa: "fa-solid fa-diagram-project",
-    title: "@abeyjs/flows",
+    slug: "openapi",
+    npm: "@abeyjs/openapi",
+    iconFa: "fa-solid fa-file-code",
+    title: "@abeyjs/openapi",
     spec: {
-      heading: "@abeyjs/flows",
-      cardTitle: "OmegaFlowManager, pipelines, and snapshots",
+      heading: "@abeyjs/openapi",
+      cardTitle: "CRUD discovery + DynamicCrudAgent",
       lead:
-        "Flow engine: `createOmegaFlowManager`, intent pipelines (`OmegaIntentHandlerPipeline*`), reducer facades (`Omega`, `OmegaIntentReducer`), navigational state (`OmegaFlowState`), workflow steps (`OmegaWorkflowFlow`), and snapshot helpers (`omegaAppSnapshot*`) for tooling and recovery. Binds runtime to repeatable rules on CH_INTENT_RECEIVED/etc. without sprawling view hardcoding.",
+        "Reads an OpenAPI document to infer collection/item pairs, register dynamic List/Show/Create/Update/Delete intents, and reusable CRUD agents (`DynamicCrudAgent`). Provides `mountOpenApiCrudView` when you want a bundled list+form/trace view without rewriting everything in OM from scratch.",
       bullets: [
-        "Install: `@abeyjs/flows` is pulled by `@abeyjs/runtime`; few apps import it unless extending pipelines.",
-        "`OmegaFlow`: declarative slice of an in-browser state machine with known steps/handlers before the server.",
-        "`navigationIntentEvent` and channel hooks tie URL history to flows without duplicated branches.",
-        "`OmegaIntentHandlerContext`: same shape handlers see after dispatch—handy when “handler doesn’t match type”.",
-        "Snapshots (`omegaFlowSnapshot*`): checkpoints in localStorage/session or exported diagnostics.",
-        "Flow-reactive tables (abey-table docs) expect intent names aligned with registrations or events look “lost”.",
+        "Install: npm install @abeyjs/openapi + transitive peers (@abeyjs/http, runtime).",
+        "Common APIs: discoverFirstCrud, discoverAllCrud, registerOpenApiCrud, registerOpenApiAllCrud, registerWithDiscovered.",
+        "`jsonObjectSchemaToZod` / `guessRowKeyFromSchema`: align server contracts with `@abeyjs/validation` and tables when schemas are sane.",
+        "HTTP stays in @abeyjs/http; openapi only registers intents and agent behavior in runtime.",
+        "If paths don’t match discover-crud heuristics, you can register intents manually and reuse data-driven views from @abeyjs/view alone.",
+        "CLI codegen often emits stubs calling these registrars with baseUrl and Bearer pulled from bootstrapOmegaApp.",
       ],
       footnote:
-        "Guides: Omega (/guides/omega), Tables / flows (/guides/table-flows). Dense package—start with omega-flow-manager + README before refactoring large view handlers.",
+        "Guides: CRUD (/guides/crud-auto), product vision (/guides/vision). Read README before pasting generated views—field overrides are subtle but powerful.",
     },
   },
+  // --- Development ---
   {
     slug: "inspector",
     npm: "@abeyjs/inspector",
@@ -290,7 +299,7 @@ const PKGS: OmegaPkgMeta[] = [
         "Full protocol in packages/inspector/src/index.ts exports—read before improvising payloads.",
         "README also covers inspector/app layering when extending inspector UI.",
         "“Hub port busy”? check for zombie hub processes like other websocket devtools.",
-        "Doesn’t replace the browser profiler or Network tab—adds Omega intent/channel/stack visibility.",
+        "Doesn’t replace the browser profiler or Network tab—adds intent/channel/stack visibility.",
         "Typical setup: env flag in omegaSetup loads conditional bridge after runtime boots.",
       ],
       footnote:
@@ -300,11 +309,11 @@ const PKGS: OmegaPkgMeta[] = [
 ];
 
 /**
- * `/omega` index and `/omega/:slug` — one declarative page per `@abeyjs/*` package.
+ * `/packages` index and `/packages/:slug` — one declarative page per `@abeyjs/*` package.
  */
 export function getOmegaPkgRoutes(): AppRoute[] {
   const navChildren = PKGS.map((p) => ({
-    path: `/omega/${p.slug}`,
+    path: `/packages/${p.slug}`,
     label: p.npm,
     navIconFa: p.iconFa,
   }));
@@ -322,8 +331,8 @@ export function getOmegaPkgRoutes(): AppRoute[] {
     lead:
       "In the sidebar, each row under Tools opens a card for an npm package published as @abeyjs/*: what problem it solves, which export to touch first, how to install, and which long guides to read next. It does not replace each packages/* README or dist/index.d.ts, but orients you without opening the whole monorepo.",
     bullets: [
-      "Suggested mental order: core → runtime → view | compiler | cli; then http + openapi + validation + uikit when building CRUD; flows + agents as the slice grows; optional inspector in dev.",
-      "Thematic guides (/guides/...) stay the main thread (intro → quick-start → bootstrap); Tools are reference by published npm name.",
+      "Suggested order follows the sidebar: core & state → runtime, flows & agents → view, compiler & CLI → validation & uikit → http & openapi; inspector last for dev tooling.",
+      "Thematic guides (/guides/...) stay the main narrative (intro → quick-start → bootstrap); Tools are reference-by-npm-name.",
       "Typical install: npm install <package> in the SPA; monorepo workspaces use links but exports are the same.",
       "Source and tests live here: packages/<name> for each @abeyjs/* npm name.",
       "Versioning: these cards describe the stack aligned with this docs site’s major line; mixing old versions—resolve peer/npm/tsc errors before “phantom bug” reports.",
@@ -333,11 +342,11 @@ export function getOmegaPkgRoutes(): AppRoute[] {
       "Start with Introduction (/guides/intro) and open Tools once you know whether you need view, openapi, or core primitives—avoid name overload.",
   };
 
-  const index = pageRoute("/omega", indexNav, indexSpec);
+  const index = pageRoute("/packages", indexNav, indexSpec);
 
   const children = PKGS.map((p) =>
     pageRoute(
-      `/omega/${p.slug}`,
+      `/packages/${p.slug}`,
       {
         label: "",
         title: `${p.title} · AbeyJs Docs`,

@@ -18,6 +18,8 @@ Copies a Vite + TypeScript starter into `<folder>`.
 
 Runs **`npm install`** in the new project folder by default (omit with **`--skip-install`** or **`SKIP_ABEYJS_SCAFFOLD_INSTALL=1`**).
 
+**Deploy:** the template is a Vite SPA—**`npm run build`** emits **`dist/`** for static hosting. AbeyJs-specific production notes (**`/abey-styles.js`**, SPA fallback, **`base`** + **`shell.pathnameBase`**) live in **`[docs/quick-start.md](../../docs/quick-start.md#deploy-your-app-production)`**.
+
 ### `abeyjs add openapi <folder>`
 
 Patches an existing AbeyJs + Vite app **without** requiring a prior `connect`. Implementation: **`src/openapi-add-wires.ts`** (`addOpenapiToApp`). After patching **`package.json`**, the CLI runs **`npm install`** in that folder unless you pass **`--skip-install`** or set **`SKIP_ABEYJS_SCAFFOLD_INSTALL=1`**.

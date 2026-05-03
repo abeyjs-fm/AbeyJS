@@ -3,7 +3,7 @@
  * Font Awesome only applies if the sheet is inside shadow (the `<link>` in index.html does not pierce Shadow DOM).
  */
 @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css");
-@import "../../styles/doc-find.css";
+@import "../../shared/styles/doc-find.css";
 
 :host {
   display: block;

@@ -1,11 +1,11 @@
 <section data-role="doc-guide-root">
   <article data-doc="markdown">
-<p>AbeyJs is the stack we built for SPAs with a <strong>real DOM</strong>, <strong>OmegaRuntime</strong>, and <strong>intents</strong> as the backbone. There is no central VDOM: the compiler turns your <strong><code>.view.html</code></strong> into elements and the binder updates only what changes. Coming from React or Vue, think <em>web components + message contract + product shell</em>, not another diffing runtime.</p>
+<p>AbeyJs is the stack we built for SPAs with a <strong>real DOM</strong>, <strong><code>OmegaRuntime</code></strong> (AbeyJS runtime), and <strong>intents</strong> as the backbone. There is no central VDOM: the compiler turns your <strong><code>.view.html</code></strong> into elements and the binder updates only what changes. Coming from React or Vue, think <em>web components + message contract + product shell</em>, not another diffing runtime.</p>
 <h2>Why it exists</h2>
 <p>We got tired of hand-duplicating CRUD, menus, and state when the backend already exposes <strong>OpenAPI</strong> and the browser can honor typed contracts. AbeyJs brings together:</p>
 <ul>
 <li><strong>Shell</strong> with routes, sidebar, and outlet ready for dashboards (<code>@abeyjs/view</code>).</li>
-<li><strong>OM</strong> (Omega markup): HTML with <code>{{ }}</code>, <code>[prop]</code>, <code>(click)</code> and <code>@if</code> / <code>@for</code> blocks, compiled by Vite (<code>@abeyjs/compiler</code>).</li>
+<li><strong>OM</strong> (AbeyJs markup): HTML with <code>{{ }}</code>, <code>[prop]</code>, <code>(click)</code> and <code>@if</code> / <code>@for</code> blocks, compiled by Vite (<code>@abeyjs/compiler</code>).</li>
 <li><strong>Channel + intents</strong>: the UI does not “call services” everywhere; it dispatches typed intents and agents/flows respond (<code>@abeyjs/core</code>, <code>@abeyjs/runtime</code>, and optionally <code>@abeyjs/agents</code> / <code>@abeyjs/flows</code>).</li>
 </ul>
 <p>The extended product vision and CRUD/OpenAPI map live under <strong><code>/guides/vision</code></strong> and <strong><code>/guides/crud-auto</code></strong>; here we only state the technical map.</p>
@@ -62,7 +62,7 @@
 </tr>
 <tr>
 <td><code>@abeyjs/view</code></td>
-<td>Shell, routes, <code>@AbeyComponent</code>, lists/forms, default HTML safety, Omega theme.</td>
+<td>Shell, routes, <code>@AbeyComponent</code>, lists/forms, default HTML safety, AbeyJS default theme (<code>omega-default.css</code>).</td>
 </tr>
 <tr>
 <td><code>@abeyjs/compiler</code></td>
@@ -123,7 +123,7 @@
 </tr>
 </tbody></table>
 <h2>Suggested reading order</h2>
-<p>If you are opening the docs site cold, follow <strong><code>/guides/quick-start</code></strong> → <strong><code>/guides/bootstrap-shell</code></strong> → <strong><code>/guides/routing</code></strong> → <strong><code>/guides/abey-component</code></strong>. Omega and CLI can slot in after you have a compiling screen; <strong><code>/guides/vision</code></strong>, OpenAPI, and tables assume that map is clear.</p>
+<p>If you are opening the docs site cold, follow <strong><code>/guides/quick-start</code></strong> → <strong><code>/guides/bootstrap-shell</code></strong> → <strong><code>/guides/routing</code></strong> → <strong><code>/guides/abey-component</code></strong>. The <strong><code>/guides/runtime</code></strong> chapter and CLI can slot in after you have a compiling screen; <strong><code>/guides/vision</code></strong>, OpenAPI, and tables assume that map is clear.</p>
 <p>Next: <strong><code>/guides/quick-start</code></strong>.</p>
   </article>
 </section>

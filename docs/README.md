@@ -22,7 +22,7 @@ The **`*.md` files in this folder** are an **optional source**: the site **does 
 
 
 
-Site source: **`docs/web/`** (`bootstrapOmegaApp`, OM, omega theme + **`doc-shell.css`** + **`doc-guide.view.css`** in each guide’s shadow root).
+Site source: **`docs/web/`** (`bootstrapOmegaApp`, OM, **`omega-default.css`** theme + **`doc-shell.css`** + **`doc-guide.view.css`** in each guide’s shadow root).
 
 
 
@@ -46,7 +46,7 @@ Site source: **`docs/web/`** (`bootstrapOmegaApp`, OM, omega theme + **`doc-shel
 
 | `/guides/data-views` | `web/src/views/guides/data-views/` |
 
-| `/guides/omega` | `web/src/views/guides/omega/` |
+| `/guides/runtime` | `web/src/views/guides/omega/` *(source folder still named `omega`; public URL uses **runtime**)* |
 
 | `/guides/cli` | `web/src/views/guides/cli/` |
 

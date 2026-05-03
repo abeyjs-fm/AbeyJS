@@ -1,6 +1,6 @@
 /*
  * Docs landing (this component only, shadow DOM): hero, cards, CTAs.
- * Prose tokens (`--doc-*` template), viewport branding (`doc-site-appearance`), and Omega theme leak into the shadow.
+ * Prose tokens (`--doc-*` template), viewport branding (`doc-site-appearance`), and default shell theme bleed into the shadow.
  */
 :host {
   display: block;

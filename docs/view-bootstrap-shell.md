@@ -1,6 +1,6 @@
 # Bootstrap and shell (`@abeyjs/view`)
 
-`bootstrapOmegaApp` is the entry when building an Omega SPA: wraps **`mountRoutedApp`**, publishes navigation to the channel on route changes, optional public branch before loading authenticated chrome.
+`bootstrapOmegaApp` is the entry when building an AbeyJs SPA: wraps **`mountRoutedApp`**, publishes navigation to the channel on route changes, optional public branch before loading authenticated chrome.
 
 Interior order:
 
@@ -35,7 +35,7 @@ Without `auth`, **`shell`** always loads with routes you pass.
 | `subBrand` | `string?` | Optional subtitle (“admin”, environment…). |
 | `variant` | `'admin'` \| `'landing'` \| `'blank'` | **`admin`** = sidebar + outlet; **`landing`** = top horizontal bar + public-ish layout; **`blank`** = **`main.abey-outlet` only**, no preset nav (embeds). |
 | `routes` | `AppRoute[]` | Flat route table; **`/guides/routing`**. |
-| `dashboardLayout` | `boolean?` | Default **`true`** when `variant === 'admin'`; Omega dashboard density vs lighter bar (`false`). |
+| `dashboardLayout` | `boolean?` | Default **`true`** when `variant === 'admin'`; admin-shell density vs lighter bar (`false`). |
 | `appearance` | `'dark'` \| `'light'`? | Initial admin chrome. **`persistAppearance`** default true: **localStorage wins** under **`ABEY_SHELL_APPEARANCE_STORAGE_KEY`**. |
 | `persistAppearance` | `boolean?` | |
 | `showAppearanceToggle` | `boolean?` | ☀️/🌙 icons admin; **`prefers-reduced-motion`** respected. Default true. |

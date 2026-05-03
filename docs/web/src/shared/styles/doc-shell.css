@@ -43,7 +43,7 @@
 }
 
 /*
- * Omega: `.abey-app:not(.abey-shell-app) > * { max-width: 960px }` — on welcome the only child is the OM root;
+ * Base theme caps `.abey-app:not(.abey-shell-app) > * { max-width: 960px }` — on welcome the only child is the OM root;
  * unless we override it, the marketing layout looks crushed / “styles not loading”.
  */
 .docs-welcome-entry.abey.abey-app:not(.abey-shell-app) > * {

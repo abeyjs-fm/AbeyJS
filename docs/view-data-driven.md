@@ -46,4 +46,4 @@ When defs are not enough (**complex custom column renderers**):
 
 This stack supports hybrid usage because row updates are idempotent with keys.
 
-Next: **`/guides/omega`**.
+Next: **`/guides/runtime`**.

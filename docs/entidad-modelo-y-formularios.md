@@ -140,7 +140,7 @@ Default `method` is `"GET"`. For POST APIs:
 
 ---
 
-## 5) Wire selects to the network via flow (Omega)
+## 5) Wire selects to the network via flow (AbeyJS runtime)
 
 `<abey-form>` does not `fetch` by default—the app decides.
 
@@ -148,15 +148,14 @@ Recommended pattern:
 
 - UI sets `cfg.resolveSelectOptions = async (opts) => ...`
 - `resolveSelectOptions` fires an **intent** (`runtime.dispatch(intentOf(...))`)
-- **Flow/agent** handles it with `OmegaHttp`
+- **Flow/agent** handles it with **`createOmegaHttp`** (HTTP client from `@abeyjs/http`)
 - Agent emits **event** `{ requestId, items }`
 - `resolveSelectOptions` waits for that event and returns rows to the form
 
 Example (Deezer genres) in this repo:
 
 - `examples/MyMiusic/src/ecosystems/alumnos/ui/app-alumnos.ts` (`resolveSelectOptions`)
-- `examples/MyMiusic/src/ecosystems/alumnos/omega/agent.ts` (`http.getJson` / `postJson`)
-- `examples/MyMiusic/src/ecosystems/alumnos/omega/flow.ts` / `behavior.ts` / `register.ts`
+- Same ecosystem’s agent/flow/registration TS next to `ui/` (`http.getJson` / `postJson`, intents, lifecycle—open the ecosystem folder in the repo to follow imports).
 
 ---
 

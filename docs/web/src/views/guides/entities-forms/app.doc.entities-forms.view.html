@@ -108,21 +108,20 @@ genreId?: string;
 } satisfies SelectApiOptions)
 </code></pre>
 <hr>
-<h2>5) Wire selects to the network via flow (Omega)</h2>
+<h2>5) Wire selects to the network via flow (AbeyJS runtime)</h2>
 <p><code>&lt;abey-form&gt;</code> does not <code>fetch</code> by default—the app decides.</p>
 <p>Recommended pattern:</p>
 <ul>
 <li>UI sets <code>cfg.resolveSelectOptions = async (opts) =&gt; ...</code></li>
 <li><code>resolveSelectOptions</code> fires an <strong>intent</strong> (<code>runtime.dispatch(intentOf(...))</code>)</li>
-<li><strong>Flow/agent</strong> handles it with <code>OmegaHttp</code></li>
+<li><strong>Flow/agent</strong> handles it with <strong><code>createOmegaHttp</code></strong> (HTTP client from <code>@abeyjs/http</code>)</li>
 <li>Agent emits <strong>event</strong> <code>{ requestId, items }</code></li>
 <li><code>resolveSelectOptions</code> waits for that event and returns rows to the form</li>
 </ul>
 <p>Example (Deezer genres) in this repo:</p>
 <ul>
 <li><code>examples/MyMiusic/src/ecosystems/alumnos/ui/app-alumnos.ts</code> (<code>resolveSelectOptions</code>)</li>
-<li><code>examples/MyMiusic/src/ecosystems/alumnos/omega/agent.ts</code> (<code>http.getJson</code> / <code>postJson</code>)</li>
-<li><code>examples/MyMiusic/src/ecosystems/alumnos/omega/flow.ts</code> / <code>behavior.ts</code> / <code>register.ts</code></li>
+<li>Same ecosystem’s agent/flow/registration TS next to <code>ui/</code> (<code>http.getJson</code> / <code>postJson</code>, intents, lifecycle—open the ecosystem folder in the repo to follow imports).</li>
 </ul>
 <hr>
 <h2>6) PK (primary key)</h2>

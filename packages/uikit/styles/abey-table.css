@@ -1,16 +1,16 @@
 abey-table {
     display: block;
     width: 100%;
-    color: #111827;
+    /* Omega shell `#app.abey`: --abey-* inherit through Shadow DOM (:host receives from document parent). */
+    color: var(--abey-text, #111827);
     font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     /* Altura del cuerpo con scroll (toolbar + footer quedan fijos). Ajustable por app: style="--abey-table-body-max-height: 50vh" */
     --abey-table-body-max-height: min(58vh, 520px);
     --abey-table-wrap-max-height: min(72vh, 680px);
-    /* Scrollbars discretos en .tableScroll (finos, poco contraste; ajustables por CSS vars) */
     --abey-table-scrollbar-size: 8px;
     --abey-table-scrollbar-track: transparent;
-    --abey-table-scrollbar-thumb: rgba(17, 24, 39, .22);
-    --abey-table-scrollbar-thumb-hover: rgba(17, 24, 39, .34)
+    --abey-table-scrollbar-thumb: color-mix(in srgb, var(--abey-text-muted, #6b7280) 38%, transparent);
+    --abey-table-scrollbar-thumb-hover: color-mix(in srgb, var(--abey-text-muted, #6b7280) 54%, transparent);
 }
 
 abey-table .wrap {
@@ -19,10 +19,10 @@ abey-table .wrap {
     width: 100%;
     max-height: var(--abey-table-wrap-max-height);
     min-height: 0;
-    border: 1px solid #E5E7EB;
+    border: 1px solid var(--abey-border, #e5e7eb);
     border-radius: 12px;
     overflow: hidden;
-    background: #fff
+    background: var(--abey-surface, #ffffff)
 }
 
 abey-table .tableScroll {
@@ -67,8 +67,8 @@ abey-table .toolbar {
     justify-content: flex-end;
     gap: 12px;
     padding: 12px 14px;
-    border-bottom: 1px solid #EEF2F7;
-    background: #fff
+    border-bottom: 1px solid var(--abey-border, #eef2f7);
+    background: var(--abey-surface, #ffffff)
 }
 
 abey-table .table {
@@ -82,8 +82,8 @@ abey-table thead th {
     position: sticky;
     top: 0;
     z-index: 3;
-    background: #F9FAFB;
-    color: #6B7280;
+    background: var(--abey-surface-elev, #f9fafb);
+    color: var(--abey-text-muted, #6b7280);
     font-size: 12px;
     font-weight: 600;
     text-transform: uppercase;
@@ -91,7 +91,7 @@ abey-table thead th {
 }
 
 abey-table .freeze {
-    background: #fff
+    background: var(--abey-surface, #ffffff)
 }
 
 abey-table tbody .freeze {
@@ -99,22 +99,22 @@ abey-table tbody .freeze {
 }
 
 abey-table thead .freeze {
-    background: #F9FAFB;
+    background: var(--abey-surface-elev, #f9fafb);
     z-index: 5
 }
 
 abey-table .freeze--left {
-    box-shadow: 6px 0 10px rgba(17, 24, 39, .06)
+    box-shadow: 6px 0 10px color-mix(in srgb, var(--abey-text, #111827) 8%, transparent)
 }
 
 abey-table .freeze--right {
-    box-shadow: -6px 0 10px rgba(17, 24, 39, .06)
+    box-shadow: -6px 0 10px color-mix(in srgb, var(--abey-text, #111827) 8%, transparent)
 }
 
 abey-table th,
 abey-table td {
     padding: 14px 14px;
-    border-bottom: 1px solid #EEF2F7;
+    border-bottom: 1px solid var(--abey-border, #eef2f7);
     vertical-align: middle
 }
 
@@ -124,7 +124,7 @@ abey-table .dense td {
 }
 
 abey-table tbody tr:hover {
-    background: #FAFBFF
+    background: color-mix(in srgb, var(--abey-accent, #2563eb) 14%, var(--abey-surface, #ffffff))
 }
 
 abey-table .checkCol {
@@ -161,14 +161,14 @@ abey-table .cellText {
 }
 
 abey-table .muted {
-    color: #6B7280
+    color: var(--abey-text-muted, #6b7280)
 }
 
 abey-table .avatar {
     width: 28px;
     height: 28px;
     border-radius: 999px;
-    background: #E5E7EB;
+    background: var(--abey-border, #e5e7eb);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -207,15 +207,15 @@ abey-table .pill--danger {
 }
 
 abey-table .pill--neutral {
-    background: #E5E7EB;
-    color: #374151
+    background: var(--abey-border, #e5e7eb);
+    color: color-mix(in srgb, var(--abey-text, #374151) 92%, transparent)
 }
 
 abey-table input[type="checkbox"] {
     width: 16px;
     height: 16px;
     border-radius: 4px;
-    accent-color: #111827;
+    accent-color: var(--abey-accent, #2563eb);
     cursor: pointer
 }
 
@@ -232,8 +232,8 @@ abey-table .kebab {
 }
 
 abey-table .kebab:hover {
-    background: #F3F4F6;
-    border-color: #E5E7EB
+    background: color-mix(in srgb, var(--abey-border, #e5e7eb) 28%, var(--abey-surface, #ffffff));
+    border-color: var(--abey-border, #e5e7eb)
 }
 
 abey-table .dots {
@@ -252,7 +252,7 @@ abey-table .dots span {
     width: 3px;
     height: 3px;
     border-radius: 999px;
-    background: #6B7280
+    background: var(--abey-text-muted, #6b7280)
 }
 
 abey-table .dots::before {
@@ -272,10 +272,10 @@ abey-table .menu {
     right: 10px;
     top: 40px;
     min-width: 170px;
-    background: #fff;
-    border: 1px solid #E5E7EB;
+    background: var(--abey-surface, #ffffff);
+    border: 1px solid var(--abey-border, #e5e7eb);
     border-radius: 12px;
-    box-shadow: 0 12px 28px rgba(17, 24, 39, .12);
+    box-shadow: var(--abey-shadow-lg, 0 12px 28px rgba(17, 24, 39, .12));
     padding: 6px;
     z-index: 2147483647
 }
@@ -284,10 +284,10 @@ abey-table .menu {
 .abey-table-menu {
     position: fixed;
     min-width: 170px;
-    background: #fff;
-    border: 1px solid #E5E7EB;
+    background: var(--abey-surface, #ffffff);
+    border: 1px solid var(--abey-border, #e5e7eb);
     border-radius: 12px;
-    box-shadow: 0 12px 28px rgba(17, 24, 39, .12);
+    box-shadow: var(--abey-shadow-lg, 0 12px 28px rgba(17, 24, 39, .12));
     padding: 6px;
     z-index: 2147483647
 }
@@ -300,17 +300,32 @@ abey-table .menu {
     border: 0;
     background: transparent;
     cursor: pointer;
-    color: #111827;
+    color: var(--abey-text, #111827);
     font-size: 13px
 }
 
 .abey-table-menu button:hover {
-    background: #F3F4F6
+    background: color-mix(in srgb, var(--abey-border, #e5e7eb) 28%, var(--abey-surface, #ffffff))
 }
 
 .abey-table-menu button:disabled {
     opacity: .5;
     cursor: not-allowed
+}
+
+/* Ported menu sits on document.body — #app Omega tokens don't inherit here. Mirror shell dark palette from theme/omega-default.css */
+body:has(.abey.abey--dark) .abey-table-menu {
+    background: #111827;
+    border-color: #243045;
+    box-shadow: 0 12px 32px -10px rgba(0, 0, 0, 0.55)
+}
+
+body:has(.abey.abey--dark) .abey-table-menu button {
+    color: #e8eaed
+}
+
+body:has(.abey.abey--dark) .abey-table-menu button:hover {
+    background: #151b2a
 }
 
 abey-table .menu button {
@@ -321,12 +336,12 @@ abey-table .menu button {
     border: 0;
     background: transparent;
     cursor: pointer;
-    color: #111827;
+    color: var(--abey-text, #111827);
     font-size: 13px
 }
 
 abey-table .menu button:hover {
-    background: #F3F4F6
+    background: color-mix(in srgb, var(--abey-border, #e5e7eb) 28%, var(--abey-surface, #ffffff))
 }
 
 abey-table .menu button:disabled {
@@ -346,17 +361,17 @@ abey-table .footer {
     justify-content: space-between;
     gap: 12px;
     padding: 12px 14px;
-    border-top: 1px solid #EEF2F7;
-    background: #fff
+    border-top: 1px solid var(--abey-border, #eef2f7);
+    background: var(--abey-surface, #ffffff)
 }
 
 abey-table .footerLeft {
-    color: #6B7280;
+    color: var(--abey-text-muted, #6b7280);
     font-size: 13px
 }
 
 abey-table .footerLeft strong {
-    color: #111827;
+    color: var(--abey-text, #111827);
     font-weight: 700
 }
 
@@ -371,52 +386,52 @@ abey-table .search {
     width: min(420px, 100%);
     padding: 0 12px;
     border-radius: 10px;
-    border: 1px solid #E5E7EB;
-    background: #fff;
-    color: #111827;
+    border: 1px solid var(--abey-border, #e5e7eb);
+    background: var(--abey-surface, #ffffff);
+    color: var(--abey-text, #111827);
     font-size: 13px;
     outline: none
 }
 
 abey-table .search:focus {
-    border-color: #D1D5DB;
-    box-shadow: 0 0 0 4px rgba(17, 24, 39, .06)
+    border-color: var(--abey-border-strong, #d1d5db);
+    box-shadow: 0 0 0 4px var(--abey-focus, rgba(37, 99, 235, .12))
 }
 
 abey-table .label {
-    color: #6B7280;
+    color: var(--abey-text-muted, #6b7280);
     font-size: 13px
 }
 
 abey-table .pageSize {
     height: 36px;
     padding: 0 10px;
-    border: 1px solid #E5E7EB;
+    border: 1px solid var(--abey-border, #e5e7eb);
     border-radius: 10px;
-    background: #fff;
-    color: #111827;
+    background: var(--abey-surface, #ffffff);
+    color: var(--abey-text, #111827);
     font-size: 13px;
     outline: none
 }
 
 abey-table .pageSize:focus {
-    border-color: #D1D5DB;
-    box-shadow: 0 0 0 4px rgba(17, 24, 39, .06)
+    border-color: var(--abey-border-strong, #d1d5db);
+    box-shadow: 0 0 0 4px var(--abey-focus, rgba(37, 99, 235, .12))
 }
 
 abey-table .pagerBtn {
     height: 36px;
     padding: 0 12px;
     border-radius: 10px;
-    border: 1px solid #E5E7EB;
-    background: #fff;
-    color: #111827;
+    border: 1px solid var(--abey-border, #e5e7eb);
+    background: var(--abey-surface, #ffffff);
+    color: var(--abey-text, #111827);
     font-size: 13px;
     cursor: pointer
 }
 
 abey-table .pagerBtn:hover {
-    background: #F3F4F6
+    background: color-mix(in srgb, var(--abey-border, #e5e7eb) 28%, var(--abey-surface, #ffffff))
 }
 
 abey-table .pagerBtn:disabled {
@@ -434,7 +449,7 @@ abey-table .abey-table-skeletonOverlay {
     gap: 12px;
     padding: 14px 16px;
     box-sizing: border-box;
-    background: rgba(255, 255, 255, .88);
+    background: color-mix(in srgb, var(--abey-surface, #ffffff) 88%, transparent);
     backdrop-filter: blur(2px);
     pointer-events: none
 }
@@ -461,7 +476,12 @@ abey-table .abey-table-skeletonRow {
 abey-table .abey-table-skeletonBar {
     height: 12px;
     border-radius: 999px;
-    background: linear-gradient(90deg, #E5E7EB 0%, #F3F4F6 40%, #E5E7EB 80%);
+    background: linear-gradient(
+        90deg,
+        var(--abey-border, #e5e7eb) 0%,
+        color-mix(in srgb, var(--abey-accent, #2563eb) 6%, var(--abey-surface, #ffffff)) 40%,
+        var(--abey-border, #e5e7eb) 80%
+    );
     background-size: 200% 100%;
     animation: abey-table-skeleton-shimmer 1.15s ease-in-out infinite
 }

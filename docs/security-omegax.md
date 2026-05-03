@@ -20,7 +20,7 @@ Linked to **`/guides/vision`** (HTML/CSS narrative); **here** hard rules + APIs.
    No automatic or data-driven API assigns `innerHTML` from domain data without the explicit layer below.
 
 4. **Automatic mode does not execute dynamic HTML**  
-   `PageViewSpec`, `buildPageView`, `createPageViewElement`, and Omega lists/forms do not interpret HTML from data strings.
+   `PageViewSpec`, `buildPageView`, `createPageViewElement`, and AbeyJs list/form components do not interpret HTML from data strings.
 
 5. **Dynamic HTML must be explicit: `abey-html` / `data-abey-html`**  
    With `setSanitizedHtml`, the host gets class `abey-html` and `data-abey-html="1"` for audit/traceability.

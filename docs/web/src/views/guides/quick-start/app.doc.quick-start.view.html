@@ -19,7 +19,7 @@ npm run dev
 <tbody><tr>
 <td><code>--template</code></td>
 <td><code>admin</code></td>
-<td>Omega dashboard: sidebar, app bar, theme; base for most “product” examples.</td>
+<td>AbeyJS admin shell: sidebar, app bar, theme; base for most “product” examples.</td>
 </tr>
 <tr>
 <td></td>
@@ -52,7 +52,7 @@ npm run dev
 </thead>
 <tbody><tr>
 <td><code>src/main.ts</code></td>
-<td>Single entry: <strong><code>bootstrapOmegaApp</code></strong>, <strong><code>omega-default.css</code></strong>, <strong><code>import &quot;/abey-styles.js&quot;</code></strong> from <code>abey.json</code>. Optionally <strong><code>fetchSidebarNav</code> + buildRoutesFromApi<code>** before **</code>shell.routes`</strong>.</td>
+<td>Single entry: <strong><code>bootstrapOmegaApp</code></strong>, <strong><code>omega-default.css</code></strong>, <strong><code>import &quot;/abey-styles.js&quot;</code></strong> from <code>abey.json</code>. Optionally <strong><code>fetchSidebarNav</code></strong> and <strong><code>buildRoutesFromApi</code></strong> before <strong><code>shell.routes</code></strong>.</td>
 </tr>
 <tr>
 <td><code>src/routes.ts</code></td>
@@ -103,5 +103,57 @@ npm run docs:dev
 </code></pre>
 <p>Default port <strong>5190</strong>. Markdown in <strong><code>docs/*.md</code></strong> becomes guide HTML via <strong><code>npm run generate:guides-html</code></strong> inside <strong><code>docs/web</code></strong>.</p>
 <p>Next: <strong><code>/guides/bootstrap-shell</code></strong>.</p>
+<h2>Deploy your app (production)</h2>
+<p>CLI templates are <strong>Vite SPAs</strong> (<code>appType: &quot;spa&quot;</code> in <code>vite.config.ts</code>). Deploying means building static assets and serving them like any other Vite/React app—plus a few AbeyJs-specific habits.</p>
+<h3>Build and smoke-test locally</h3>
+<pre><code class="language-bash">npm ci          # or npm install
+npm run build   # emits dist/
+npm run preview # optional: Vite serves dist/
+</code></pre>
+<p>Confirm the browser loads <strong>JS/CSS</strong> from <code>dist</code> (network tab shows <strong>200</strong> on hashed assets—not HTML mis-served as script).</p>
+<h3>Production checklist (AbeyJs)</h3>
+<table>
+<thead>
+<tr>
+<th>Requirement</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong><code>import &quot;/abey-styles.js&quot;</code></strong> in <strong><code>main.ts</code></strong> (or equivalent entry)</td>
+<td><strong><code>abey.json</code></strong> styles are bundled into that URL by <strong><code>abeyVitePlugin()</code></strong>. It is <strong>not</strong> injected automatically into built <strong><code>index.html</code></strong>; omitting the import ⇒ blank UI or stray <strong>404/HTML parsed as JS</strong> in prod.</td>
+</tr>
+<tr>
+<td><strong><code>abeyVitePlugin()</code></strong> with <strong><code>enforce: &quot;pre&quot;</code></strong> (default in the scaffold)</td>
+<td>Ensures <strong><code>.view.html</code></strong> / <strong><code>.abey</code></strong> compile during <strong><code>vite build</code></strong>. Stripping <strong><code>enforce</code></strong> breaks the optimizer/scan path—see <strong><code>@abeyjs/compiler</code></strong> README troubleshooting.</td>
+</tr>
+<tr>
+<td><strong><code>import &quot;@abeyjs/view/theme/omega-default.css&quot;</code></strong> when you use <strong><code>bootstrapOmegaApp</code></strong> / shell chrome</td>
+<td>Tokens and shell styles are separate from <strong><code>/abey-styles.js</code></strong>.</td>
+</tr>
+<tr>
+<td><strong><code>&quot;experimentalDecorators&quot;: true</code></strong> in <strong><code>tsconfig.json</code></strong> (or rely on the plugin’s esbuild flag)</td>
+<td>Lazy routes <strong><code>import()</code></strong> OM modules; decorators must lower or dynamic import fails (<strong><code>Unexpected token &#39;@&#39;</code></strong>).</td>
+</tr>
+</tbody></table>
+<p>Static hosts that only upload <strong><code>dist/</code></strong> do not run Node; <strong><code>VITE_*</code></strong> URLs (API, OpenAPI in templates) must be correct <strong>at build time</strong> in CI—set them in the host’s env or in <strong><code>.env.production</code></strong>.</p>
+<h3>SPA hosting (routing)</h3>
+<p>Your server or CDN must <strong>serve <code>index.html</code> for unknown paths</strong> used by <strong><code>createPathRouter</code> / History API</strong>, while real files (<strong><code>/assets/*.js</code></strong>, <strong><code>favicon</code></strong>, <strong><code>mock-nav.json</code></strong>, …) resolve normally.</p>
+<p>Examples:</p>
+<ul>
+<li><strong>Nginx:</strong> <code>try_files $uri /index.html;</code> for the SPA location.</li>
+<li><strong>Netlify:</strong> <code>/* /index.html 200</code> (or SPA preset).</li>
+<li><strong><code>serve</code> SPA mode:</strong> prefers a fallback to <strong><code>index.html</code></strong>.</li>
+<li><strong>GitHub Pages (project site)</strong> is purely static—without server rewrites you need <strong><code>base</code></strong> plus pathname handling (see below), and either duplicate <strong><code>404.html</code></strong> from <strong><code>index.html</code></strong> or emit per-route <strong><code>index.html</code></strong> stubs. AbeyJs’s <strong>docs web</strong> uses <strong><code>vite-doc-spa-paths.ts</code></strong> for known routes (<strong><a href="monorepo-desarrollo.md"><code>docs/monorepo-desarrollo.md</code></a></strong>). Your product app can copy that pattern or rely on <strong><code>404.html</code></strong> plus client routing if an HTTP <strong>404</strong> on refresh is acceptable.</li>
+</ul>
+<h3>Subpath deployments (<code>/</code> + repo or company prefix)</h3>
+<p>If the app is not at <strong><code>https://host/</code></strong> but at <strong><code>https://host/MyApp/</code></strong>, <strong>Vite</strong> and <strong><code>@abeyjs/view</code></strong> must agree:</p>
+<ol>
+<li><strong><code>vite.config.ts</code>:</strong> set <strong><code>base</code></strong> to that prefix with a trailing slash, e.g. <strong><code>base: &quot;/MyApp/&quot;</code></strong>. Often from <strong><code>process.env</code> / CI</strong> (case-sensitive slug must match the public URL).</li>
+<li><strong><code>bootstrapOmegaApp</code></strong> — pass <strong><code>shell.pathnameBase</code></strong> equal to <strong><code>import.meta.env.BASE_URL</code></strong> (same string Vite injects from <strong><code>base</code></strong>). The <strong><code>admin</code></strong> / <strong><code>empty</code></strong> template <strong><code>main</code></strong> omits <strong><code>pathnameBase</code></strong> when <strong><code>base</code></strong> is <strong><code>/</code></strong>; <strong>add it whenever <code>base</code> is not <code>/</code>.</strong></li>
+</ol>
+<p>The router (<strong><code>mountRoutedApp</code></strong>) uses that basename so <strong><code>pushState</code></strong> and sidebar <strong><code>href</code></strong> match the deployed URL (<strong><code>pathnameBase</code></strong> in <strong><code>@abeyjs/view</code></strong>).</p>
+<h3>What this repo’s <strong>docs site</strong> deployment is</h3>
+<p><strong><a href="monorepo-desarrollo.md"><code>docs/monorepo-desarrollo.md</code></a></strong> (<em>Publishing <strong><code>docs/web</code></strong> to GitHub Pages</em>) is <strong>only</strong> the <strong>documentation SPA</strong> inside this monorepo (workflow <strong><code>.github/workflows/docs-github-pages.yml</code></strong>, <strong><code>DOCS_SITE_BASE</code></strong>, <strong><code>vite-doc-spa-paths.ts</code></strong>). Product apps generated with <strong><code>abeyjs init</code></strong> follow <strong>this Quick start</strong> § plus your host’s SPA rules—they do <strong>not</strong> need that workflow unless you copy it for your own Pages deploy.</p>
   </article>
 </section>

@@ -1,7 +1,7 @@
 <section data-role="doc-guide-root">
   <article data-doc="markdown">
-<p>When the table must <strong>talk to Omega</strong> (columns and actions arrive on the channel; user actions return as intents), enable flow mode. Pattern used in demos where an agent publishes <code>tableColumns</code> / <code>tableItems</code> and the grid fires <code>intentload</code> on pagination without every screen calling <code>fetch</code> directly.</p>
-<p>This doc covers <strong>only</strong> DOM contract / attributes / expected payloads; flow logic lives in your <code>omega/</code> modules.</p>
+<p>When the table must <strong>use the runtime channel</strong> (columns and actions arrive on the channel; user actions return as intents), enable flow mode. Pattern used in demos where an agent publishes <code>tableColumns</code> / <code>tableItems</code> and the grid fires <code>intentload</code> on pagination without every screen calling <code>fetch</code> directly.</p>
+<p>This doc covers <strong>only</strong> DOM contract / attributes / expected payloads; flow logic lives in your domain/agent modules beside the OM views.</p>
 <h2>Flow mode (<code>flow=&quot;true&quot;</code>)</h2>
 <p><code>flow=&quot;true&quot;</code> turns on:</p>
 <ul>
@@ -15,9 +15,9 @@
 <li><strong><code>intentload=&quot;Music/TableLoad&quot;</code></strong></li>
 <li>**<code>intentselection=&quot;Music/TableSelection&quot;</code> <em>(optional)</em></li>
 <li>**<code>intentaction=&quot;Music/TableAction&quot;</code> <em>(optional)</em></li>
-<li><strong><code>eventcolumns=&quot;omega/.../tableColumns&quot;</code></strong></li>
-<li>**<code>eventactions=&quot;omega/.../tableActions&quot;</code> <em>(optional)</em></li>
-<li><strong><code>eventitems=&quot;omega/.../tableItems&quot;</code></strong></li>
+<li><strong><code>eventcolumns=&quot;MySlice/events/…/tableColumns&quot;</code></strong> <em>(topic strings match what your handlers publish)</em></li>
+<li>**<code>eventactions=&quot;MySlice/events/…/tableActions&quot;</code> <em>(optional)</em></li>
+<li><strong><code>eventitems=&quot;MySlice/events/…/tableItems&quot;</code></strong></li>
 <li><strong><code>loadnetwork=&quot;true&quot;</code></strong> (table fires <code>intentload</code> when <code>page</code> / <code>pageSize</code> change)</li>
 </ul>
 <h3>Payloads (flow → UI)</h3>

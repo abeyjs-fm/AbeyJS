@@ -95,6 +95,8 @@ With **workspace** tooling you rarely publish each tarball separately locally; e
 4. OM screens import **`?raw`** or use **`abeyVitePlugin()`** so **`.view.html`/`.abey`** compile during dev/build.
 5. Reusable orchestration attaches via **`runtime.onIntent`**, flows/agents, and **`createOmegaHttp({ channel: runtime.channel, … })`** so HTTP publishes **`CH_HTTP_*`** alongside other bus traffic.
 
+**Production deploy:** **`npm run build`** → **`dist/`** static hosting with an SPA **`index.html` fallback**. AbeyJs-specific notes (**`/abey-styles.js`**, **`pathnameBase`** when **`base` ≠ `/`) are in **`[docs/quick-start.md § Deploy](docs/quick-start.md#deploy-your-app-production)`**.
+
 Template variants and **`--shell appbar`** for admin live in [**`packages/cli/templates/README.md`**](packages/cli/templates/README.md).
 
 ---
@@ -191,6 +193,7 @@ Folders **`examples/*`** host runnable demos (`npm run example:starter`, etc.—
 
 | Doc | Covers |
 |-----|--------|
+| [**`docs/quick-start.md`**](docs/quick-start.md) | **`abeyjs init`** layout, must-have imports, **production deploy** (Vite **`dist/`**, SPA fallback, subpath **`base`**, **`pathnameBase`**) |
 | [**`docs/vision-abeyjs.md`**](docs/vision-abeyjs.md) | Product matrix coverage, CSS policy, directional roadmap *(some sections Spanish today)* |
 | [**`docs/crud-automatico-abeyjs.md`**](docs/crud-automatico-abeyjs.md) | OpenAPI-assisted CRUD |
 | [**`docs/entidad-modelo-y-formularios.md`**](docs/entidad-modelo-y-formularios.md) | Entity ↔ forms |

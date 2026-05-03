@@ -79,7 +79,7 @@ Emit OM views + TS from connected contract.
 
 ### `abeyjs generate ecosystem <PascalName>`
 
-Vertical slice **`omega/` + `ui/`** plus example tick.
+Vertical slice (**domain/logic folder** + **`ui/`**) plus example tick.
 
 | Flag | |
 |------|--|

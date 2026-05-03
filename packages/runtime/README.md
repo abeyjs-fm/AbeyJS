@@ -43,6 +43,14 @@ Constructor wiring:
 - **`registerModule`** / **`registerModules`** — **`OmegaModule`** **`(container, runtime) => void`** executed **once per module function** (**`WeakSet`** dedupe).
 - **`provide`**, **`provideFactory`**, **`get`**, **`tryGet`** — delegate to **`di`**.
 
+### Troubleshooting: missing provider
+
+If the app throws **`OmegaContainer: missing provider for token "abeyjs:…"`** (literal suffix matches your **`omegaToken("…")`** name):
+
+1. **`get` / `tryGet`** ran for a token that was never **`provide`**‘d or **`provideFactory`**‘d—often inside a copied **`install…(runtime)`** that expects HTTP or another service registered elsewhere.
+2. **Fix:** call **`runtime.registerModule((c, rt) => { … })`** *before* that installer, and register the same **`omegaToken("…")`** (or shared **`const`** re-export) you pass to **`get`**.
+3. **`omegaToken("name")`** uses **`Symbol.for("abeyjs:name")`**, so the error string **`abeyjs:name`** matches the **`omegaToken`** argument.
+
 ### Trace
 
 - **`getTraceSnapshot()`** — read-only view of the ring buffer (**`RuntimeTraceEvent`**).

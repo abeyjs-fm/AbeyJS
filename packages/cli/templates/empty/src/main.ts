@@ -1,4 +1,3 @@
-import type { OmegaRuntime } from "@abeyjs/runtime";
 import "/abey-styles.js";
 import { bootstrapOmegaApp } from "@abeyjs/view";
 import { createOmega } from "./omegaSetup.js";
@@ -21,13 +20,6 @@ const { router, dispose, runtime } = bootstrapOmegaApp(app, {
 });
 
 void runtime;
-
-const w = globalThis as unknown as { __abeyRuntime?: OmegaRuntime; __abeyDi?: { channel?: unknown } };
-if (runtime) {
-  w.__abeyRuntime = runtime;
-}
-w.__abeyDi ??= {};
-w.__abeyDi.channel = w.__abeyDi.channel ?? (() => w.__abeyRuntime?.channel);
 
 if (import.meta.env.DEV) {
   (globalThis as unknown as { __abeyRouter?: unknown }).__abeyRouter = router;

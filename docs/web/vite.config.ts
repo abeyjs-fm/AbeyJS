@@ -3,6 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { defineConfig, loadEnv, type Plugin } from "vite";
 import { createAbeyViteLogger } from "@abeyjs/view/dev/vite-logger";
+import { abeyViteMalformedUriGuard } from "@abeyjs/view/dev/vite-malformed-uri-guard";
 import { abeyVitePlugin } from "@abeyjs/compiler";
 import { DOC_SPA_HTML_FALLBACK_PATHS } from "./vite-doc-spa-paths.js";
 
@@ -33,7 +34,7 @@ function resolveDocSiteOrigin(
  */
 function docsSeoIndexHtml(getOrigin: () => string): Plugin {
   const description =
-    "AbeyJs framework documentation — Omega runtime, OM templates, routed shell (@abeyjs/view), CLI, OpenAPI-assisted CRUD, tables, forms, and monorepo guides.";
+    "AbeyJs framework documentation — AbeyJS runtime, OM templates, routed shell (@abeyjs/view), CLI, OpenAPI-assisted CRUD, tables, forms, and monorepo guides.";
   return {
     name: "docs-seo-index-html",
     enforce: "pre",
@@ -114,9 +115,22 @@ export default defineConfig(({ mode }) => {
     publicDir: "public",
     clearScreen: false,
     customLogger: createAbeyViteLogger(),
-    plugins: [docsSeoIndexHtml(origin), abeyVitePlugin(), docsSpaHtmlFallbackDirs()],
+    plugins: [
+      abeyViteMalformedUriGuard({ locale: "es" }),
+      docsSeoIndexHtml(origin),
+      abeyVitePlugin(),
+      docsSpaHtmlFallbackDirs(),
+    ],
     server: {
       port: 5190,
+      proxy: {
+        "/api/deezer": {
+          target: "https://api.deezer.com",
+          changeOrigin: true,
+          secure: true,
+          rewrite: (path) => path.replace(/^\/api\/deezer/, ""),
+        },
+      },
     },
     build: {
       chunkSizeWarningLimit: 600,

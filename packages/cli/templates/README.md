@@ -14,9 +14,9 @@ AbeyJs-first **Vite + TypeScript** starter (OM home view under `src/views/home/`
 | Home screen | **`src/views/home/`** — **`app.home.view.html`**, **`app.home.view.ts`** (`@AbeyComponent`, **`stylesText`** + CSS **`?inline`**, Shadow DOM), **`app.home.view.css`**. |
 | Runtime | **`src/omegaSetup.ts`** (`createOmega`, inspector bridge guard, optional OpenAPI **`init`** hook). |
 | Env | **`src/environment.ts`**, **`.env.*`**, **`abey.json`** → lista **`styles`** (p. ej. **`./src/om-global.css`**). |
-| Entry | **`src/main.ts`** — **`import "/abey-styles.js"`**, **`__abeyRuntime`** / **`__abeyDi.channel`** para DOM-DI; **`index.html`** + favicon **`public/icon.png`**. |
+| Entry | **`src/main.ts`** — **`import "/abey-styles.js"`**, **`bootstrapOmegaApp(app, { createOmega, shell })`**; **`__abeyRuntime`** / **`__abeyDi.channel`** los expone el bootstrap (véase **`exposeBootstrapRuntime`** en **`@abeyjs/view`**), igual que **`admin/`**, sin pegamento manual en `main.ts`; **`index.html`** + favicon **`public/icon.png`**. |
 | Assets | **`public/logo.png`** (hero), **`public/icon.png`** (favicon). |
-| Dev | **`scripts/clean-vite.mjs`** — **`npm run dev:clean`** borra **`node_modules/.vite`**. |
+| Dev | **`scripts/clean-vite.mjs`** — **`npm run dev:clean`** borra **`node_modules/.vite`**. **`vite.config.ts`**: **`abeyViteMalformedUriGuard()`** (evita spam **`URI malformed`** en dev), **`createAbeyViteLogger()`**, **`abeyVitePlugin()`**. |
 
 Good default when you want **`.view.html` + `@abeyjs/compiler`** in the repo from day one.
 
@@ -31,6 +31,7 @@ Dashboard-style **AbeyJs shell** (same stack family, different defaults):
 | Shell | **`bootstrapOmegaApp`** in **`src/main.ts`**; **`dashboardLayout`** patched by **`--shell`**. |
 | Home | **`src/views/home/`** — **`app.home.view.html`**, **`app.home.view.ts`** (`@AbeyComponent`, **`stylesText`** + **`?inline`**, Shadow DOM), **`routes.ts`** + **`componentRoute`** + lazy **`load()`** (igual patrón que **`empty/`**). |
 | Shared | **`src/common/http.ts`**, **`session.ts`**, **`environment.ts`** — patterns for REST + guards. |
+| Dev | **`vite.config.ts`** — **`abeyViteMalformedUriGuard()`**, **`createAbeyViteLogger()`**, **`abeyVitePlugin()`** (mismo orden que **`empty/`**). |
 
 **`--shell`**
 

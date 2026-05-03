@@ -1,8 +1,18 @@
 # `abey-table` with flows
 
-When the table must **talk to Omega** (columns and actions arrive on the channel; user actions return as intents), enable flow mode. Pattern used in demos where an agent publishes `tableColumns` / `tableItems` and the grid fires `intentload` on pagination without every screen calling `fetch` directly.
+When the table must **use the runtime channel** (columns and actions arrive on the channel; user actions return as intents), enable flow mode. Pattern used in demos where an agent publishes `tableColumns` / `tableItems` and the grid fires `intentload` on pagination without every screen calling `fetch` directly.
 
-This doc covers **only** DOM contract / attributes / expected payloads; flow logic lives in your `omega/` modules.
+This doc covers **only** DOM contract / attributes / expected payloads; flow logic lives in your domain/agent modules beside the OM views.
+
+## Prerequisites: `globalThis.__abeyRuntime`
+
+**Flow mode** subscribes to **`runtime.channel.onAll`** and emits intents via **`runtime.dispatch`** (see **`#attachFlow`** in **`@abeyjs/uikit`** **`abey-table`**). The element resolves **`OmegaRuntime`** by walking **`globalThis`** from **`runtimepath`** (default **`"__abeyRuntime"`**).
+
+1. **Bootstrap:** call **`bootstrapOmegaApp`** with **`createOmega`** from your **`omegaSetup`**. That path runs **`exposeBootstrapRuntime`**, which assigns **`globalThis.__abeyRuntime`** (and default **`__abeyDi.channel`** when missing). No extra **`main.ts`** assignment is required for standard **empty** / **admin** templates.
+2. **Custom element:** call **`registerAbeyJsUi()`** (or **`AbeyTableElement.define("abey-table")`**) before the table appears in the DOM — globals alone do not register the tag.
+3. **Public-only pages:** if the user never hits the routed shell bootstrap, **`__abeyRuntime`** may stay unset until the app mounts — the table will not attach **`channel`** listeners until **`exposeBootstrapRuntime`** has run.
+
+Detailed overview of **`runtimepath`** / **`exposeBootstrapRuntime`**: **`docs/abey-table.md`** § *Omega runtime on `globalThis`*.
 
 ## Flow mode (`flow="true"`)
 
@@ -18,9 +28,9 @@ This doc covers **only** DOM contract / attributes / expected payloads; flow log
 - **`intentload="Music/TableLoad"`**
 - **`intentselection="Music/TableSelection"` *(optional)*
 - **`intentaction="Music/TableAction"` *(optional)*
-- **`eventcolumns="omega/.../tableColumns"`**
-- **`eventactions="omega/.../tableActions"` *(optional)*
-- **`eventitems="omega/.../tableItems"`**
+- **`eventcolumns="MySlice/events/…/tableColumns"`** *(topic strings match what your handlers publish)*
+- **`eventactions="MySlice/events/…/tableActions"` *(optional)*
+- **`eventitems="MySlice/events/…/tableItems"`**
 - **`loadnetwork="true"`** (table fires `intentload` when `page` / `pageSize` change)
 
 ### Payloads (flow → UI)

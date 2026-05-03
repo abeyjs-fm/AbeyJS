@@ -25,15 +25,7 @@ const { router, dispose, runtime } = bootstrapOmegaApp(app, {
   },
 });
 
-// Exponer runtime para vistas lazy que necesiten dispatch/flow sin acoplar la firma mount(outlet).
-(globalThis as unknown as { __abeyRuntime?: unknown }).__abeyRuntime = runtime;
-
-// DOM-DI defaults (para poder hacer: `injectFromDom("channel", el)` / `<abey-provide token="channel" ...>`).
-// No acopla el componente a `__abeyRuntime`: el provider resuelve el channel cuando el runtime ya existe.
-(globalThis as any).__abeyDi = (globalThis as any).__abeyDi ?? {};
-(globalThis as any).__abeyDi.channel =
-  (globalThis as any).__abeyDi.channel ??
-  (() => (globalThis as any).__abeyRuntime?.channel);
+void runtime;
 
 if (import.meta.env.DEV) {
   (globalThis as unknown as { __abeyRouter?: unknown }).__abeyRouter = router;

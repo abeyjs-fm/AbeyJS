@@ -1,6 +1,6 @@
 <section data-role="doc-guide-root">
   <article data-doc="markdown">
-<p><code>OmegaRuntime</code> (<code>@abeyjs/runtime</code>) is the object you typically create once in <strong><code>omegaSetup.ts</code></strong> and share (channel + dispatch + optional plugin registry). The runtime should feel <strong>familiar</strong> if you know CQRS-lite buses: nominal typed intents from <strong><code>@abeyjs/core</code></strong> and follow-up effects via <strong><code>channel.publish</code></strong>.</p>
+<p>The <strong>AbeyJS runtime</strong> is the object you typically create once (type <strong><code>OmegaRuntime</code></strong> from <code>@abeyjs/runtime</code>) in <strong><code>omegaSetup.ts</code></strong> and share (channel + dispatch + optional plugin registry). The runtime should feel <strong>familiar</strong> if you know CQRS-lite buses: nominal typed intents from <strong><code>@abeyjs/core</code></strong> and follow-up effects via <strong><code>channel.publish</code></strong>.</p>
 <h2>Live pieces inside the process</h2>
 <table>
 <thead>
@@ -19,7 +19,7 @@
 </tr>
 <tr>
 <td><strong><code>channel</code></strong></td>
-<td>Namespaced pub/sub strings you choose (<code>omega/...</code> is only convention)</td>
+<td>Namespaced pub/sub topic strings you choose (for example <code>MySlice/events/…</code>)</td>
 </tr>
 <tr>
 <td><strong>Flows</strong></td>
@@ -55,9 +55,9 @@
 <h2>CLI ecosystem generator (<strong><code>abeyjs generate ecosystem</code></strong>)</h2>
 <p>Vertical slice scaffolding—not new philosophy:</p>
 <ul>
-<li><strong><code>omega/semantics.ts</code></strong>: symbolic intents.</li>
+<li><strong><code>slice/semantics.ts</code></strong> (CLI layout may vary): symbolic intents.</li>
 <li><strong><code>agent</code> / <code>behavior</code> / <code>flow</code></strong>: full example lifecycle.</li>
-<li><strong><code>installXxxOmega(runtime)</code></strong>: function you wire from <code>omegaSetup</code>.</li>
+<li><strong><code>installXxx…(runtime)</code></strong> registrar: function you wire from <code>omegaSetup</code>.</li>
 </ul>
 <p>Maintained as example <strong>within the repo</strong> because large teams copied inconsistent structures. Your later tweaks are not semver-rigid library output—baseline reference snapshot.</p>
 <p>When you need the broader <strong>product vision</strong> doc, read <strong><code>/guides/vision</code></strong> in addition to this technical page.</p>
@@ -84,6 +84,30 @@
 </tr>
 </tbody></table>
 <p>For telemetry across integrations use shell <strong><code>omega/nav:changed</code></strong> in addition to domain intents.</p>
+<hr>
+<h2><code>OmegaContainer: missing provider for token &quot;abeyjs:…&quot;</code></h2>
+<p><strong>What it means:</strong> something called <strong><code>runtime.get(someToken)</code></strong> (or <strong><code>di.get</code></strong>) before any code registered a value or factory for that token on <strong><code>OmegaContainer</code></strong>. Tokens from <strong><code>omegaToken(&quot;name&quot;)</code></strong> show up in the error as <strong><code>abeyjs:name</code></strong> (internally <strong><code>Symbol.for(&quot;abeyjs:name&quot;)</code></strong>).</p>
+<p><strong>Typical cause:</strong> you copied an <strong><code>installXxxOmega(runtime)</code></strong> helper (ecosystem slice, agent that needs <strong><code>OmegaHttp</code></strong>, etc.) from an example that assumed another module had already run—e.g. <strong><code>registerCommon</code></strong> providing <strong><code>TOK_DEEZER_HTTP</code></strong>, <strong><code>TOK_HTTP</code></strong>, etc.—but your <strong><code>createOmega()</code></strong> only calls the installer and never registers those services.</p>
+<p><strong>Fix:</strong></p>
+<ol>
+<li><p>Register a module <strong>before</strong> the code that <strong><code>get</code>s</strong> the token:</p>
+<pre><code class="language-ts">const runtime = createOmegaRuntime();
+
+runtime.registerModule((c, rt) =&gt; {
+  c.provideFactory(TOK_MY_HTTP, () =&gt;
+    createOmegaHttp({ channel: rt.channel, baseUrl: &quot;/api&quot;, source: &quot;my-app&quot; }),
+  );
+});
+
+installMySlice(runtime); // may call runtime.get(TOK_MY_HTTP)
+</code></pre>
+</li>
+<li><p>Use the <strong>same</strong> token identity everywhere: import a shared <strong><code>export const TOK_MY_HTTP = omegaToken(&quot;my_http&quot;)</code></strong> (or always use the same string in <strong><code>omegaToken(&quot;…&quot;)</code></strong>) so <strong><code>provideFactory</code></strong> and <strong><code>get</code></strong> refer to one symbol.</p>
+</li>
+<li><p><strong>Order:</strong> <strong><code>registerModule</code></strong> first, then <strong><code>registerAgent</code></strong>, flows, and <strong><code>onIntent</code></strong> wiring that depends on DI.</p>
+</li>
+</ol>
+<p><strong>Reference in this repo:</strong> <strong><code>examples/MyMiusic/src/common/register-common.ts</code></strong> pairs <strong><code>provideFactory</code></strong> with <strong><code>installArtistOmega</code></strong>; <strong><code>docs/web</code></strong> registers <strong><code>registerDeezerHttpModule</code></strong> in <strong><code>omegaSetup.ts</code></strong> before <strong><code>installArtistOmega</code></strong> for the same pattern.</p>
 <p>Next: <strong><code>/guides/cli</code></strong>.</p>
   </article>
 </section>

@@ -22,7 +22,7 @@ Short positioning vs manual work: **`/guides/vision`**.
 | 9 | Strong convention without spec | **No** | Convention **requires** faithful OpenAPI with collection + optional `/{id}`. |
 | 10 | Progressive auto → manual customization | **Yes (direction)** | Documented **`/guides/vision`** + **`/guides/security`**. |
 | 11 | XSS-safe defaults | **Yes** | **`/guides/security`**. |
-| 12 | Omega theme styles | **Yes** | `@abeyjs/view/theme/omega-default.css`, `--abey-*`. |
+| 12 | AbeyJS default theme styles | **Yes** | `@abeyjs/view/theme/omega-default.css`, `--abey-*`. |
 | 13 | Sync after mutation without full reload | **Partial** | Agent state updates lists/forms; “always server-identical” may need refresh. |
 | 14 | Optimization (app-level cache) | **Partial** | List batching yes; declarative app cache not core focus. |
 | 15 | Entity/intent feel | **Partial** | Names from paths (`entityPascal`); you still see `mount*` in routes. |

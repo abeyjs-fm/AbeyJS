@@ -11,7 +11,9 @@
     "generate:guides-html": "node scripts/generate-guide-html.mjs"
   },
   "dependencies": {
+    "@abeyjs/agents": "^0.1.1",
     "@abeyjs/core": "^0.1.1",
+    "@abeyjs/flows": "^0.1.1",
     "@abeyjs/http": "^0.1.1",
     "@abeyjs/runtime": "^0.1.1",
     "@abeyjs/uikit": "^0.1.1",

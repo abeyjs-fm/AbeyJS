@@ -9,7 +9,7 @@ import type {
   BootstrapOmegaAppConfig,
   BootstrapOmegaAppResult,
 } from "./omega-config.js";
-import { isPublicPath, resolveBootstrapRuntime } from "./omega-runtime.js";
+import { exposeBootstrapRuntime, isPublicPath, resolveBootstrapRuntime } from "./omega-runtime.js";
 
 export type {
   BootstrapOmegaAuthConfig,
@@ -19,8 +19,8 @@ export type {
 } from "./omega-config.js";
 
 /**
- * Single browser entrypoint: optional **auth** branch for **public paths**, then **`mountRoutedApp`** + **`resolveBootstrapRuntime`**.
- * Apps should **`import`** **`@abeyjs/view/theme/omega-default.css`** themselves.
+ * Single browser entrypoint: optional **auth** branch for **public paths**, then **`mountRoutedApp`** + **`resolveBootstrapRuntime`** + **`exposeBootstrapRuntime`** (**`globalThis.__abeyRuntime`**, **`__abeyDi.channel`**).
+ * Apps should **`import`** **`@abeyjs/view/theme/omega-default.css`** themselves — no manual glue for lazy **`OmegaRuntime`**.
  *
  * **Vite HMR:** **`import.meta.hot?.dispose(() => result.dispose())`** in **`main.ts`** to teardown shell/nav.
  */
@@ -61,6 +61,7 @@ export function bootstrapOmegaApp(root: HTMLElement, config: BootstrapOmegaAppCo
   }
 
   const runtime = resolveBootstrapRuntime(createOmega);
+  exposeBootstrapRuntime(runtime);
   const userOnRouteChange = shell.onRouteChange;
   const initialBrowser =
     typeof window !== "undefined" ? window.location.pathname || "/" : "/";

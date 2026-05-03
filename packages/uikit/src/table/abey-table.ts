@@ -28,6 +28,25 @@ type AbeyTableActionsPayload = {
   actions?: AbeyTableActionJson[];
 };
 
+/**
+ * Focus inside nested open shadow roots: `document.activeElement` may stop at the host,
+ * so caret capture must descend `shadowRoot.activeElement` until the leaf (e.g. table search inside OM).
+ */
+function getDeepestActiveElement(doc: Document): Element | null {
+  let active: Element | null = doc.activeElement;
+  if (!active || active === doc.body || active === doc.documentElement) return active;
+
+  let depth = 0;
+  while (depth++ < 32) {
+    if (active == null) return active;
+    const shadow: ShadowRoot | null | undefined = active.shadowRoot;
+    const innerEl: Element | null = shadow?.activeElement ?? null;
+    if (!innerEl || innerEl === active) return active;
+    active = innerEl;
+  }
+  return active;
+}
+
 function el<K extends keyof HTMLElementTagNameMap>(
   tag: K,
   attrs?: Record<string, string>,
@@ -246,21 +265,101 @@ export class AbeyTableElement<Row = unknown> extends HTMLElement {
   #suppressLoadEmit = false;
   #query = "";
   #searchTimer: number | null = null;
+  /** ms sin teclear antes de disparar `intentSearch` / carga red con la query actual */
+  static searchDebounceMs = 250;
   /** Tras `TableLoad` por flow: mostrar skeleton hasta `eventItems`. */
   #networkLoading = false;
+  /**
+   * El usuario enfocó el buscador — restaurar tras renders async (skeleton / `eventItems`) aunque el `focusout`
+   * venga con `relatedTarget === null` (nodo quitado antes de cargar datos).
+   */
+  #searchUserKeepsFocus = false;
+
+  /** Mismo nodo toolbar search entre renders (`remove` antes de `clear`) — evita blur al reemplazar el árbol. */
+  #boundSearchKeydown = (ev: KeyboardEvent): void => {
+    const t = ev.target;
+    if (!(t instanceof HTMLInputElement) || !t.classList.contains("search")) return;
+    if (ev.key !== "Enter") return;
+    ev.preventDefault();
+    this.#flushPendingSearchDispatch();
+  };
+
+  #boundSearchInput = (ev: Event): void => {
+    const t = ev.target;
+    if (!(t instanceof HTMLInputElement) || !t.classList.contains("search")) return;
+    this.#query = t.value;
+    this.#page = 1;
+    this.#emitSearch();
+    /*
+     * Búsqueda remota (`loadNetwork` + `intentLoad` + flow) ya hace `render()` en `#flowDispatchLoad` / `#applyFlowItems`.
+     * Re-render sincrónico en cada tecla reemplaza el grafo → sensación de “perder cursor” entre refrescos.
+     */
+    const serverKeyedSearch =
+      this.#flowEnabled && (Boolean(this.#intentSearch) || (Boolean(this.#intentLoad) && this.#loadNetwork));
+    if (!serverKeyedSearch) {
+      this.render();
+    }
+  };
+
+  #boundSearchFocusIn = (ev: FocusEvent): void => {
+    const t = ev.target;
+    if (t instanceof HTMLInputElement && t.classList.contains("search")) {
+      this.#searchUserKeepsFocus = true;
+    }
+  };
+
+  #boundSearchFocusOut = (ev: FocusEvent): void => {
+    const t = ev.target;
+    if (!(t instanceof HTMLInputElement) || !t.classList.contains("search")) return;
+    const rt = ev.relatedTarget as Node | null;
+    // Blur porque el DOM se reemplaza (clave al cargar): no borrar `#searchUserKeepsFocus`.
+    if (rt == null) return;
+    if (this.contains(rt)) return;
+    const el = rt instanceof Element ? rt : rt.parentElement;
+    if (el instanceof Element && el.closest(".abey-table-menu, [data-abey-menu='1']")) return;
+    this.#searchUserKeepsFocus = false;
+    this.#flushPendingSearchDispatch();
+  };
+
+  /** Clic fuera de la tabla (y fuera del menú portado) → el usuario ya no busca ahí . */
+  #boundDocPointerForSearchStick = (ev: Event): void => {
+    if (!this.#searchUserKeepsFocus) return;
+    const tgt = ev.target as Node | null;
+    if (!(tgt instanceof Node)) return;
+    if (this.contains(tgt)) return;
+    const host = tgt instanceof Element ? tgt : (tgt.parentElement as Element | null);
+    if (host instanceof Element && host.closest(".abey-table-menu, [data-abey-menu='1']")) return;
+    this.#searchUserKeepsFocus = false;
+    this.#flushPendingSearchDispatch();
+  };
 
   /** Antes de vaciar el DOM: si el buscador tenía foco, guardamos el caret para restaurarlo al final de `render()`. */
   #captureSearchCaretForRestore(): { start: number; end: number } | null {
-    const ae = document.activeElement;
-    if (!(ae instanceof HTMLInputElement) || !ae.classList.contains("search") || !this.contains(ae)) {
-      return null;
+    // Prefer subtree match (no retarget quirks); then deep activeElement; then :focus-within + single toolbar input.
+    let ae =
+      (this.querySelector("input.search:focus") as HTMLInputElement | null) ??
+      (() => {
+        const deep = getDeepestActiveElement(document);
+        if (deep instanceof HTMLInputElement && deep.classList.contains("search") && this.contains(deep)) return deep;
+        return null;
+      })();
+    if (!ae && this.matches(":focus-within")) {
+      ae = this.querySelector("input.search") as HTMLInputElement | null;
     }
-    let start = ae.selectionStart;
-    let end = ae.selectionEnd;
-    if (start == null || end == null) {
-      start = end = this.#query.length;
+    if (ae instanceof HTMLInputElement && ae.classList.contains("search")) {
+      let start = ae.selectionStart;
+      let end = ae.selectionEnd;
+      if (start == null || end == null) {
+        start = end = this.#query.length;
+      }
+      return { start, end };
     }
-    return { start, end };
+
+    if (this.#searchUserKeepsFocus) {
+      const len = this.#query.length;
+      return { start: len, end: len };
+    }
+    return null;
   }
 
   #restoreSearchCaret(caret: { start: number; end: number } | null): void {
@@ -270,10 +369,22 @@ export class AbeyTableElement<Row = unknown> extends HTMLElement {
     search.value = this.#query;
     try {
       search.focus({ preventScroll: true });
-      search.setSelectionRange(caret.start, caret.end);
+      const max = this.#query.length;
+      const s = Math.max(0, Math.min(caret.start, max));
+      const e = Math.max(0, Math.min(caret.end, max));
+      search.setSelectionRange(s, e);
     } catch {
       /* ignore */
     }
+  }
+
+  /** Run after OM / browser paint — single microtask loses to parent updates in some stacks. */
+  #scheduleSearchFocusRestore(caret: { start: number; end: number } | null): void {
+    if (!caret) return;
+    queueMicrotask(() => {
+      this.#restoreSearchCaret(caret);
+      requestAnimationFrame(() => this.#restoreSearchCaret(caret));
+    });
   }
 
   #appendNetworkSkeletonOverlay(tableScroll: HTMLElement): void {
@@ -539,6 +650,9 @@ export class AbeyTableElement<Row = unknown> extends HTMLElement {
     if (!this.firstChild) this.render();
     this.addEventListener("click", (ev) => this.#onClick(ev));
     document.addEventListener("click", (ev) => this.#onDocClick(ev), { capture: true });
+    document.addEventListener("pointerdown", this.#boundDocPointerForSearchStick, { capture: true });
+    this.addEventListener("focusin", this.#boundSearchFocusIn);
+    this.addEventListener("focusout", this.#boundSearchFocusOut);
     this.#attachFlow();
     // Ensure autoload after upgrade+attrs ordering settles
     queueMicrotask(() => {
@@ -550,7 +664,14 @@ export class AbeyTableElement<Row = unknown> extends HTMLElement {
   }
 
   disconnectedCallback() {
+    if (this.#searchTimer != null) {
+      window.clearTimeout(this.#searchTimer);
+      this.#searchTimer = null;
+    }
     document.removeEventListener("click", (ev) => this.#onDocClick(ev), { capture: true } as AddEventListenerOptions);
+    document.removeEventListener("pointerdown", this.#boundDocPointerForSearchStick, { capture: true });
+    this.removeEventListener("focusin", this.#boundSearchFocusIn);
+    this.removeEventListener("focusout", this.#boundSearchFocusOut);
     this.#detachFlow();
   }
 
@@ -574,6 +695,9 @@ export class AbeyTableElement<Row = unknown> extends HTMLElement {
   render() {
     const savedSearchCaret = this.#captureSearchCaretForRestore();
     const cfg = this.#config;
+    let reusedToolbarSearchEl: HTMLInputElement | null = this.querySelector("input.search") as HTMLInputElement | null;
+    if (reusedToolbarSearchEl) reusedToolbarSearchEl.remove(); // detach before clear (node survives for reuse)
+
     const preservedTemplates = Array.from(this.querySelectorAll("template[data-abey-cell]")) as HTMLTemplateElement[];
     this.#cellTemplates.clear();
     for (const t of preservedTemplates) {
@@ -590,11 +714,12 @@ export class AbeyTableElement<Row = unknown> extends HTMLElement {
     const tableScroll = el("div", { class: "tableScroll" });
 
     if (!cfg) {
+      reusedToolbarSearchEl = null;
       table.append(el("tbody", {}, [el("tr", {}, [el("td", {}, ["No config"])])]));
       tableScroll.append(table);
       wrap.append(tableScroll);
       this.append(wrap);
-      this.#restoreSearchCaret(savedSearchCaret);
+      if (savedSearchCaret) this.#scheduleSearchFocusRestore(savedSearchCaret);
       return;
     }
 
@@ -759,18 +884,19 @@ export class AbeyTableElement<Row = unknown> extends HTMLElement {
     }
 
     const toolbar = el("div", { class: "toolbar" });
-    const search = document.createElement("input");
-    search.type = "search";
-    search.className = "search";
-    search.placeholder = "Search…";
+    const reusedSearchInstance = reusedToolbarSearchEl != null;
+    const search = reusedToolbarSearchEl ?? document.createElement("input");
+    if (!reusedSearchInstance) {
+      search.type = "search";
+      search.className = "search";
+      search.placeholder = "Search…";
+    }
     search.value = this.#query;
-    search.addEventListener("input", () => {
-      this.#query = search.value;
-      this.#page = 1;
-      this.#emitSearch();
-      // `render()` captura/restaura foco del buscador (también cuando llegan items por red).
-      this.render();
-    });
+    if (search.dataset.abeySearchBound !== "1") {
+      search.dataset.abeySearchBound = "1";
+      search.addEventListener("input", this.#boundSearchInput);
+      search.addEventListener("keydown", this.#boundSearchKeydown);
+    }
     toolbar.append(search);
 
     wrap.append(toolbar, tableScroll);
@@ -818,7 +944,16 @@ export class AbeyTableElement<Row = unknown> extends HTMLElement {
 
     // reopen menu without full rerender for current row
     if (this.#openMenuForRowId) this.#openMenu(this.#openMenuForRowId);
-    this.#restoreSearchCaret(savedSearchCaret);
+    const caretReuse =
+      savedSearchCaret ??
+      (reusedSearchInstance && this.#searchUserKeepsFocus
+        ? { start: this.#query.length, end: this.#query.length }
+        : null);
+    if (reusedSearchInstance && caretReuse) {
+      queueMicrotask(() => this.#restoreSearchCaret(caretReuse));
+    } else if (savedSearchCaret) {
+      this.#scheduleSearchFocusRestore(savedSearchCaret);
+    }
   }
 
   #updateSelectionUi() {
@@ -1060,24 +1195,38 @@ export class AbeyTableElement<Row = unknown> extends HTMLElement {
     return String(v).toLowerCase();
   }
 
+  /** Intento de servidor/flow cuando la búsqueda se estabiliza (debounce). */
+  #runScheduledSearchDispatch() {
+    const runtime = this.#getRuntime();
+    if (!runtime?.dispatch) return;
+    if (this.#flowEnabled && this.#intentSearch) {
+      try {
+        void runtime.dispatch(
+          intentOf(this.#intentSearch!, { query: this.#query, page: this.#page, pageSize: this.#pageSize }),
+          { source: "abey-table" },
+        );
+      } catch {
+        /* ignore */
+      }
+    } else if (this.#loadNetwork && this.#flowEnabled && this.#intentLoad && !this.#suppressLoadEmit) {
+      this.#maybeEmitLoad();
+    }
+  }
+
+  /** Si hay un disparo aplazado tras teclear, ejecutarlo ya (blur fuera / Enter). */
+  #flushPendingSearchDispatch() {
+    if (this.#searchTimer == null) return;
+    window.clearTimeout(this.#searchTimer);
+    this.#searchTimer = null;
+    this.#runScheduledSearchDispatch();
+  }
+
   #emitSearch() {
     if (this.#searchTimer != null) window.clearTimeout(this.#searchTimer);
     this.#searchTimer = window.setTimeout(() => {
-      const runtime = this.#getRuntime();
-      if (!runtime?.dispatch) return;
-      if (this.#flowEnabled && this.#intentSearch) {
-        try {
-          void runtime.dispatch(
-            intentOf(this.#intentSearch!, { query: this.#query, page: this.#page, pageSize: this.#pageSize }),
-            { source: "abey-table" },
-          );
-        } catch {
-          /* ignore */
-        }
-      } else if (this.#loadNetwork && this.#flowEnabled && this.#intentLoad && !this.#suppressLoadEmit) {
-        this.#maybeEmitLoad();
-      }
-    }, 250);
+      this.#searchTimer = null;
+      this.#runScheduledSearchDispatch();
+    }, AbeyTableElement.searchDebounceMs);
     this.dispatchEvent(
       new CustomEvent("searchchange", {
         detail: { query: this.#query },
