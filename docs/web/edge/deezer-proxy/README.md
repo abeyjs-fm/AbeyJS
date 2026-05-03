@@ -19,7 +19,8 @@ Add **`VITE_DEEZER_HTTP_BASE`** as either:
 1. **Repository secret:** Settings → **Secrets and variables** → Actions → **Repository secrets** → New secret.
 2. **Environment secret:** Settings → **Environments** → environment **`github-pages`** (exact name — same as **`jobs.deploy.environment.name`** in **`docs-github-pages.yml`**) → **Environment secrets**.
 
-Value = Worker URL with **no trailing slash**, e.g. `https://abey-docs-deezer-proxy.foo.workers.dev`.
+Value = **Worker URL** with **no trailing slash**, e.g. `https://abey-docs-deezer-proxy.foo.workers.dev`.  
+**Do not** use `https://api.deezer.com` — the browser will hit CORS on GitHub Pages; the SPA must call your **`*.workers.dev`** relay.
 
 The **`Docs — GitHub Pages`** workflow passes it into `vite build` so `import.meta.env.VITE_DEEZER_HTTP_BASE` is baked into the SPA. Open the workflow run log → **Build docs** step: if the relay is wired you should see **`VITE_DEEZER_HTTP_BASE is non-empty`**. Push or **Run workflow** again after saving the secret.
 

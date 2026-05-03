@@ -4,7 +4,10 @@ import type { AbeyTableConfig } from "@abeyjs/uikit";
 import { template } from "./app-abey-table.view.html";
 import abeyTableKitCss from "@abeyjs/uikit/styles/abey-table.css?inline";
 import abeyTableCss from "./app-abey-table.view.css?inline";
-import { isDeezerProdRelayAbsent } from "../../../../shared/htpp/http-providers.js";
+import {
+  isDeezerProdRelayAbsent,
+  isDeezerViteBasePointsAtApiHost,
+} from "../../../../shared/htpp/http-providers.js";
 import { ArtistEcosystem } from "../omega/semantics.js";
 import type { DeezerArtist } from "../model/artist.types.js";
 
@@ -51,9 +54,11 @@ export class AppAbeyTableElement extends AbeyComponentElement {
         selectable: true,
         getRowId: (r: DeezerArtist) => String(r.id),
       } satisfies AbeyTableConfig<DeezerArtist>,
-      demoHint: isDeezerProdRelayAbsent()
-        ? "This prod build has no VITE_DEEZER_HTTP_BASE — Deezer loads are disabled until you set the Workers relay URL (GitHub Actions secret for CI, or VITE_DEEZER_HTTP_BASE in docs/web/.env.production for a local production build). See docs/web/edge/deezer-proxy/README.md."
-        : "Try searching for artists and changing pages: each action triggers a remote load.",
+      demoHint: isDeezerViteBasePointsAtApiHost()
+        ? "VITE_DEEZER_HTTP_BASE is set to https://api.deezer.com — that cannot work from the browser (CORS). Replace it with your Cloudflare Worker URL (…workers.dev) from docs/web/edge/deezer-proxy, then redeploy Pages."
+        : isDeezerProdRelayAbsent()
+          ? "Set VITE_DEEZER_HTTP_BASE to your Workers relay URL (GitHub Actions secret or .env.local production build—see docs/web/edge/deezer-proxy/README.md)."
+          : "Try searching for artists and changing pages: each action triggers a remote load.",
       intentLoad: ArtistEcosystem.intentLoadTable,
       intentSelection: ArtistEcosystem.intentTableSelection,
       intentAction: ArtistEcosystem.intentTableAction,
