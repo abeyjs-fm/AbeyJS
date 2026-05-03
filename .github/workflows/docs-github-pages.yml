@@ -43,6 +43,9 @@ jobs:
 
       # GitHub Pages paths are case-sensitive: base must match the repo segment in the URL (`/AbeyJS/` not `/abeyjs/`).
       - name: Build docs (subpath = repository name casing)
+        env:
+          # No Vite `/api/deezer` proxy on Pages — Worker relay + build-time bake (docs/web/edge/deezer-proxy/README.md).
+          VITE_DEEZER_HTTP_BASE: ${{ secrets.VITE_DEEZER_HTTP_BASE }}
         run: |
           OWNER="${GITHUB_REPOSITORY%%/*}"
           SLUG="${GITHUB_REPOSITORY##*/}"
