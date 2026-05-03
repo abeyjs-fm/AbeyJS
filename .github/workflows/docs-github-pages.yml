@@ -45,8 +45,14 @@ jobs:
       - name: Build docs (subpath = repository name casing)
         env:
           # No Vite `/api/deezer` proxy on Pages — Worker relay + build-time bake (docs/web/edge/deezer-proxy/README.md).
+          # Secrets: use **repository** Actions secret, OR **environment** secret on environment **github-pages** (must match jobs.deploy.environment.name above).
           VITE_DEEZER_HTTP_BASE: ${{ secrets.VITE_DEEZER_HTTP_BASE }}
         run: |
+          if [ -z "$VITE_DEEZER_HTTP_BASE" ]; then
+            echo "::warning::VITE_DEEZER_HTTP_BASE is empty — /abey-table will not reach Deezer. Add an Actions repository secret named VITE_DEEZER_HTTP_BASE, OR an environment secret under Environment \"github-pages\" with the Worker URL."
+          else
+            echo "VITE_DEEZER_HTTP_BASE is non-empty (${#VITE_DEEZER_HTTP_BASE} chars); Vite will bake it into the bundle."
+          fi
           OWNER="${GITHUB_REPOSITORY%%/*}"
           SLUG="${GITHUB_REPOSITORY##*/}"
           export DOC_SITE_ORIGIN="https://${OWNER}.github.io/${SLUG}"

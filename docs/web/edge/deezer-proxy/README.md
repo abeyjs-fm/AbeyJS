@@ -14,8 +14,13 @@ If **`VITE_DEEZER_HTTP_BASE`** is **not** set at build time, the **`/abey-table`
 
 ## CI / forks
 
-Add a repository **Actions secret** named **`VITE_DEEZER_HTTP_BASE`** with the Worker URL (no trailing slash), e.g. `https://abey-docs-deezer-proxy.foo.workers.dev`.
+Add **`VITE_DEEZER_HTTP_BASE`** as either:
 
-The **`Docs — GitHub Pages`** workflow exports it so `vite build` bakes `import.meta.env.VITE_DEEZER_HTTP_BASE` into the Deezer Omega HTTP module.
+1. **Repository secret:** Settings → **Secrets and variables** → Actions → **Repository secrets** → New secret.
+2. **Environment secret:** Settings → **Environments** → environment **`github-pages`** (exact name — same as **`jobs.deploy.environment.name`** in **`docs-github-pages.yml`**) → **Environment secrets**.
+
+Value = Worker URL with **no trailing slash**, e.g. `https://abey-docs-deezer-proxy.foo.workers.dev`.
+
+The **`Docs — GitHub Pages`** workflow passes it into `vite build` so `import.meta.env.VITE_DEEZER_HTTP_BASE` is baked into the SPA. Open the workflow run log → **Build docs** step: if the relay is wired you should see **`VITE_DEEZER_HTTP_BASE is non-empty`**. Push or **Run workflow** again after saving the secret.
 
 Forks without the secret see empty/error loads until they deploy their own Worker and set the secret — or **`npm run dev`** with the Vite **`/api/deezer`** proxy locally — or bake **`VITE_DEEZER_HTTP_BASE`** in **`.env.production`** before **`vite build`**.
