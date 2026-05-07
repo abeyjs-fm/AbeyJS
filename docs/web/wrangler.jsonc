@@ -1,5 +1,0 @@
-{
-  "name": "abey-docs-deezer-proxy",
-  "compatibility_date": "2026-05-07",
-  "main": "edge/deezer-proxy/src/index.js"
-}

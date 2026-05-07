@@ -23,7 +23,6 @@ import { abeyViteMalformedUriGuard } from "@abeyjs/view/dev/vite-malformed-uri-g
 import { abeyVitePlugin } from "@abeyjs/compiler";
 import { DOC_SPA_HTML_FALLBACK_PATHS } from "./vite-doc-spa-paths.js";
 
-import { cloudflare } from "@cloudflare/vite-plugin";
 
 const configDir = path.dirname(fileURLToPath(import.meta.url));
 
@@ -53,7 +52,7 @@ export default defineConfig(({ mode }) => {
       },
     }), abeyVitePlugin(), abeyViteSpaHtmlFallbackDirs({
       paths: DOC_SPA_HTML_FALLBACK_PATHS,
-    }), cloudflare()],
+    })],
     server: {
       port: 5190,
       proxy: {
