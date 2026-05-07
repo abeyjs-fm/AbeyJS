@@ -23,6 +23,8 @@ import { abeyViteMalformedUriGuard } from "@abeyjs/view/dev/vite-malformed-uri-g
 import { abeyVitePlugin } from "@abeyjs/compiler";
 import { DOC_SPA_HTML_FALLBACK_PATHS } from "./vite-doc-spa-paths.js";
 
+import { cloudflare } from "@cloudflare/vite-plugin";
+
 const configDir = path.dirname(fileURLToPath(import.meta.url));
 
 /** AbeyJs-specific; forks change this blob only if they want different JSON-LD. */
@@ -42,21 +44,16 @@ export default defineConfig(({ mode }) => {
     publicDir: "public",
     clearScreen: false,
     customLogger: createAbeyViteLogger(),
-    plugins: [
-      abeyViteMalformedUriGuard({ locale: "es" }),
-      abeyViteCanonicalSitePlugin({
-        getOrigin: origin,
-        jsonLd: {
-          siteName: "AbeyJs Documentation",
-          description: SITE_DESCRIPTION,
-          inLanguage: "en",
-        },
-      }),
-      abeyVitePlugin(),
-      abeyViteSpaHtmlFallbackDirs({
-        paths: DOC_SPA_HTML_FALLBACK_PATHS,
-      }),
-    ],
+    plugins: [abeyViteMalformedUriGuard({ locale: "es" }), abeyViteCanonicalSitePlugin({
+      getOrigin: origin,
+      jsonLd: {
+        siteName: "AbeyJs Documentation",
+        description: SITE_DESCRIPTION,
+        inLanguage: "en",
+      },
+    }), abeyVitePlugin(), abeyViteSpaHtmlFallbackDirs({
+      paths: DOC_SPA_HTML_FALLBACK_PATHS,
+    }), cloudflare()],
     server: {
       port: 5190,
       proxy: {

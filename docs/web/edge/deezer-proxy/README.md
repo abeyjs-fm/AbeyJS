@@ -6,11 +6,23 @@ The Docs SPA calls `/api/deezer` locally via the Vite dev proxy (`vite.config.ts
 
 If **`VITE_DEEZER_HTTP_BASE`** is **not** set at build time, the **`/abey-table`** demo does **not** call Deezer from the browser (avoids pointless CORS errors); wire the Worker URL via secret or **`docs/web/.env.production`** so **`fetch`** hits your relay instead.
 
+### Do not deploy from `docs/web/`
+
+Run **`wrangler`** only inside **`docs/web/edge/deezer-proxy/`** (this folder contains **`wrangler.toml`** for the relay). From **`docs/web/`**, Wrangler may start a **Vite / Pages** wizard; typing **`y`** to confirm can be mistaken for the Worker **name** and break **`package.json`**. Always:
+
+```bash
+cd docs/web/edge/deezer-proxy
+npx wrangler login
+npx wrangler deploy
+```
+
+Copy the printed **`https://abey-docs-deezer-proxy…workers.dev`** URL into **`VITE_DEEZER_HTTP_BASE`**.
+
 ## One-time deploy (maintainer)
 
-1. Install tooling: `npm i -g wrangler` (or use `npx wrangler`).
-2. From `docs/web/edge/deezer-proxy/`: run `wrangler login` once.
-3. `wrangler deploy` — note the printed URL (`https://abey-docs-deezer-proxy.<account>.workers.dev`).
+1. **`cd`** to **`docs/web/edge/deezer-proxy`** (required).
+2. `npx wrangler login` once.
+3. `npx wrangler deploy` — copy the Worker URL (**`*.workers.dev`**, no trailing slash).
 
 ## CI / forks
 
