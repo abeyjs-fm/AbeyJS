@@ -1,6 +1,6 @@
 {
   "name": "@abeyjs/uikit",
-  "version": "0.1.1",
+  "version": "0.1.3",
   "license": "MIT",
   "publishConfig": {
     "access": "public"
@@ -46,6 +46,10 @@
     "./input": {
       "types": "./dist/input/index.d.ts",
       "import": "./dist/input/index.js"
+    },
+    "./dialog/abey-dialog": {
+      "types": "./dist/dialog/abey-dialog.d.ts",
+      "import": "./dist/dialog/abey-dialog.js"
     }
   },
   "files": [
@@ -53,11 +57,12 @@
     "styles"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.json"
+    "clean": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\"",
+    "build": "tsc -p tsconfig.json && node -e \"const fs=require('node:fs');fs.mkdirSync('dist/dialog',{recursive:true});fs.copyFileSync('src/dialog/abey-dialog.html','dist/dialog/abey-dialog.html');fs.copyFileSync('src/dialog/abey-dialog.css','dist/dialog/abey-dialog.css');\""
   },
   "dependencies": {
     "@abeyjs/core": "0.1.1",
-    "@abeyjs/runtime": "0.1.1",
+    "@abeyjs/runtime": "0.1.2",
     "@abeyjs/validation": "0.1.1",
     "@abeyjs/state": "0.1.1"
   },

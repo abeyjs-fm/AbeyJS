@@ -31,7 +31,11 @@ export function getRoutes(): AppRoute[] {
       label: "Bootstrap · shell",
       navIconFa: "fa-solid fa-window-maximize",
     },
-    { path: "/guides/routing", label: "Routing", navIconFa: "fa-solid fa-route" },
+    {
+      path: "/guides/routing",
+      label: "Routing",
+      navIconFa: "fa-solid fa-route",
+    },
     {
       path: "/guides/abey-component",
       label: "@AbeyComponent",
@@ -130,7 +134,7 @@ export function getRoutes(): AppRoute[] {
     ...getOmegaPkgRoutes(),
     // Utils routes
     getUtilsRoutes(),
-    
+
     componentRoute(
       "/abey-table",
       {
@@ -138,7 +142,24 @@ export function getRoutes(): AppRoute[] {
         title: "abey-table · AbeyJs Docs",
         showInNav: false,
       } satisfies ComponentRouteNav,
-      { selector: "app-abey-table", load: () => import("./views/utils/abey-table-for-api/ui/app-abey-table.biew.js") },
+      {
+        selector: "app-abey-table",
+        load: () =>
+          import("./views/utils/abey-table-for-api/ui/app-abey-table.biew.js"),
+      },
+    ),
+
+    componentRoute(
+      "/students",
+      {
+        label: "Students",
+        title: "Students · AbeyJs Docs",
+        showInNav: false,
+      } satisfies ComponentRouteNav,
+      {
+        selector: "app-students",
+        load: () => import("./views/utils/students/ui/app-students.view.js"),
+      },
     ),
 
     componentRoute(
@@ -182,9 +203,7 @@ export function getRoutes(): AppRoute[] {
         load: (): Promise<
           typeof import("./views/guides/bootstrap-shell/app.doc.bootstrap-shell.view.js")
         > =>
-          import(
-            "./views/guides/bootstrap-shell/app.doc.bootstrap-shell.view.js"
-          ),
+          import("./views/guides/bootstrap-shell/app.doc.bootstrap-shell.view.js"),
       } satisfies ComponentRouteSpec,
     ),
     componentRoute(
@@ -213,9 +232,7 @@ export function getRoutes(): AppRoute[] {
         load: (): Promise<
           typeof import("./views/guides/abey-component/app.doc.abey-component.view.js")
         > =>
-          import(
-            "./views/guides/abey-component/app.doc.abey-component.view.js"
-          ),
+          import("./views/guides/abey-component/app.doc.abey-component.view.js"),
       } satisfies ComponentRouteSpec,
     ),
     componentRoute(
@@ -300,9 +317,7 @@ export function getRoutes(): AppRoute[] {
         load: (): Promise<
           typeof import("./views/guides/abey-templates/app.doc.abey-templates.view.js")
         > =>
-          import(
-            "./views/guides/abey-templates/app.doc.abey-templates.view.js"
-          ),
+          import("./views/guides/abey-templates/app.doc.abey-templates.view.js"),
       } satisfies ComponentRouteSpec,
     ),
     componentRoute(
@@ -373,9 +388,7 @@ export function getRoutes(): AppRoute[] {
         load: (): Promise<
           typeof import("./views/guides/entities-forms/app.doc.entities-forms.view.js")
         > =>
-          import(
-            "./views/guides/entities-forms/app.doc.entities-forms.view.js"
-          ),
+          import("./views/guides/entities-forms/app.doc.entities-forms.view.js"),
       } satisfies ComponentRouteSpec,
     ),
 
@@ -393,4 +406,3 @@ export function getRoutes(): AppRoute[] {
     ),
   ];
 }
-

@@ -73,6 +73,7 @@ export {
   ABEY_DOM_FACTORYPATH_CHANNEL,
 } from "./di/dom-di-tokens.js";
 export { mountFormView, mountIntentButton, createOmegaFormSurface } from "./dom/mount-form.js";
+export { entityToFormValues } from "./form/entity-form-values.js";
 export { mountListView } from "./dom/mount-list.js";
 export { mountListViewSync } from "./dom/mount-list-sync.js";
 export { mountBoundText } from "./dom/mount-text.js";

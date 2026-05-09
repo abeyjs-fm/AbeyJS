@@ -27,7 +27,7 @@ npm install @abeyjs/uikit zod   # zod recommended if you use class-form / Zod in
 | **`@abeyjs/uikit/form-types`** | **`FormViewDef`**, **`FormSlice`**, **`ViewField`**, **`ViewTheme`**, OpenAPI CRUD overrides — types only. |
 | **`@abeyjs/uikit/mount-form`** | **`mountFormView`**, **`createOmegaFormSurface`**, **`applyViewTheme`** — tree-shake form mounting without importing every control file. |
 | **`@abeyjs/uikit/abey-form-classes`** | **`ABEY`**, **`ABEY_TAG`** — BEM-ish class map + CE tag constants. |
-| **`@abeyjs/uikit/form-field-ui-types`** | **`OmegaFormFieldUi`** and related typings. |
+| **`@abeyjs/uikit/dialog/abey-dialog`** | **`AbeyDialogElement`** — premium animated modal dialog component. |
 | **`@abeyjs/uikit/checkbox`**, **`/radio`**, **`/select`**, **`/input`** | Narrow barrels: **`mount*Field`** + **`ensureAbey*Defined`** (+ element export). |
 
 **`sideEffects`: `false`** — safe for bundlers when using subpaths.
@@ -41,6 +41,7 @@ Rough groupings:
 | Area | Symbols (representative) |
 |------|---------------------------|
 | **Controls** | **`AbeyInputElement`**, **`AbeySelectElement`**, **`AbeyCheckboxElement`**, **`AbeyRadioElement`**, **`mountTextInputField`**, **`mountSelectField`**, **`mountCheckboxField`**, **`mountRadioField`**, **`ensure*Defined`** |
+| **Dialog** | **`AbeyDialogElement`** (modal, closable, maximizable, breakpoints) |
 | **Button** | **`AbeyButtonElement`**, **`createOmegaButton`** |
 | **Forms** | **`AbeyFormElement`**, **`mountFormView`**, **`createOmegaFormSurface`**, **`applyViewTheme`**, **`mountIntentButton`**, **`moveAbeyFormActionsIntoTabShell`**, **`slotHostIntoAbeyFormTabPanel`**, **`restoreAbeyFormHostToPool`** |
 | **Class / decorators** | **`FormModel`**, **`parseClassJson`**, **`classToAbeyFormConfig`**, **`classToSchema`**, field decorators (**`PrimaryKey`**, **`SelectApi`**, …) |

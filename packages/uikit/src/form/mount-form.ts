@@ -1,8 +1,18 @@
-import { fieldErrorsToDottedMap, fieldErrorsToMap, safeParseWithErrors } from "@abeyjs/validation";
+import {
+  fieldErrorsToDottedMap,
+  fieldErrorsToMap,
+  safeParseWithErrors,
+} from "@abeyjs/validation";
 import type { Unsubscribe } from "@abeyjs/core";
 import type { StateCell } from "@abeyjs/state";
 import type { OmegaRuntime } from "@abeyjs/runtime";
-import type { FormViewDef, FormSlice, FieldSelectOptions, ViewField, ViewTheme } from "./form-types.js";
+import type {
+  FormViewDef,
+  FormSlice,
+  FieldSelectOptions,
+  ViewField,
+  ViewTheme,
+} from "./form-types.js";
 import type { OmegaFormFieldUi } from "../form-field-ui-types.js";
 import { applyViewTheme } from "./theme/apply-view-theme.js";
 import { ABEY } from "../abey-form-classes.js";
@@ -25,7 +35,10 @@ function fieldBindingId(storeKey: string | null, logical: string): string {
   return storeKey ? `${storeKey}${ABEY_FIELD_STORE_SEP}${logical}` : logical;
 }
 
-function fieldDomRadioGroupId(storeKey: string | null, logicalGroup: string): string {
+function fieldDomRadioGroupId(
+  storeKey: string | null,
+  logicalGroup: string,
+): string {
   return fieldBindingId(storeKey, logicalGroup);
 }
 
@@ -62,7 +75,10 @@ function rootFieldUnits(fields: ViewField[]): ViewField[][] {
 /**
  * Approx **`pageSize`** fields per page without splitting radio groups (one page may exceed **`pageSize`** when a radio block is larger).
  */
-function paginateRootFieldUnits(fields: ViewField[], pageSize: number): ViewField[][] {
+function paginateRootFieldUnits(
+  fields: ViewField[],
+  pageSize: number,
+): ViewField[][] {
   if (pageSize <= 0 || fields.length <= pageSize) {
     return [fields];
   }
@@ -94,7 +110,10 @@ function paginateRootFieldUnits(fields: ViewField[], pageSize: number): ViewFiel
  * Si la última página tiene pocos campos, la fusiona con la anterior (hasta `pageSize + 2`
  * campos en total) para evitar una pantalla casi vacía.
  */
-function mergeSparseTrailingRootPages(pages: ViewField[][], pageSize: number): ViewField[][] {
+function mergeSparseTrailingRootPages(
+  pages: ViewField[][],
+  pageSize: number,
+): ViewField[][] {
   if (pageSize <= 0 || pages.length < 2) {
     return pages;
   }
@@ -117,7 +136,10 @@ function mergeSparseTrailingRootPages(pages: ViewField[][], pageSize: number): V
   return out;
 }
 
-function nestRef(root: Record<string, unknown>, storeKey: string | null): Record<string, unknown> {
+function nestRef(
+  root: Record<string, unknown>,
+  storeKey: string | null,
+): Record<string, unknown> {
   if (!storeKey) {
     return root;
   }
@@ -168,8 +190,13 @@ export function mountFormView<TView>(
   config: {
     getForm: (s: TView) => FormSlice;
     onValid: (v: Record<string, unknown>, runtime: OmegaRuntime) => void;
-    onValidationFieldErrors?: (s: TView, fieldErrors: Record<string, string>) => void;
-    resolveSelectOptions?: (opts: FieldSelectOptions) => Promise<Array<{ value: string; label: string }>>;
+    onValidationFieldErrors?: (
+      s: TView,
+      fieldErrors: Record<string, string>,
+    ) => void;
+    resolveSelectOptions?: (
+      opts: FieldSelectOptions,
+    ) => Promise<Array<{ value: string; label: string }>>;
     runtime: OmegaRuntime;
     theme?: ViewTheme;
   },
@@ -190,8 +217,11 @@ export function mountFormView<TView>(
 
     if (def.schema) {
       const p = safeParseWithErrors(def.schema, record);
-      if (!p.success) {
-        const m = (def.tabs?.length ?? 0) > 0 ? fieldErrorsToDottedMap(p.fields) : fieldErrorsToMap(p.fields);
+      if (!p.success && "fields" in p) {
+        const m =
+          (def.tabs?.length ?? 0) > 0
+            ? fieldErrorsToDottedMap(p.fields)
+            : fieldErrorsToMap(p.fields);
         config.onValidationFieldErrors?.(cell.get() as TView, m);
         return;
       }
@@ -215,7 +245,9 @@ export function mountFormView<TView>(
 export function createOmegaFormSurface(
   def: FormViewDef,
   config: {
-    resolveSelectOptions?: (opts: FieldSelectOptions) => Promise<Array<{ value: string; label: string }>>;
+    resolveSelectOptions?: (
+      opts: FieldSelectOptions,
+    ) => Promise<Array<{ value: string; label: string }>>;
     runtime: OmegaRuntime;
     theme?: ViewTheme;
     /** Slice after reset (**`resetButtonLabel`**). */
@@ -247,9 +279,15 @@ export function createOmegaFormSurface(
   const fieldUIs: OmegaFormFieldUi[] = [];
   const fieldByName = new Map<string, OmegaFormFieldUi>();
 
-  const normalizeSelectItems = (items: Array<{ value: string; label: string }>, allowEmptyValue?: boolean) =>
+  const normalizeSelectItems = (
+    items: Array<{ value: string; label: string }>,
+    allowEmptyValue?: boolean,
+  ) =>
     items
-      .map((it) => ({ value: String(it.value ?? "").trim(), label: String(it.label ?? "").trim() }))
+      .map((it) => ({
+        value: String(it.value ?? "").trim(),
+        label: String(it.label ?? "").trim(),
+      }))
       .filter((it) => allowEmptyValue || it.value !== "");
 
   const draft = new Map<string, string>();
@@ -268,7 +306,11 @@ export function createOmegaFormSurface(
     }
   };
 
-  const appendOneFieldRow = (rowParent: HTMLElement, f: ViewField, storeKey: string | null): void => {
+  const appendOneFieldRow = (
+    rowParent: HTMLElement,
+    f: ViewField,
+    storeKey: string | null,
+  ): void => {
     const lab = document.createElement("label");
     lab.className = ABEY.field;
     const labSpan = document.createElement("span");
@@ -310,7 +352,9 @@ export function createOmegaFormSurface(
       dispose = built.dispose;
     } else if (f.kind === "radio") {
       const g = (f.radioGroup ?? f.name).trim() || f.name;
-      const built = mountRadioField(lab, f, draft, { groupBindingId: fieldDomRadioGroupId(storeKey, g) });
+      const built = mountRadioField(lab, f, draft, {
+        groupBindingId: fieldDomRadioGroupId(storeKey, g),
+      });
       input = built.input;
       dispose = built.dispose;
     } else {
@@ -332,17 +376,27 @@ export function createOmegaFormSurface(
       dispose,
       selectClearButton,
       syncSelectClearVisibility,
-      radioGroup: f.kind === "radio" ? (f.radioGroup ?? f.name).trim() || f.name : undefined,
+      radioGroup:
+        f.kind === "radio"
+          ? (f.radioGroup ?? f.name).trim() || f.name
+          : undefined,
       optional: !!f.optional,
     };
     fieldUIs.push(ui);
     fieldByName.set(bindingId, ui);
     rowParent.appendChild(lab);
 
-    if (f.kind === "select" && Array.isArray(f.selectStaticItems) && f.selectStaticItems.length > 0) {
+    if (
+      f.kind === "select" &&
+      Array.isArray(f.selectStaticItems) &&
+      f.selectStaticItems.length > 0
+    ) {
       const uiSel = fieldByName.get(bindingId);
       if (uiSel) {
-        uiSel.selectItems = normalizeSelectItems(f.selectStaticItems, f.optional);
+        uiSel.selectItems = normalizeSelectItems(
+          f.selectStaticItems,
+          f.optional,
+        );
         const inp = uiSel.input;
         const v = uiSel.hidden?.value ?? "";
         const selected = (uiSel.selectItems ?? []).find((it) => it.value === v);
@@ -360,7 +414,11 @@ export function createOmegaFormSurface(
     }
   };
 
-  const appendFieldRows = (parent: HTMLElement, fields: ViewField[], storeKey: string | null): void => {
+  const appendFieldRows = (
+    parent: HTMLElement,
+    fields: ViewField[],
+    storeKey: string | null,
+  ): void => {
     let fi = 0;
     while (fi < fields.length) {
       const f = fields[fi]!;
@@ -409,7 +467,8 @@ export function createOmegaFormSurface(
 
   const tabs = def.tabs ?? [];
   const pageSize = def.rootFieldsPageSize ?? 0;
-  const useStacked = tabs.length > 0 || (pageSize > 0 && def.fields.length > pageSize);
+  const useStacked =
+    tabs.length > 0 || (pageSize > 0 && def.fields.length > pageSize);
 
   if (useStacked) {
     section.classList.add("abey-form--stacked");
@@ -434,7 +493,10 @@ export function createOmegaFormSurface(
       next.textContent = "Siguiente";
       const pagesRoot = document.createElement("div");
       pagesRoot.className = "abey-form__pages";
-      const pageSlices = mergeSparseTrailingRootPages(paginateRootFieldUnits(def.fields, pageSize), pageSize);
+      const pageSlices = mergeSparseTrailingRootPages(
+        paginateRootFieldUnits(def.fields, pageSize),
+        pageSize,
+      );
       const pageCount = pageSlices.length;
       let rootPage = 0;
       const pageEls: HTMLElement[] = [];
@@ -594,7 +656,10 @@ export function createOmegaFormSurface(
     form.addEventListener("submit", submitHandler);
   };
 
-  const setFieldError = (ui: OmegaFormFieldUi, msg: string | undefined): void => {
+  const setFieldError = (
+    ui: OmegaFormFieldUi,
+    msg: string | undefined,
+  ): void => {
     if (msg) {
       ui.input.setAttribute("aria-invalid", "true");
       if (!ui.error) {
@@ -648,7 +713,11 @@ export function createOmegaFormSurface(
       const draftValue = draft.get(ui.bindingId);
       const rawVal = sk ? nest[f.name] : vs.value[f.name];
       const nextFromModel =
-        f.kind === "date" ? toDateInputValue(rawVal) : rawVal == null ? "" : String(rawVal);
+        f.kind === "date"
+          ? toDateInputValue(rawVal)
+          : rawVal == null
+            ? ""
+            : String(rawVal);
 
       if (f.kind === "select") {
         const nextValue = draftValue ?? nextFromModel;
@@ -672,14 +741,16 @@ export function createOmegaFormSurface(
       if (f.kind === "checkbox") {
         const v = sk ? nest[f.name] : vs.value[f.name];
         const checked = v === true || v === "true" || v === 1 || v === "1";
-        if (document.activeElement !== ui.input) (ui.input as HTMLInputElement).checked = checked;
+        if (document.activeElement !== ui.input)
+          (ui.input as HTMLInputElement).checked = checked;
         continue;
       }
       if (f.kind === "radio") {
         const g = ui.radioGroup ?? f.name;
         const selected = sk ? nest[g] : vs.value[g];
         const match = selected != null && String(selected) === f.name;
-        if (document.activeElement !== ui.input) (ui.input as HTMLInputElement).checked = match;
+        if (document.activeElement !== ui.input)
+          (ui.input as HTMLInputElement).checked = match;
         continue;
       }
       if (f.kind === "file") {
@@ -689,11 +760,17 @@ export function createOmegaFormSurface(
       setControlValueIfSafe(ui.input, next);
     }
 
-    submitBtn.textContent = vs.status === "saving" ? "…" : vs.mode === "edit" ? "Guardar" : "Enviar";
+    submitBtn.textContent =
+      vs.status === "saving" ? "…" : vs.mode === "edit" ? "Guardar" : "Enviar";
     submitBtn.disabled = vs.status === "saving";
     if (resetBtn) resetBtn.disabled = vs.status === "saving";
   };
 
+  /**
+   * Reads form data and returns a record.
+   * @param vs Form slice
+   * @returns Record with form data
+   */
   const readFormData = (vs: FormSlice): Record<string, unknown> => {
     const data = new FormData(form);
     const record: Record<string, unknown> = { ...vs.value };
@@ -735,8 +812,13 @@ export function createOmegaFormSurface(
         if (radioDomRead.has(domName)) continue;
         radioDomRead.add(domName);
         const g = (f.radioGroup ?? f.name).trim() || f.name;
-        const el = form.querySelector(`input[type="radio"][name="${CSS.escape(domName)}"]:checked`) as HTMLInputElement | null;
-        target[g] = el?.value ?? "";
+        const checkedUi = fieldUIs.find(
+          (u) =>
+            u.input.name === domName && (u.input as HTMLInputElement).checked,
+        );
+        target[g] = checkedUi
+          ? (checkedUi.input as HTMLInputElement).value
+          : "";
         continue;
       }
       if (f.kind === "file") {
@@ -789,7 +871,8 @@ export function createOmegaFormSurface(
     onSubmit,
     readFormData,
     dispose: () => {
-      if (resetBtn && resetHandler) resetBtn.removeEventListener("click", resetHandler);
+      if (resetBtn && resetHandler)
+        resetBtn.removeEventListener("click", resetHandler);
       if (submitHandler) form.removeEventListener("submit", submitHandler);
       for (const ui of fieldUIs) ui.dispose?.();
       optionalToggleDispose?.();

@@ -1,0 +1,160 @@
+<!-- 
+  Students View: Comprehensive CRUD Implementation Guide.
+  This example demonstrates the orchestration between Table, Form, and Dialog components.
+-->
+<section class="stu" data-role="students-root">
+  
+  <!-- Live Demo Section -->
+  <div class="stu-demo">
+    <header class="stu-head">
+      <div>
+        <h1 class="stu-h1">Student CRUD Example</h1>
+        <p class="stu-lead">
+          Full in-memory CRUD implementation. Interact with the table to see the AbeyJS flow in action.
+        </p>
+      </div>
+      <div class="stu-pills">
+        <div class="stu-pill">
+          <strong>{{ stats.count }}</strong> Records
+        </div>
+        <button
+          type="button"
+          class="stu-btn stu-btn--primary"
+          data-action="open-create"
+        >
+          <span style="margin-right: 0.5rem">+</span> New Student
+        </button>
+      </div>
+    </header>
+
+    <div class="stu-card stu-card--full">
+      <div class="stu-host">
+        <abey-table
+          data-role="students-table"
+          flow="false"
+          loadNetwork="false"
+          autoload="false"
+          page="1"
+          pageSize="10"
+          pageSizes="10,50,100"
+          columns='[{"key":"nombres","header":"Name"},{"key":"email","header":"Email"},{"key":"edad","header":"Age"},{"key":"grado","header":"Grade"},{"key":"artistaFavoritoId","header":"Favorite Artist"}]'
+          actions='[{"id":"edit","label":"Edit"},{"id":"delete","label":"Delete"}]'
+        ></abey-table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Documentation Section -->
+  <article class="stu-doc">
+    <h2 class="stu-doc-title">Implementation Guide</h2>
+    <p class="stu-doc-lead">
+      The student CRUD uses a decoupled architecture where the UI communicates with the state through intents. 
+      Explore the tabs to understand the technical structure.
+    </p>
+
+    <div class="stu-tabs">
+      <!-- Tabs Radios -->
+      <input type="radio" name="stu-tab" id="stu-tab-1" class="stu-tab-radio" checked>
+      <input type="radio" name="stu-tab" id="stu-tab-2" class="stu-tab-radio">
+      <input type="radio" name="stu-tab" id="stu-tab-3" class="stu-tab-radio">
+      <input type="radio" name="stu-tab" id="stu-tab-4" class="stu-tab-radio">
+
+      <!-- Tabs Labels -->
+      <div class="stu-tab-list">
+        <label for="stu-tab-1" class="stu-tab-label">Summary</label>
+        <label for="stu-tab-2" class="stu-tab-label">Markup</label>
+        <label for="stu-tab-3" class="stu-tab-label">Omega/Logic</label>
+        <label for="stu-tab-4" class="stu-tab-label">Files</label>
+      </div>
+
+      <!-- Tab Panels -->
+      <div class="stu-tab-panels">
+        
+        <!-- Panel 1: Summary -->
+        <section class="stu-tab-panel stu-tab-panel--1">
+          <h3 class="stu-doc-h3">CRUD Flow</h3>
+          <ul class="stu-doc-list">
+            <li><strong>Listing:</strong> The <code>abey-table</code> component visualizes the <code>students</code> collection.</li>
+            <li><strong>Create/Edit:</strong> The <code>open-create</code> or <code>edit</code> intent is triggered, which activates the modal.</li>
+            <li><strong>Dynamic Form:</strong> The <code>abey-form</code> is automatically generated and validates data before emitting the save action.</li>
+          </ul>
+          <p class="stu-doc-lead" style="font-size: 0.85rem; border-top: 1px dashed var(--abey-border); padding-top: 1rem;">
+            Note: As a "memory-only" example, changes persist in the global runtime state but are lost on page refresh.
+          </p>
+        </section>
+
+        <!-- Panel 2: Markup -->
+        <section class="stu-tab-panel stu-tab-panel--2">
+          <h3 class="stu-doc-h3">Component Configuration</h3>
+          <pre class="stu-pre"><code>&lt;!-- Table with local actions --&gt;
+&lt;abey-table 
+  data-role="students-table"
+  columns='[...] '
+  actions='[{"id":"edit","label":"Edit"}]'
+&gt;&lt;/abey-table&gt;
+
+&lt;!-- Modal containing the form --&gt;
+&lt;abey-dialog data-role="students-dialog" maximizable&gt;
+  &lt;abey-form data-role="students-form"&gt;&lt;/abey-form&gt;
+&lt;/abey-dialog&gt;</code></pre>
+        </section>
+
+        <!-- Panel 3: Omega -->
+        <section class="stu-tab-panel stu-tab-panel--3">
+          <h3 class="stu-doc-h3">Omega Interaction</h3>
+          <p class="stu-doc-lead">The component communicates with the Agent via business intents.</p>
+          <pre class="stu-pre"><code>// Agent action handler example
+onAction("saveStudent", (student) => {
+  if (student.id) {
+    this.repo.update(student);
+  } else {
+    this.repo.create(student);
+  }
+  this.channel.emit("students/changed");
+});</code></pre>
+        </section>
+
+        <!-- Panel 4: Files -->
+        <section class="stu-tab-panel stu-tab-panel--4">
+          <h3 class="stu-doc-h3">Directory Structure</h3>
+          <div class="stu-pre" style="background: var(--abey-bg);">
+            <code style="color: var(--abey-text-muted);">views/utils/students/</code><br>
+            <code style="color: var(--abey-text);">├── ui/</code><br>
+            <code style="color: var(--abey-text-muted);">│   ├── app-students.view.ts    <span style="color: var(--abey-text-muted);">// View logic</span></code><br>
+            <code style="color: var(--abey-text-muted);">│   ├── app-students.view.html  <span style="color: var(--abey-text-muted);">// This template</span></code><br>
+            <code style="color: var(--abey-text-muted);">│   └── app-students.view.css   <span style="color: var(--abey-text-muted);">// Styles</span></code><br>
+            <code style="color: var(--abey-text);">└── omega/</code><br>
+            <code style="color: var(--abey-text-muted);">    ├── agent.ts                <span style="color: var(--abey-text-muted);">// Data handling</span></code><br>
+            <code style="color: var(--abey-text-muted);">    └── flow.ts                 <span style="color: var(--abey-text-muted);">// Flow definition</span></code>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </article>
+
+  <!-- Create/Edit Dialog -->
+  <abey-dialog
+    data-role="students-dialog"
+    header="Student Management"
+    width="650px"
+    breakpoints='{"1100":"85vw","700":"95vw"}'
+    modal="true"
+    dismissableMask="true"
+    closeOnEscape="true"
+    closable="true"
+    maximizable="true"
+  >
+    <p
+      class="stu-toast"
+      [class.stu-toast--ok]="banner.tone === 'ok'"
+      [class.stu-toast--err]="banner.tone === 'err'"
+      [hidden]="banner.text === ''"
+      role="status"
+      [attr.aria-live]="'polite'"
+    >
+      {{ banner.text }}
+    </p>
+    <abey-form data-role="students-form" flow="false"></abey-form>
+  </abey-dialog>
+</section>

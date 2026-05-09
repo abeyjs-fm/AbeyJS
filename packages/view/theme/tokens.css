@@ -1,0 +1,179 @@
+/* --- AbeyJs Theme Tokens (Variables, Colors, Spacing) --- */
+
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+:root {
+  /* Tipografía */
+  --abey-font-sans: ui-sans-serif, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --abey-font-mono: ui-monospace, "Cascadia Code", "SFMono-Regular", Menlo, Consolas, monospace;
+}
+
+/* --- Claro (por defecto) bajo .abey --- */
+.abey {
+  /* Superficies */
+  --abey-bg: #f6f7f9;
+  --abey-surface: #ffffff;
+  --abey-surface-elev: #fcfcfd;
+  --abey-border: #e1e4e8;
+  --abey-border-strong: #c9ced6;
+  /* Texto */
+  --abey-text: #1a1d21;
+  --abey-text-muted: #5c636d;
+  --abey-on-accent: #ffffff;
+  /* Acento / interacción */
+  --abey-accent: #2563eb;
+  --abey-accent-hover: #1d4ed8;
+  --abey-focus: rgba(37, 99, 235, 0.35);
+  /* Estado */
+  --abey-error: #dc2626;
+  --abey-error-bg: #fef2f2;
+  /* Radio / sombra */
+  --abey-radius: 10px;
+  --abey-radius-sm: 6px;
+  --abey-shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 0 0 1px var(--abey-border);
+  --abey-shadow-lg: 0 10px 30px -12px rgba(15, 23, 42, 0.18);
+  /* App shell (sidebar / appbar) */
+  --abey-appbar-h: 3.5rem;
+  --abey-sidebar-w: 15.5rem;
+  /* Espaciado */
+  --abey-space-1: 0.25rem;
+  --abey-space-2: 0.5rem;
+  --abey-space-3: 0.75rem;
+  --abey-space-4: 1rem;
+  --abey-space-5: 1.25rem;
+  --abey-space-6: 1.5rem;
+
+  box-sizing: border-box;
+  color: var(--abey-text);
+  font-family: var(--abey-font-sans);
+  font-size: 15px;
+  line-height: 1.5;
+  color-scheme: light;
+}
+
+.abey *,
+.abey *::before,
+.abey *::after {
+  box-sizing: border-box;
+}
+
+/* --- Dark Mode ---
+   Applies both when the same node has `.abey.abey--dark`
+   and when nested `.abey` blocks live inside a dark shell. */
+.abey.abey--dark,
+.abey--dark .abey {
+  --abey-bg: #0b0f14;
+  --abey-surface: #111827;
+  --abey-surface-elev: #151b2a;
+  --abey-border: #243045;
+  --abey-border-strong: #3d4a5f;
+  --abey-text: #e8eaed;
+  --abey-text-muted: #9aa3b2;
+  --abey-on-accent: #f8fafc;
+  --abey-accent: #38bdf8;
+  --abey-accent-hover: #0ea5e9;
+  --abey-focus: rgba(56, 189, 248, 0.35);
+  --abey-error: #f87171;
+  --abey-error-bg: rgba(127, 29, 29, 0.35);
+  --abey-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --abey-shadow-lg: 0 12px 32px -10px rgba(0, 0, 0, 0.55);
+  color-scheme: dark;
+}
+
+/* Runtime appearance sync from shell host.
+   Ensures nested form blocks follow app toggle in both directions. */
+.abey-shell-app.abey--dark .abey,
+.abey-app.abey--dark .abey {
+  --abey-bg: #0b0f14;
+  --abey-surface: #111827;
+  --abey-surface-elev: #151b2a;
+  --abey-border: #243045;
+  --abey-border-strong: #3d4a5f;
+  --abey-text: #e8eaed;
+  --abey-text-muted: #9aa3b2;
+  --abey-on-accent: #f8fafc;
+  --abey-accent: #38bdf8;
+  --abey-accent-hover: #0ea5e9;
+  --abey-focus: rgba(56, 189, 248, 0.35);
+  --abey-error: #f87171;
+  --abey-error-bg: rgba(127, 29, 29, 0.35);
+  --abey-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --abey-shadow-lg: 0 12px 32px -10px rgba(0, 0, 0, 0.55);
+  color-scheme: dark;
+}
+
+.abey:host-context(.abey--dark),
+:host-context(.abey--dark) .abey {
+  --abey-bg: #0b0f14;
+  --abey-surface: #111827;
+  --abey-surface-elev: #151b2a;
+  --abey-border: #243045;
+  --abey-border-strong: #3d4a5f;
+  --abey-text: #e8eaed;
+  --abey-text-muted: #9aa3b2;
+  --abey-on-accent: #f8fafc;
+  --abey-accent: #38bdf8;
+  --abey-accent-hover: #0ea5e9;
+  --abey-focus: rgba(56, 189, 248, 0.35);
+  --abey-error: #f87171;
+  --abey-error-bg: rgba(127, 29, 29, 0.35);
+  --abey-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --abey-shadow-lg: 0 12px 32px -10px rgba(0, 0, 0, 0.55);
+  color-scheme: dark;
+}
+
+.abey-shell-app:not(.abey--dark) .abey,
+.abey-app:not(.abey--dark) .abey {
+  --abey-bg: #f6f7f9;
+  --abey-surface: #ffffff;
+  --abey-surface-elev: #fcfcfd;
+  --abey-border: #e1e4e8;
+  --abey-border-strong: #c9ced6;
+  --abey-text: #1a1d21;
+  --abey-text-muted: #5c636d;
+  --abey-on-accent: #ffffff;
+  --abey-accent: #2563eb;
+  --abey-accent-hover: #1d4ed8;
+  --abey-focus: rgba(37, 99, 235, 0.35);
+  --abey-error: #dc2626;
+  --abey-error-bg: #fef2f2;
+  --abey-shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 0 0 1px var(--abey-border);
+  --abey-shadow-lg: 0 10px 30px -12px rgba(15, 23, 42, 0.18);
+  color-scheme: light;
+}
+
+.abey:host-context(.abey-shell-app:not(.abey--dark)),
+.abey:host-context(.abey-app:not(.abey--dark)),
+:host-context(.abey-shell-app:not(.abey--dark)) .abey,
+:host-context(.abey-app:not(.abey--dark)) .abey {
+  --abey-bg: #f6f7f9;
+  --abey-surface: #ffffff;
+  --abey-surface-elev: #fcfcfd;
+  --abey-border: #e1e4e8;
+  --abey-border-strong: #c9ced6;
+  --abey-text: #1a1d21;
+  --abey-text-muted: #5c636d;
+  --abey-on-accent: #ffffff;
+  --abey-accent: #2563eb;
+  --abey-accent-hover: #1d4ed8;
+  --abey-focus: rgba(37, 99, 235, 0.35);
+  --abey-error: #dc2626;
+  --abey-error-bg: #fef2f2;
+  --abey-shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 0 0 1px var(--abey-border);
+  --abey-shadow-lg: 0 10px 30px -12px rgba(15, 23, 42, 0.18);
+  color-scheme: light;
+}
+
+/* Base App Wrapper */
+.abey-app {
+  min-height: 100vh;
+  margin: 0;
+  background: var(--abey-bg);
+  color: var(--abey-text);
+  font-family: var(--abey-font-sans);
+  font-size: 15px;
+  line-height: 1.55;
+}

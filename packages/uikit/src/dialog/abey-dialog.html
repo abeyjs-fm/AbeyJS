@@ -1,0 +1,33 @@
+<dialog class="abey-dialog">
+  <div class="abey-dialog-header">
+    <span class="abey-dialog-title">
+      <slot name="title">{{header}}</slot>
+    </span>
+    <div class="abey-dialog-header-icons">
+      <button
+        type="button"
+        class="abey-dialog-header-icon"
+        data-role="toggle-maximize"
+        aria-label="Toggle maximize"
+      >
+        <span class="abey-dialog-close-icon" data-role="maximize-icon">□</span>
+      </button>
+      <button
+        type="button"
+        class="abey-dialog-header-icon"
+        data-role="close-btn"
+        aria-label="Close"
+      >
+        <span class="abey-dialog-close-icon">×</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="abey-dialog-content">
+    <slot></slot>
+  </div>
+
+  <div class="abey-dialog-footer">
+    <slot name="footer"></slot>
+  </div>
+</dialog>

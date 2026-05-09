@@ -111,9 +111,12 @@ disposeDocsRootAnchorGuard = installDocsSiteRootAnchorGuard(
 );
 
 if (router) {
-  disposeDocsShellSearchUi = attachDocSiteSearch(docsShellSearchHost, (path) => {
-    router.navigate(path);
-  });
+  disposeDocsShellSearchUi = attachDocSiteSearch(
+    docsShellSearchHost,
+    (path) => {
+      router.navigate(path);
+    },
+  );
 }
 
 if (import.meta.env.DEV && router) {

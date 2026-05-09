@@ -1,0 +1,110 @@
+/* --- AbeyJs Form Grids and Layout Splits --- */
+
+@media (min-width: 1025px) {
+  .abey-form:not(.abey-form--stacked) form {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--abey-space-4);
+    align-items: start;
+  }
+
+  .abey-form:not(.abey-form--stacked) form>.abey-form__radio-group {
+    grid-column: 1 / -1;
+  }
+
+  .abey-form:not(.abey-form--stacked) form>.abey-field:only-child {
+    grid-column: 1 / -1;
+  }
+
+  .abey-form:not(.abey-form--stacked) form>.abey-field:last-child:nth-child(odd):not(:has(> abey-radio)) {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 1024px) {
+  .abey-form:not(.abey-form--stacked) form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--abey-space-4);
+  }
+}
+
+.abey-form__field-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--abey-space-4);
+  align-items: start;
+  width: 100%;
+}
+
+.abey-form__field-grid>.abey-field {
+  min-width: 0;
+}
+
+.abey-form__field-grid>.abey-form__radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--abey-space-2);
+  min-width: 0;
+  width: 100%;
+}
+
+.abey-form__field-grid>.abey-form__radio-group>.abey-field {
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+}
+
+.abey-form__field-split {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.abey-form__field-aside {
+  display: flex;
+  flex-direction: column;
+  gap: var(--abey-space-4);
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 1024px) {
+  .abey-form__field-split {
+    display: flex;
+    flex-direction: column;
+    gap: var(--abey-space-4);
+  }
+}
+
+@media (min-width: 1025px) {
+  .abey-form__field-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .abey-form__field-grid>.abey-form__radio-group {
+    grid-column: 1 / -1;
+  }
+
+  .abey-form__field-grid>.abey-form__field-split {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--abey-space-4);
+    align-items: start;
+  }
+
+  .abey-form__field-grid>.abey-field:only-child {
+    grid-column: 1 / -1;
+  }
+
+  .abey-form__field-grid>.abey-field:last-child:nth-child(odd):not(:has(> abey-radio)) {
+    grid-column: 1 / -1;
+  }
+
+  .abey-form__field-grid>.abey-field:has(+ .abey-form__radio-group),
+  .abey-form__field-grid>.abey-field:has(+ .abey-form__field-split) {
+    grid-column: 1 / -1;
+  }
+}

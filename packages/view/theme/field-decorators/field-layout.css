@@ -1,0 +1,48 @@
+/* --- AbeyJs Field Decorators (Field Wrapper and Layout) --- */
+
+.abey-form .abey-field {
+  min-width: 0;
+  width: 100%;
+  max-width: none;
+  box-sizing: border-box;
+}
+
+.abey-field {
+  display: block;
+  margin-bottom: var(--abey-space-4);
+}
+
+.abey-field:has(> abey-checkbox),
+.abey-field:has(> abey-radio) {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: var(--abey-space-3);
+  flex-wrap: nowrap;
+}
+
+.abey-field:has(> abey-checkbox) abey-checkbox,
+.abey-field:has(> abey-radio) abey-radio {
+  order: 1;
+  margin-top: 0.1rem;
+}
+
+.abey-field--inlineOptional {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--abey-space-2);
+  margin-bottom: var(--abey-space-3);
+}
+
+@media (min-width: 1025px) {
+  .abey-form:not(.abey-form--stacked) form>.abey-field--inlineOptional {
+    grid-column: 1 / -1;
+  }
+
+  .abey-form.abey-form--stacked form>.abey-field--inlineOptional {
+    align-self: stretch;
+    width: 100%;
+    box-sizing: border-box;
+  }
+}

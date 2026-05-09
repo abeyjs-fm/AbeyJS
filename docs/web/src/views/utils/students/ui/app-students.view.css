@@ -1,0 +1,238 @@
+:host {
+  display: block;
+  --stu-spacing: 1.5rem;
+  --stu-border: 1px solid rgba(0, 0, 0, 0.08);
+  --stu-radius: 12px;
+  --stu-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+}
+
+.stu {
+  padding: var(--stu-spacing);
+  max-width: 1400px;
+  margin: 0 auto;
+  font-family: var(--abey-font, system-ui, sans-serif);
+}
+
+.stu-head {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: calc(var(--stu-spacing) * 1.5);
+  padding-bottom: var(--stu-spacing);
+  border-bottom: var(--stu-border);
+}
+
+.stu-h1 {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  color: var(--abey-text, #1a1d21);
+}
+
+.stu-lead {
+  margin: 0.5rem 0 0;
+  font-size: 0.95rem;
+  color: var(--abey-muted, #64748b);
+  max-width: 600px;
+}
+
+.stu-pills {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.stu-pill {
+  padding: 0.5rem 0.85rem;
+  background: var(--abey-surface-elev, #f8fafc);
+  border: var(--stu-border);
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--abey-text-muted, #475569);
+  white-space: nowrap;
+}
+
+.stu-main {
+  display: grid;
+  gap: var(--stu-spacing);
+}
+
+.stu-card {
+  background: var(--abey-surface, #ffffff);
+  border: var(--stu-border);
+  border-radius: var(--stu-radius);
+  box-shadow: var(--stu-shadow);
+  overflow: hidden;
+  transition: box-shadow 0.2s ease;
+}
+
+.stu-card:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.07);
+}
+
+.stu-card--full {
+  min-height: 500px;
+}
+
+.stu-host {
+  padding: 1rem;
+}
+
+.stu-host abey-table.abey-table {
+  --abey-table-wrap-max-height: calc(100vh - 350px);
+  --abey-table-body-max-height: calc(100vh - 450px);
+}
+
+.stu-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.65rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: var(--stu-radius);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.stu-btn--primary {
+  background: var(--abey-accent, #2563eb);
+  color: white;
+  box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+}
+
+/* ... previous stu styles ... */
+
+.stu-doc {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  border: var(--stu-border);
+  background: var(--abey-surface-elev);
+}
+
+.stu-doc-title {
+  margin: 0 0 0.75rem;
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--abey-text);
+}
+
+.stu-doc-lead {
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--abey-text-muted);
+}
+
+/* Tabs System */
+.stu-tabs {
+  margin-top: 1.5rem;
+}
+
+.stu-tab-radio {
+  display: none;
+}
+
+.stu-tab-list {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.4rem;
+  background: var(--abey-bg);
+  border: var(--stu-border);
+  border-radius: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.stu-tab-label {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--abey-text-muted);
+}
+
+.stu-tab-label:hover {
+  background: var(--abey-surface-elev);
+  color: var(--abey-text);
+}
+
+#stu-tab-1:checked ~ .stu-tab-list label[for="stu-tab-1"],
+#stu-tab-2:checked ~ .stu-tab-list label[for="stu-tab-2"],
+#stu-tab-3:checked ~ .stu-tab-list label[for="stu-tab-3"],
+#stu-tab-4:checked ~ .stu-tab-list label[for="stu-tab-4"] {
+  background: var(--abey-surface);
+  color: var(--abey-accent);
+  box-shadow: var(--abey-shadow);
+}
+
+.stu-tab-panels {
+  background: var(--abey-surface);
+  border: var(--stu-border);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  min-height: 200px;
+}
+
+.stu-tab-panel {
+  display: none;
+}
+
+#stu-tab-1:checked ~ .stu-tab-panels .stu-tab-panel--1,
+#stu-tab-2:checked ~ .stu-tab-panels .stu-tab-panel--2,
+#stu-tab-3:checked ~ .stu-tab-panels .stu-tab-panel--3,
+#stu-tab-4:checked ~ .stu-tab-panels .stu-tab-panel--4 {
+  display: block;
+}
+
+.stu-pre {
+  background: var(--abey-surface-elev);
+  color: var(--abey-text);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.8rem;
+  overflow-x: auto;
+  margin: 1rem 0;
+  line-height: 1.5;
+  border: var(--stu-border);
+}
+
+.stu-doc-h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  color: var(--abey-text);
+}
+
+.stu-doc-list {
+  padding-left: 1.25rem;
+  margin: 0 0 1rem;
+  font-size: 0.9rem;
+  color: var(--abey-text-muted);
+}
+
+.stu-doc-list li {
+  margin-bottom: 0.5rem;
+}
+
+.stu-doc-path {
+  font-family: var(--abey-font-mono);
+  background: var(--abey-bg);
+  padding: 0.1rem 0.3rem;
+  border-radius: 0.25rem;
+  font-size: 0.85em;
+  color: var(--abey-accent);
+}
+
+@media (max-width: 768px) {
+  .stu-tab-list {
+    flex-wrap: wrap;
+  }
+}

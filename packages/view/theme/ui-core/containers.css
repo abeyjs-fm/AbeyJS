@@ -1,0 +1,94 @@
+/* --- AbeyJs UI Core (Containers and Blocks) --- */
+
+.abey-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--abey-space-2);
+  margin: var(--abey-space-4) 0;
+  padding: var(--abey-space-3) var(--abey-space-4);
+  background: var(--abey-surface);
+  border: 1px solid var(--abey-border);
+  border-radius: var(--abey-radius);
+  box-shadow: var(--abey-shadow);
+}
+
+.abey-list,
+.abey-form,
+.abey-trace {
+  display: block;
+  margin: var(--abey-space-4) auto;
+  padding: var(--abey-space-5) var(--abey-space-5);
+  background: var(--abey-surface);
+  border: 1px solid var(--abey-border);
+  border-radius: var(--abey-radius);
+  box-shadow: var(--abey-shadow);
+  max-width: 960px;
+}
+
+.abey-form.abey-form--full {
+  max-width: none !important;
+  width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+.abey-list {
+  padding: 0;
+  overflow: hidden;
+}
+
+.abey-list__title,
+.abey-form__title,
+.abey-trace__head {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin: 0;
+  padding: var(--abey-space-4) var(--abey-space-5);
+  color: var(--abey-text);
+  border-bottom: 1px solid var(--abey-border);
+  background: var(--abey-surface-elev);
+}
+
+abey-form.abey-form:has(.abey-form.abey-form--full) {
+  max-width: none !important;
+  width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+.abey-app>hr,
+.abey hr,
+hr.abey-divider {
+  border: none;
+  height: 1px;
+  background: var(--abey-border);
+  margin: var(--abey-space-4) 0;
+}
+
+.abey-callout {
+  margin: var(--abey-space-3) 0;
+  padding: var(--abey-space-3) var(--abey-space-4);
+  background: var(--abey-surface);
+  border: 1px solid var(--abey-border);
+  border-radius: var(--abey-radius, 8px);
+  font-family: var(--abey-font-mono);
+  font-size: 0.8rem;
+  color: var(--abey-text-muted);
+  overflow: auto;
+}
+
+.abey-starter-card {
+  margin-top: 1rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--abey-border);
+  border-radius: var(--abey-radius);
+  background: var(--abey-surface);
+  box-shadow: var(--abey-shadow);
+}
+
+.abey-starter-card__title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem;
+}

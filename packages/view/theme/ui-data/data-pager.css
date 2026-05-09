@@ -1,0 +1,18 @@
+/* --- AbeyJs UI Data (Pagers) --- */
+
+.abey-list__pager {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--abey-space-2);
+  padding: var(--abey-space-3) var(--abey-space-4);
+  border-top: 1px solid var(--abey-border);
+  background: var(--abey-surface-elev);
+}
+
+.abey-list__pager-info {
+  font-size: 0.82rem;
+  color: var(--abey-text-muted);
+  min-width: 12rem;
+  text-align: center;
+}

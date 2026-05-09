@@ -1,0 +1,117 @@
+/* --- AbeyJs Layout (Shell, Outlet, Transitions) --- */
+
+html {
+  height: 100%;
+}
+
+.abey-shell-app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--abey-bg);
+  color: var(--abey-text);
+}
+
+.abey-shell-app>.abey-shell,
+.abey-shell {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.abey-shell__body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  align-items: stretch;
+}
+
+/* Content Outlet */
+.abey-outlet {
+  flex: 1;
+  min-width: 0;
+  padding: 1.25rem 1.5rem 2rem;
+  overflow: auto;
+  scrollbar-gutter: stable;
+  background: var(--abey-bg);
+  --abey-route-ease: cubic-bezier(0.32, 0.72, 0.25, 1);
+  --abey-route-dur-out: 105ms;
+  --abey-route-dur-in: 145ms;
+}
+
+.abey-outlet--landing {
+  max-width: 100%;
+  padding: 0;
+}
+
+/* Dashboard scrollbars for outlet */
+.abey-shell--dashboard .abey-outlet {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(100, 116, 139, 0.3) transparent;
+}
+
+.abey.abey--dark .abey-shell--dashboard .abey-outlet {
+  scrollbar-color: rgba(148, 163, 184, 0.2) transparent;
+}
+
+.abey-shell--dashboard .abey-outlet::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.abey-shell--dashboard .abey-outlet::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(100, 116, 139, 0.28);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.abey-shell--dashboard .abey-outlet::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.4);
+}
+
+/* Route transitions */
+.abey-outlet--leaving {
+  opacity: 0;
+  transform: translateY(3px) scale(0.996);
+  transition: opacity var(--abey-route-dur-out) var(--abey-route-ease), transform var(--abey-route-dur-out) var(--abey-route-ease);
+}
+
+.abey-outlet--entering {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition: opacity var(--abey-route-dur-in) var(--abey-route-ease), transform var(--abey-route-dur-in) var(--abey-route-ease);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .abey-outlet--leaving,
+  .abey-outlet--entering {
+    transition: none !important;
+    transform: none !important;
+  }
+}
+/* Navigation Scrim (Overlay/Drawer background) */
+button.abey-shell__nav-scrim {
+  appearance: none;
+  position: fixed;
+  inset: var(--abey-appbar-h) 0 0 0;
+  z-index: 7;
+  border: none;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(4px) saturate(1.08);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: all 0.22s ease;
+}
+
+button.abey-shell__nav-scrim[data-abey-active="true"] {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.abey.abey--dark button.abey-shell__nav-scrim {
+  background: rgba(3, 7, 18, 0.62);
+}

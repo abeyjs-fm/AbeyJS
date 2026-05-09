@@ -1,0 +1,71 @@
+/* --- AbeyJs UI Core (Buttons) --- */
+
+.abey-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.2;
+  padding: 0.5rem 1rem;
+  border-radius: var(--abey-radius-sm);
+  border: 1px solid var(--abey-border-strong, #c9ced6);
+  background: var(--abey-surface);
+  color: var(--abey-text);
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.abey-btn:hover {
+  background: var(--abey-surface-elev);
+  border-color: var(--abey-border);
+}
+
+.abey-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--abey-focus);
+}
+
+.abey-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Variants */
+.abey-btn--primary {
+  background: var(--abey-accent);
+  color: var(--abey-on-accent, #fff);
+  border-color: var(--abey-accent);
+}
+
+.abey-btn--primary:hover:not(:disabled) {
+  background: var(--abey-accent-hover);
+  border-color: var(--abey-accent-hover);
+}
+
+.abey-btn--sm {
+  font-size: 0.8rem;
+  padding: 0.35rem 0.6rem;
+}
+
+.abey-btn--success {
+  color: #166534;
+  background: #dcfce7;
+  border-color: #86efac;
+}
+
+.abey-btn--danger {
+  color: #991b1b;
+  background: #fee2e2;
+  border-color: #fca5a5;
+}
+
+/* UIKit Element */
+abey-button {
+  display: inline-block;
+}
+
+abey-button>button.abey-btn {
+  width: 100%;
+}

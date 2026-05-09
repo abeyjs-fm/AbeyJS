@@ -1,12 +1,12 @@
 import {
   AbeyButtonElement,
   AbeyCheckboxElement,
-  AbeyFormElement,
   AbeyInputElement,
   AbeyLineItemsElement,
   AbeyRadioElement,
   AbeySelectElement,
-  AbeyTableElement,
+  ensureAbeyFormElementDefined,
+  ensureAbeyTableElementDefined,
 } from "@abeyjs/uikit";
 import { AbeyProvideElement } from "./di/dom-di.js";
 import { AbeyWidgetElement } from "./dom/abey-widget.js";
@@ -16,7 +16,6 @@ import { AbeyWidgetElement } from "./dom/abey-widget.js";
  */
 export function registerAbeyJsUi(): void {
   AbeyButtonElement.define("abey-button");
-  AbeyFormElement.define("abey-form");
   AbeyLineItemsElement.define("abey-line-items");
   AbeyWidgetElement.define("abey-widget");
   AbeyProvideElement.define("abey-provide");
@@ -26,8 +25,7 @@ export function registerAbeyJsUi(): void {
   AbeySelectElement.define("abey-select");
   AbeyCheckboxElement.define("abey-checkbox");
   AbeyRadioElement.define("abey-radio");
-
-  // Table
-  AbeyTableElement.define("abey-table");
+  ensureAbeyTableElementDefined("abey-table");
+  ensureAbeyFormElementDefined();
 }
 

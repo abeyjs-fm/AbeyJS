@@ -1,0 +1,107 @@
+/* --- AbeyJs Control Components (Inputs) --- */
+
+.abey-form abey-input {
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.abey-form .abey-input {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+abey-input {
+  display: block;
+  width: 100%;
+  max-width: 32rem;
+}
+
+abey-input input.abey-input {
+  margin: 0;
+}
+
+.abey-input {
+  display: block;
+  width: 100%;
+  max-width: 32rem;
+  margin-top: 0;
+  padding: 0.6rem 0.85rem;
+  font: inherit;
+  font-size: 0.9375rem;
+  line-height: 1.45;
+  color: var(--abey-text);
+  background: var(--abey-surface);
+  border: 1px solid var(--abey-border);
+  border-radius: var(--abey-radius-sm);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.abey-input::placeholder {
+  color: var(--abey-text-muted);
+  opacity: 0.85;
+}
+
+.abey-input:hover:not(:read-only):not(:disabled):not([aria-invalid="true"]) {
+  border-color: var(--abey-border-strong);
+}
+
+.abey-input:focus,
+.abey-input:focus-visible {
+  outline: none;
+  border-color: var(--abey-accent);
+  box-shadow: 0 0 0 3px var(--abey-focus);
+}
+
+.abey-input:read-only {
+  background: var(--abey-surface-elev);
+  color: var(--abey-text-muted);
+  cursor: default;
+}
+
+.abey-input:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  background: var(--abey-surface-elev);
+}
+
+.abey-input[type="number"] {
+  font-variant-numeric: tabular-nums;
+}
+
+/* File Input */
+abey-input input.abey-input[type="file"] {
+  padding: 0.5rem 0;
+  font-size: 0.875rem;
+  cursor: pointer;
+  border-style: dashed;
+}
+
+abey-input input.abey-input[type="file"]::file-selector-button {
+  margin-right: var(--abey-space-3);
+  padding: 0.4rem 0.85rem;
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--abey-text);
+  background: var(--abey-surface-elev);
+  border: 1px solid var(--abey-border-strong);
+  border-radius: var(--abey-radius-sm);
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+}
+
+abey-input input.abey-input[type="file"]::file-selector-button:hover {
+  background: var(--abey-surface);
+  border-color: var(--abey-accent);
+  color: var(--abey-accent);
+}
+
+.abey-form.abey-form--full abey-input,
+.abey-form.abey-form--full .abey-input,
+abey-form.abey-form.abey-form--full abey-input,
+abey-form.abey-form.abey-form--full .abey-input {
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
+}

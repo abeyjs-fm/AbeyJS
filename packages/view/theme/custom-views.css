@@ -1,0 +1,74 @@
+/* --- AbeyJs Custom Views (abeyjs-view and special components) --- */
+
+.abey-abeyview {
+  --abey-abeyview-stack: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--abey-abeyview-stack);
+  width: 100%;
+  max-width: 100%;
+}
+
+.abey-abeyview-title {
+  font-size: 1.2rem;
+  font-weight: 800;
+  margin: 0;
+  color: var(--abey-text);
+}
+
+.abey-abeyview-block {
+  margin: 0;
+  padding: 0.9rem 1.15rem;
+  border: 1px solid var(--abey-border);
+  border-radius: var(--abey-radius, 10px);
+  background: var(--abey-surface);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+}
+
+.abey-abeyview-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--abey-border);
+  border-radius: 12px;
+  background: var(--abey-surface);
+  box-shadow: 0 6px 28px -8px rgba(15, 23, 42, 0.12);
+}
+
+.abey-abeyview-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+}
+
+.abey-abeyview-table th,
+.abey-abeyview-table td {
+  text-align: left;
+  border-bottom: 1px solid var(--abey-border);
+  padding: 0.72rem 1rem;
+}
+
+.abey-abeyview-table thead th {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--abey-text-muted);
+  background: linear-gradient(180deg, var(--abey-surface-elev) 0%, #f1f5f9 100%);
+  border-bottom: 2px solid var(--abey-border-strong);
+}
+
+/* Course Badges */
+.abey-course-badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0.18rem 0.56rem;
+  font-size: 0.68rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+}
+
+.abey-course-badge--ongoing { color: #0f766e; background: #ccfbf1; border-color: #99f6e4; }
+.abey-course-badge--done { color: #166534; background: #dcfce7; border-color: #bbf7d0; }
+
+.abey.abey--dark .abey-abeyview-table thead th {
+  background: linear-gradient(180deg, #1a2234 0%, #151b2a 100%);
+}

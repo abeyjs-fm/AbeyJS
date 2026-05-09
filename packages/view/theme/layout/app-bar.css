@@ -1,0 +1,367 @@
+/* --- AbeyJs Layout (App Bar, Branding, Tools) --- */
+
+.abey-appbar {
+  flex-shrink: 0;
+  height: var(--abey-appbar-h);
+  border-bottom: 1px solid var(--abey-border);
+  background: var(--abey-surface);
+  box-shadow: 0 1px 0 rgba(15, 23, 42, 0.04);
+  z-index: 10;
+}
+
+.abey-shell>.abey-appbar {
+  position: sticky;
+  top: 0;
+  z-index: 12;
+}
+
+.abey-appbar__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--abey-space-3);
+  min-height: var(--abey-appbar-h);
+  max-width: 100%;
+  margin: 0;
+  padding: 0 1.25rem;
+}
+
+.abey-appbar__row {
+  display: flex;
+  flex: 1;
+  align-items: stretch;
+  width: 100%;
+  min-height: var(--abey-appbar-h);
+}
+
+.abey-appbar__brand {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  line-height: 1.2;
+  min-width: 0;
+}
+
+.abey-appbar__title {
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: -0.02em;
+  color: var(--abey-text);
+}
+
+.abey-appbar__subtitle {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--abey-text-muted);
+}
+
+.abey-appbar__nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--abey-space-1) var(--abey-space-3);
+}
+
+/* Dashboard App Bar */
+.abey-appbar--dashboard {
+  height: auto;
+  min-height: var(--abey-appbar-h);
+  background: linear-gradient(180deg, var(--abey-surface) 0%, color-mix(in srgb, var(--abey-surface) 96%, var(--abey-bg) 4%) 100%);
+  border-bottom: 1px solid color-mix(in srgb, var(--abey-border) 88%, transparent);
+  box-shadow: 0 1px 0 rgba(15, 23, 42, 0.04), 0 8px 24px -14px rgba(15, 23, 42, 0.12);
+}
+
+.abey-appbar--dashboard .abey-appbar__inner {
+  min-height: var(--abey-appbar-h);
+  padding: 0 1.25rem 0 0;
+  align-items: stretch;
+}
+
+.abey-appbar__mark {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.1rem;
+  min-width: 8.85rem;
+  padding: 0.5rem 1.35rem 0.52rem 1.25rem;
+  background: radial-gradient(120% 140% at 10% -20%, rgba(255, 255, 255, 0.22) 0%, transparent 45%),
+              linear-gradient(145deg, #5b21b6 0%, #4338ca 42%, #5b21b6 72%, #6d28d9 100%);
+  color: #fff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), inset 0 -1px 0 rgba(0, 0, 0, 0.12);
+}
+
+.abey-appbar--dashboard .abey-appbar__mark {
+  flex: 0 0 var(--abey-sidebar-w);
+  width: var(--abey-sidebar-w);
+  max-width: var(--abey-sidebar-w);
+  min-width: 0;
+  box-sizing: border-box;
+  text-align: center;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+}
+
+.abey-appbar__mark-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  align-items: inherit;
+  text-align: inherit;
+  min-width: 0;
+}
+
+.abey-appbar__mark-title {
+  font-weight: 800;
+  font-size: 1.1rem;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: #fff;
+}
+
+.abey-appbar__mark-sub {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.abey-appbar__mark-logo {
+  flex-shrink: 0;
+  height: 2rem;
+  width: auto;
+  max-width: 10rem;
+  object-fit: contain;
+}
+
+.abey-appbar__mark:has(.abey-appbar__mark-logo)::before {
+  content: none;
+  display: none;
+}
+
+.abey-appbar__mark-heading {
+  display: inline-flex;
+  flex-wrap: nowrap;
+  align-items: baseline;
+  gap: 0;
+  max-width: 100%;
+  min-width: 0;
+  font-weight: inherit;
+  font-size: inherit;
+  line-height: 1.2;
+  letter-spacing: inherit;
+}
+
+.abey-appbar--dashboard .abey-appbar__mark-title--lead {
+  color: var(--abey-brand-mark-lead, #ffffff);
+}
+
+.abey-appbar__mark-title--tail {
+  background: linear-gradient(
+    92deg,
+    var(--abey-brand-tail-a, #38bdf8) 0%,
+    var(--abey-brand-tail-b, #6366f1) 46%,
+    var(--abey-brand-tail-c, #7c3aed) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+.abey-appbar__spacer {
+  flex: 1;
+  min-width: 0.5rem;
+}
+
+.abey-appbar__inset {
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 28rem;
+  display: flex;
+  align-items: center;
+  padding: 0 0.35rem;
+  box-sizing: border-box;
+}
+
+
+.abey-appbar__tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding: 0.35rem 0 0.35rem 0.5rem;
+}
+
+.abey-appbar__action {
+  --abey-appbar-action-radius: 0.6875rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  font-size: 1.05rem;
+  line-height: 1;
+  border-radius: var(--abey-appbar-action-radius);
+  border: 1px solid color-mix(in srgb, var(--abey-border) 92%, var(--abey-text) 8%);
+  background: color-mix(in srgb, var(--abey-surface-elev, #f8fafc) 94%, var(--abey-bg) 6%);
+  color: color-mix(in srgb, var(--abey-text-muted) 86%, var(--abey-text) 14%);
+  cursor: pointer;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.58) inset, 0 1px 2px rgba(15, 23, 42, 0.04), 0 6px 16px rgba(15, 23, 42, 0.05);
+  transition: background 0.14s ease, color 0.14s ease, border-color 0.14s ease, box-shadow 0.14s ease, transform 0.14s ease;
+}
+
+.abey-appbar__action:hover,
+.abey-appbar__action:focus-visible {
+  color: color-mix(in srgb, var(--abey-text) 94%, var(--abey-accent));
+  background: color-mix(in srgb, var(--abey-surface) 94%, var(--abey-accent) 4%);
+  border-color: color-mix(in srgb, var(--abey-accent) 22%, var(--abey-border));
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.45) inset, 0 0 0 1px color-mix(in srgb, var(--abey-accent) 12%, transparent), 0 8px 22px rgba(15, 23, 42, 0.08);
+  outline: none;
+}
+
+.abey-appbar__action:active {
+  transform: translateY(0.5px) scale(0.98);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.42) inset, 0 1px 2px rgba(15, 23, 42, 0.06);
+}
+
+.abey.abey--dark .abey-appbar--dashboard .abey-appbar__action {
+  border-color: color-mix(in srgb, var(--abey-border) 78%, transparent);
+  background: color-mix(in srgb, var(--abey-surface-elev) 88%, transparent);
+  color: color-mix(in srgb, var(--abey-text-muted) 78%, var(--abey-text) 22%);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 2px 10px rgba(0, 0, 0, 0.32);
+}
+
+.abey.abey--dark .abey-appbar--dashboard .abey-appbar__action:hover,
+.abey.abey--dark .abey-appbar--dashboard .abey-appbar__action:focus-visible {
+  color: color-mix(in srgb, var(--abey-text) 92%, var(--abey-accent));
+  border-color: color-mix(in srgb, var(--abey-accent) 28%, var(--abey-border));
+  background: color-mix(in srgb, var(--abey-surface-elev) 76%, transparent);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.06) inset, 0 0 0 1px color-mix(in srgb, var(--abey-accent) 22%, transparent), 0 10px 28px rgba(0, 0, 0, 0.4);
+}
+
+.abey-appbar__action:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.abey-appbar__action--labeled {
+  width: auto;
+  min-width: 2.4rem;
+  padding: 0 0.65rem;
+  gap: 0.4rem;
+  border-radius: var(--abey-appbar-action-radius);
+}
+
+.abey-appbar__action-txt {
+  font-size: 0.82rem;
+  font-weight: 600;
+  max-width: 10rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.abey-appbar__action i {
+  font-size: 1.02rem;
+  line-height: 1;
+  opacity: 0.92;
+}
+
+.abey-appbar__action.abey-appbar__action--theme i {
+  font-size: 0.94rem;
+  opacity: 0.94;
+}
+
+.abey-appbar__dropdown {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.abey-appbar__dropdown-panel {
+  position: absolute;
+  top: calc(100% + 0.4rem);
+  right: 0;
+  z-index: 120;
+  min-width: 12.75rem;
+  max-width: min(18rem, calc(100vw - 2rem));
+  padding: 0.4rem;
+  border-radius: 0.85rem;
+  border: 1px solid color-mix(in srgb, var(--abey-border) 90%, var(--abey-text) 10%);
+  background: color-mix(in srgb, var(--abey-surface) 96%, var(--abey-bg) 4%);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.55) inset, 0 8px 28px rgba(15, 23, 42, 0.1), 0 2px 8px rgba(15, 23, 42, 0.05);
+}
+
+.abey-appbar__dropdown-item {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  width: 100%;
+  margin: 0;
+  padding: 0.48rem 0.62rem;
+  border: none;
+  border-radius: 0.62rem;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+  text-align: left;
+  text-decoration: none;
+  color: color-mix(in srgb, var(--abey-text-muted) 72%, var(--abey-text) 28%);
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.12s ease, color 0.12s ease;
+}
+
+.abey-appbar__dropdown-item:hover,
+.abey-appbar__dropdown-item:focus-visible {
+  outline: none;
+  color: var(--abey-text);
+  background: color-mix(in srgb, var(--abey-accent) 8%, var(--abey-surface));
+}
+
+.abey-appbar__dropdown-item i {
+  width: 1.1rem;
+  font-size: 0.92rem;
+  text-align: center;
+  opacity: 0.9;
+}
+
+.abey-appbar__dropdown-item-label {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.abey.abey--dark .abey-appbar--dashboard .abey-appbar__dropdown-panel {
+  border-color: color-mix(in srgb, var(--abey-border) 72%, transparent);
+  background: color-mix(in srgb, var(--abey-surface-elev) 94%, transparent);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05) inset, 0 12px 36px rgba(0, 0, 0, 0.45);
+}
+
+.abey.abey--dark .abey-appbar--dashboard .abey-appbar__dropdown-item:hover,
+.abey.abey--dark .abey-appbar--dashboard .abey-appbar__dropdown-item:focus-visible {
+  background: color-mix(in srgb, var(--abey-accent) 14%, var(--abey-surface-elev));
+}
+
+.abey-appbar__action--avatar {
+  overflow: hidden;
+  padding: 2px;
+}
+
+.abey-appbar__action-avatar-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: 2rem;
+  max-height: 2rem;
+  object-fit: cover;
+  border-radius: calc(var(--abey-appbar-action-radius, 0.6875rem) - 2px);
+}

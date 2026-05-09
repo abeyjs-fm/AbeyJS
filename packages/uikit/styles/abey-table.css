@@ -141,9 +141,8 @@ abey-table .actionsCol {
 }
 
 abey-table .colHead {
-    display: flex;
-    align-items: center;
-    gap: 8px
+    text-align: left;
+    white-space: nowrap
 }
 
 abey-table .cell {
@@ -382,6 +381,24 @@ abey-table .footerRight {
     gap: 10px
 }
 
+abey-table .pagination {
+    display: flex;
+    align-items: center;
+    gap: 8px
+}
+
+abey-table .pageIndicator {
+    color: var(--abey-text, #111827);
+    font-size: 13px;
+    font-weight: 600
+}
+
+abey-table .pageSizeWrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px
+}
+
 abey-table .search {
     height: 36px;
     width: min(420px, 100%);
@@ -532,12 +549,16 @@ abey-table .abey-table-skeletonBar {
     }
 
     abey-table .footerLeft,
-    abey-table .footerRight {
+    abey-table .footerRight,
+    abey-table .pagination,
+    abey-table .pageSizeWrap {
         flex: 1 1 auto;
         min-width: 0
     }
 
-    abey-table .footerRight {
+    abey-table .footerRight,
+    abey-table .pagination,
+    abey-table .pageSizeWrap {
         flex-wrap: wrap;
         justify-content: flex-end
     }

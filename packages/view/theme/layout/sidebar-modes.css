@@ -1,0 +1,551 @@
+@media (min-width: 901px) {
+  .abey-shell[data-abey-nav-mode="compact"] {
+    --abey-sidebar-w: 13.25rem;
+  }
+
+  .abey-shell[data-abey-nav-mode="compact"] .abey-shell__body>.abey-sidebar .abey-sidebar__inner {
+    padding-bottom: 0.85rem;
+  }
+
+  .abey-shell[data-abey-nav-mode="compact"] .abey-shell__body>.abey-sidebar .abey-nav-link--sidebar:not(.abey-nav-link--horizontal) {
+    font-size: 0.82rem;
+    padding: 0.38rem 0.55rem;
+  }
+
+  .abey-shell[data-abey-nav-mode="compact"] .abey-shell__body>.abey-sidebar .abey-nav-tree__summary {
+    font-size: 0.82rem;
+    padding: 0.4rem 0.55rem;
+  }
+
+  .abey-shell[data-abey-nav-mode="compact"] .abey-appbar--dashboard .abey-appbar__mark {
+    flex-basis: var(--abey-sidebar-w);
+    width: var(--abey-sidebar-w);
+    max-width: var(--abey-sidebar-w);
+  }
+
+  /*
+   * Slim colapsado: rail tipo Prime ÔÇö icono arriba, etiqueta peque├▒a debajo (texto visible).
+   * Expandido (hover / foco / open): mismo ancho est├índar ÔÇö filas horizontales.
+   */
+  .abey-shell[data-abey-nav-mode="slim"] {
+    --abey-slim-rail-w: 5.85rem;
+  }
+
+  /* Rail estrecha; expande con hover, foco en navegaci├│n o Ôÿ░ (m├│vil / si el toggle es visible). */
+  .abey-shell[data-abey-nav-mode="slim"] .abey-shell__body>.abey-sidebar {
+    flex: 0 0 var(--abey-slim-rail-w);
+    width: var(--abey-slim-rail-w);
+    max-width: var(--abey-slim-rail-w);
+    overflow: visible;
+    transition:
+      flex-basis 0.26s cubic-bezier(0.32, 0.72, 0.25, 1),
+      width 0.26s cubic-bezier(0.32, 0.72, 0.25, 1),
+      max-width 0.26s cubic-bezier(0.32, 0.72, 0.25, 1),
+      box-shadow 0.26s ease;
+  }
+
+  .abey-shell[data-abey-nav-mode="slim"] .abey-shell__body>.abey-sidebar:is(:hover, :focus-within, [data-abey-open="true"]) {
+    flex-basis: var(--abey-sidebar-w);
+    width: var(--abey-sidebar-w);
+    max-width: var(--abey-sidebar-w);
+    box-shadow: 8px 0 36px rgba(15, 23, 42, 0.1);
+    z-index: 6;
+  }
+
+  .abey.abey--dark .abey-shell[data-abey-nav-mode="slim"] .abey-shell__body>.abey-sidebar:is(:hover, :focus-within, [data-abey-open="true"]) {
+    box-shadow: 10px 0 40px rgba(0, 0, 0, 0.45);
+  }
+
+  .abey-shell[data-abey-nav-mode="slim"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-sidebar__inner {
+    overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-gutter: stable;
+    padding-left: 0.32rem;
+    padding-right: 0.4rem;
+  }
+
+  .abey-shell.abey-shell--dashboard[data-abey-nav-mode="slim"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-sidebar__inner {
+    padding-left: 0.28rem;
+    padding-right: 0.38rem;
+  }
+
+  .abey-shell[data-abey-nav-mode="slim"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-nav-stack {
+    align-items: center;
+    width: 100%;
+  }
+
+  .abey-shell[data-abey-nav-mode="slim"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-nav-link--sidebar:hover,
+  .abey-shell[data-abey-nav-mode="slim"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-nav-link--sidebar:focus-visible {
+    transform: none;
+  }
+
+  .abey-shell.abey-shell--dashboard[data-abey-nav-mode="slim"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-nav-link--sidebar:not(.abey-nav-link--horizontal),
+  .abey-shell.abey-shell--dashboard[data-abey-nav-mode="slim"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-nav-tree__summary {
+    padding: 0.45rem 0.22rem;
+  }
+
+  .abey-shell.abey-shell--dashboard[data-abey-nav-mode="slim"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-nav-link[aria-current="page"].abey-nav-link--sidebar::before,
+  .abey-shell.abey-shell--dashboard[data-abey-nav-mode="slim"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-nav-link--active.abey-nav-link--sidebar::before {
+    display: none;
+  }
+
+  .abey-shell[data-abey-nav-mode="slim"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-nav-link--with-icon.abey-nav-link--sidebar {
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0.3rem;
+    text-align: center;
+    border-radius: 0.65rem;
+  }
+
+  /* Etiquetas bajo el icono ÔÇö visibles en carril angosto */
+  .abey-shell[data-abey-nav-mode="slim"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-nav-link--with-icon.abey-nav-link--sidebar .abey-nav-link__txt {
+    flex: none;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    margin: 0;
+    overflow: hidden;
+    text-align: center;
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.015em;
+    line-height: 1.18;
+    white-space: normal;
+    word-break: break-word;
+    hyphens: auto;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    color: color-mix(in srgb, var(--abey-text-muted) 88%, transparent);
+    transition: none;
+  }
+
+  .abey-shell[data-abey-nav-mode="slim"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-nav-link--with-icon.abey-nav-link--sidebar.abey-nav-link--active .abey-nav-link__txt,
+  .abey-shell[data-abey-nav-mode="slim"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-nav-link--with-icon.abey-nav-link--sidebar[aria-current="page"] .abey-nav-link__txt {
+    color: color-mix(in srgb, var(--abey-accent, #2563eb) 55%, var(--abey-text));
+  }
+
+  .abey-shell[data-abey-nav-mode="slim"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-nav-tree__summary {
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0.3rem;
+    text-align: center;
+    padding: 0.45rem 0.22rem;
+    border-radius: 0.65rem;
+  }
+
+  .abey-shell[data-abey-nav-mode="slim"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-nav-tree__summary-txt {
+    flex: none;
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
+    text-align: center;
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.015em;
+    line-height: 1.18;
+    white-space: normal;
+    word-break: break-word;
+    hyphens: auto;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+  }
+
+  /* En carril: sin sub├írbol hasta expandir lateral (coincide con hover / foco sobre men├║ amplio). */
+  .abey-shell[data-abey-nav-mode="slim"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-nav-tree__subs {
+    display: none;
+  }
+
+  .abey-shell[data-abey-nav-mode="slim"] .abey-appbar--dashboard .abey-appbar__mark {
+    flex-basis: var(--abey-slim-rail-w);
+    width: var(--abey-slim-rail-w);
+    max-width: var(--abey-slim-rail-w);
+    transition: flex-basis 0.26s cubic-bezier(0.32, 0.72, 0.25, 1), width 0.26s cubic-bezier(0.32, 0.72, 0.25, 1),
+      max-width 0.26s cubic-bezier(0.32, 0.72, 0.25, 1);
+  }
+
+  .abey-shell[data-abey-nav-mode="slim"]:has(.abey-shell__body > .abey-sidebar:is(:hover, :focus-within, [data-abey-open="true"])) .abey-appbar--dashboard .abey-appbar__mark {
+    flex-basis: var(--abey-sidebar-w);
+    width: var(--abey-sidebar-w);
+    max-width: var(--abey-sidebar-w);
+  }
+
+  /*
+   * Franja lateral izquierda (toggle): antes `translateX(calc(-100% + ÔÇª))` dejaba visible
+   * el borde derecho del aside ÔÇö el Ôÿ░ est├í a la izquierda ÔåÆ el men├║ se ve├¡a cortado mal.
+   */
+  .abey-shell[data-abey-nav-mode="reveal"] {
+    /* Chip + paddings dashboard; menos de ~5rem recorta iconos contra el borde. */
+    --abey-overlay-rail-w: 5.5rem;
+  }
+
+  /* Reveal: rail estrecho; Ôÿ░ (`data-abey-open`), hover o foco dentro ampl├¡an el ancho (t├íctil/teclado). */
+  .abey-shell[data-abey-nav-mode="reveal"] .abey-shell__body>.abey-sidebar {
+    position: fixed;
+    left: 0;
+    top: var(--abey-appbar-h);
+    height: calc(100vh - var(--abey-appbar-h));
+    max-height: none;
+    align-self: auto;
+    z-index: 18;
+    width: var(--abey-overlay-rail-w);
+    min-width: var(--abey-overlay-rail-w);
+    max-width: var(--abey-overlay-rail-w);
+    flex: 0 0 auto;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+    visibility: visible;
+    transform: none;
+    transition:
+      width 0.28s cubic-bezier(0.32, 0.72, 0.25, 1),
+      min-width 0.28s cubic-bezier(0.32, 0.72, 0.25, 1),
+      max-width 0.28s cubic-bezier(0.32, 0.72, 0.25, 1),
+      box-shadow 0.28s ease;
+    box-shadow: 4px 0 24px rgba(15, 23, 42, 0.08);
+  }
+
+  .abey-shell[data-abey-nav-mode="reveal"] .abey-shell__body>.abey-sidebar:is(:hover, :focus-within, [data-abey-open="true"]) {
+    width: min(18rem, calc(100vw - 12px));
+    min-width: min(18rem, calc(100vw - 12px));
+    max-width: min(18rem, calc(100vw - 12px));
+    overflow: visible;
+    box-shadow: 12px 0 48px rgba(15, 23, 42, 0.18);
+  }
+
+  .abey.abey--dark .abey-shell[data-abey-nav-mode="reveal"] .abey-shell__body>.abey-sidebar:is(:hover, :focus-within, [data-abey-open="true"]) {
+    box-shadow: 16px 0 56px rgba(0, 0, 0, 0.45);
+  }
+
+  .abey-shell[data-abey-nav-mode="reveal"] .abey-sidebar__nav {
+    flex: 1;
+    min-height: 0;
+  }
+
+  .abey-shell[data-abey-nav-mode="reveal"] .abey-sidebar__inner {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+  }
+
+  /* Reveal escritorio: sin Ôÿ░ en el rail (solo iconos); ampliaci├│n con hover o foco en la lista. El Ôÿ░ sigue en m├│vil Ôëñ900px. */
+  .abey-shell[data-abey-nav-mode="reveal"] .abey-shell__body>.abey-sidebar .abey-sidebar__toggle {
+    display: none !important;
+  }
+
+  /* Reveal colapsado: texto como slim (iconos en carril estrecho). */
+  .abey-shell[data-abey-nav-mode="reveal"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-nav-link__txt {
+    opacity: 0;
+    visibility: hidden;
+    width: 0;
+    min-width: 0;
+    max-width: 0;
+    margin: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    transition: opacity 0.15s ease, visibility 0.15s ease, width 0.2s ease;
+  }
+
+  .abey-shell[data-abey-nav-mode="reveal"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-nav-tree__summary-txt {
+    opacity: 0;
+    visibility: hidden;
+    width: 0;
+    min-width: 0;
+    max-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    flex: unset;
+    transition: opacity 0.15s ease, visibility 0.15s ease, width 0.2s ease;
+  }
+
+  .abey-shell[data-abey-nav-mode="reveal"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-nav-tree__subs {
+    display: none;
+  }
+
+  .abey-shell[data-abey-nav-mode="reveal"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-nav-link--with-icon.abey-nav-link--sidebar {
+    justify-content: center;
+    gap: 0;
+  }
+
+  .abey-shell[data-abey-nav-mode="reveal"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-nav-tree__summary {
+    justify-content: center;
+    gap: 0;
+  }
+
+  /* Overlay / drawer: cerrado fuera del lienzo (Ôÿ░ en la app bar); abierto mismo panel que en m├│vil. */
+  .abey-shell[data-abey-nav-mode="overlay"] .abey-shell__body>.abey-sidebar,
+  .abey-shell[data-abey-nav-mode="drawer"] .abey-shell__body>.abey-sidebar {
+    position: fixed;
+    left: 0;
+    top: var(--abey-appbar-h);
+    height: calc(100vh - var(--abey-appbar-h));
+    max-height: none;
+    align-self: auto;
+    z-index: 18;
+    flex: 0 0 auto;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+    width: min(18rem, calc(100vw - 12px));
+    min-width: min(18rem, calc(100vw - 12px));
+    max-width: min(18rem, calc(100vw - 12px));
+    transition:
+      transform 0.26s cubic-bezier(0.32, 0.72, 0.25, 1),
+      box-shadow 0.26s ease;
+    border-right: none;
+    background: linear-gradient(180deg, var(--abey-surface) 0%, color-mix(in srgb, var(--abey-surface) 93%, var(--abey-accent) 3%) 100%);
+  }
+
+  .abey-shell[data-abey-nav-mode="overlay"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]),
+  .abey-shell[data-abey-nav-mode="drawer"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) {
+    transform: translateX(-100%);
+    pointer-events: none;
+    box-shadow: none;
+  }
+
+  .abey-shell[data-abey-nav-mode="overlay"] .abey-shell__body>.abey-sidebar[data-abey-open="true"],
+  .abey-shell[data-abey-nav-mode="drawer"] .abey-shell__body>.abey-sidebar[data-abey-open="true"] {
+    transform: translateX(0);
+    pointer-events: auto;
+    overflow: hidden;
+    border-right: 2px solid color-mix(in srgb, var(--abey-accent) 35%, var(--abey-border));
+    box-shadow:
+      12px 0 48px rgba(15, 23, 42, 0.2),
+      0 0 0 1px color-mix(in srgb, var(--abey-border) 70%, transparent);
+  }
+
+  .abey.abey--dark .abey-shell[data-abey-nav-mode="overlay"] .abey-shell__body>.abey-sidebar[data-abey-open="true"],
+  .abey.abey--dark .abey-shell[data-abey-nav-mode="drawer"] .abey-shell__body>.abey-sidebar[data-abey-open="true"] {
+    box-shadow:
+      16px 0 52px rgba(0, 0, 0, 0.48),
+      0 0 0 1px color-mix(in srgb, var(--abey-accent) 18%, transparent);
+  }
+
+  .abey-shell[data-abey-nav-mode="overlay"] .abey-sidebar__toggle,
+  .abey-shell[data-abey-nav-mode="drawer"] .abey-sidebar__toggle {
+    display: inline-flex;
+    align-self: center;
+    flex-shrink: 0;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .abey-shell[data-abey-nav-mode="overlay"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-sidebar__toggle,
+  .abey-shell[data-abey-nav-mode="drawer"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-sidebar__toggle {
+    margin-top: 0.75rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1.22rem;
+    line-height: 1;
+    font-weight: 600;
+    border-radius: calc(var(--abey-radius-sm) + 2px);
+    border: 2px solid color-mix(in srgb, var(--abey-accent) 48%, var(--abey-border));
+    background: linear-gradient(165deg,
+        color-mix(in srgb, var(--abey-accent) 18%, var(--abey-surface)) 0%,
+        color-mix(in srgb, var(--abey-surface) 96%, var(--abey-accent)) 100%);
+    color: var(--abey-accent-hover, var(--abey-accent));
+    box-shadow:
+      0 2px 8px rgba(15, 23, 42, 0.12),
+      0 1px 0 rgba(255, 255, 255, 0.35) inset;
+  }
+
+  .abey.abey--dark .abey-shell[data-abey-nav-mode="overlay"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-sidebar__toggle,
+  .abey.abey--dark .abey-shell[data-abey-nav-mode="drawer"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-sidebar__toggle {
+    background: linear-gradient(165deg,
+        color-mix(in srgb, var(--abey-accent) 22%, var(--abey-surface)) 0%,
+        color-mix(in srgb, var(--abey-surface) 94%, transparent) 100%);
+    color: var(--abey-accent);
+    box-shadow:
+      0 2px 14px rgba(0, 0, 0, 0.4),
+      0 0 18px color-mix(in srgb, var(--abey-accent) 22%, transparent);
+  }
+
+  .abey-shell[data-abey-nav-mode="overlay"] .abey-shell__body>.abey-sidebar[data-abey-open="true"] .abey-sidebar__toggle,
+  .abey-shell[data-abey-nav-mode="drawer"] .abey-shell__body>.abey-sidebar[data-abey-open="true"] .abey-sidebar__toggle {
+    margin-top: 0.35rem;
+  }
+
+  .abey-shell[data-abey-nav-mode="overlay"] .abey-shell__body>.abey-sidebar .abey-sidebar__nav,
+  .abey-shell[data-abey-nav-mode="drawer"] .abey-shell__body>.abey-sidebar .abey-sidebar__nav {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .abey-shell[data-abey-nav-mode="overlay"] .abey-shell__body>.abey-sidebar .abey-sidebar__inner,
+  .abey-shell[data-abey-nav-mode="drawer"] .abey-shell__body>.abey-sidebar .abey-sidebar__inner {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  /* Colapsado overlay/drawer: paddings sim├®tricos + ├¡tems centrados (evita chips cortados a la izquierda). */
+  .abey-shell[data-abey-nav-mode="overlay"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-sidebar__inner,
+  .abey-shell[data-abey-nav-mode="drawer"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-sidebar__inner {
+    padding-left: 0.3rem;
+    padding-right: 0.42rem;
+    padding-top: 0.2rem;
+    box-sizing: border-box;
+  }
+
+  .abey-shell.abey-shell--dashboard[data-abey-nav-mode="overlay"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-sidebar__inner,
+  .abey-shell.abey-shell--dashboard[data-abey-nav-mode="drawer"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-sidebar__inner {
+    padding-left: 0.26rem;
+    padding-right: 0.36rem;
+  }
+
+  .abey-shell[data-abey-nav-mode="overlay"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-nav-stack,
+  .abey-shell[data-abey-nav-mode="drawer"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-nav-stack {
+    align-items: center;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .abey-shell[data-abey-nav-mode="overlay"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-nav-link--with-icon.abey-nav-link--sidebar,
+  .abey-shell[data-abey-nav-mode="drawer"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-nav-link--with-icon.abey-nav-link--sidebar {
+    justify-content: center;
+    gap: 0;
+  }
+
+  .abey-shell[data-abey-nav-mode="overlay"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-nav-tree__summary,
+  .abey-shell[data-abey-nav-mode="drawer"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-nav-tree__summary {
+    justify-content: center;
+    gap: 0;
+  }
+
+  .abey-shell[data-abey-nav-mode="overlay"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-nav-link--sidebar:not(.abey-nav-link--horizontal),
+  .abey-shell[data-abey-nav-mode="overlay"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-nav-tree__summary,
+  .abey-shell[data-abey-nav-mode="drawer"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-nav-link--sidebar:not(.abey-nav-link--horizontal),
+  .abey-shell[data-abey-nav-mode="drawer"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-nav-tree__summary {
+    padding-left: 0.32rem;
+    padding-right: 0.32rem;
+  }
+
+  /* Dashboard usa paddings algo mayores por defecto: un poco m├ís apretados en rail. */
+  .abey-shell.abey-shell--dashboard[data-abey-nav-mode="overlay"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-nav-link--sidebar:not(.abey-nav-link--horizontal),
+  .abey-shell.abey-shell--dashboard[data-abey-nav-mode="overlay"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-nav-tree__summary,
+  .abey-shell.abey-shell--dashboard[data-abey-nav-mode="drawer"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-nav-link--sidebar:not(.abey-nav-link--horizontal),
+  .abey-shell.abey-shell--dashboard[data-abey-nav-mode="drawer"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-nav-tree__summary {
+    padding-left: 0.26rem;
+    padding-right: 0.26rem;
+  }
+
+  .abey-shell.abey-shell--dashboard[data-abey-nav-mode="overlay"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-nav-link--sidebar:hover,
+  .abey-shell.abey-shell--dashboard[data-abey-nav-mode="overlay"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-nav-link--sidebar:focus-visible,
+  .abey-shell.abey-shell--dashboard[data-abey-nav-mode="drawer"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-nav-link--sidebar:hover,
+  .abey-shell.abey-shell--dashboard[data-abey-nav-mode="drawer"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-nav-link--sidebar:focus-visible {
+    transform: none;
+  }
+
+  .abey-shell.abey-shell--dashboard[data-abey-nav-mode="overlay"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-nav-link[aria-current="page"].abey-nav-link--sidebar::before,
+  .abey-shell.abey-shell--dashboard[data-abey-nav-mode="overlay"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-nav-link--active.abey-nav-link--sidebar::before,
+  .abey-shell.abey-shell--dashboard[data-abey-nav-mode="drawer"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-nav-link[aria-current="page"].abey-nav-link--sidebar::before,
+  .abey-shell.abey-shell--dashboard[data-abey-nav-mode="drawer"] .abey-shell__body>.abey-sidebar:not([data-abey-open="true"]) .abey-nav-link--active.abey-nav-link--sidebar::before {
+    left: 3px;
+    width: 2px;
+  }
+
+  /* Reveal (rail colapsado): mismos m├írgenes que overlay carril. */
+  .abey-shell[data-abey-nav-mode="reveal"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-sidebar__inner {
+    padding-left: 0.3rem;
+    padding-right: 0.42rem;
+    box-sizing: border-box;
+  }
+
+  .abey-shell.abey-shell--dashboard[data-abey-nav-mode="reveal"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-sidebar__inner {
+    padding-left: 0.26rem;
+    padding-right: 0.36rem;
+  }
+
+  .abey-shell[data-abey-nav-mode="reveal"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-nav-stack {
+    align-items: center;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .abey-shell[data-abey-nav-mode="reveal"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-nav-link--sidebar:not(.abey-nav-link--horizontal),
+  .abey-shell[data-abey-nav-mode="reveal"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-nav-tree__summary {
+    padding-left: 0.32rem;
+    padding-right: 0.32rem;
+  }
+
+  .abey-shell.abey-shell--dashboard[data-abey-nav-mode="reveal"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-nav-link--sidebar:not(.abey-nav-link--horizontal),
+  .abey-shell.abey-shell--dashboard[data-abey-nav-mode="reveal"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-nav-tree__summary {
+    padding-left: 0.26rem;
+    padding-right: 0.26rem;
+  }
+
+  .abey-shell.abey-shell--dashboard[data-abey-nav-mode="reveal"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-nav-link--sidebar:hover,
+  .abey-shell.abey-shell--dashboard[data-abey-nav-mode="reveal"] .abey-shell__body>.abey-sidebar:not(:hover):not(:focus-within):not([data-abey-open="true"]) .abey-nav-link--sidebar:focus-visible {
+    transform: none;
+  }
+
+  .abey-shell[data-abey-nav-mode="drawer"] .abey-shell__body>.abey-sidebar[data-abey-open="true"] {
+    box-shadow: 24px 0 72px rgba(15, 23, 42, 0.22);
+  }
+
+  .abey.abey--dark .abey-shell[data-abey-nav-mode="drawer"] .abey-shell__body>.abey-sidebar[data-abey-open="true"] {
+    box-shadow: 28px 0 80px rgba(0, 0, 0, 0.55);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .abey-shell[data-abey-nav-mode="overlay"] .abey-shell__body>.abey-sidebar,
+  .abey-shell[data-abey-nav-mode="drawer"] .abey-shell__body>.abey-sidebar,
+  .abey-shell[data-abey-nav-mode="reveal"] .abey-shell__body>.abey-sidebar {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (max-width: 900px) {
+
+  /* Mismo ancho que `.abey-sidebar` en este breakpoint (marca del app bar). */
+  .abey-appbar--dashboard .abey-appbar__mark {
+    flex: 0 0 min(18rem, 100vw);
+    width: min(18rem, 100vw);
+    max-width: min(18rem, 100vw);
+  }
+
+  .abey-sidebar {
+    position: fixed;
+    inset: var(--abey-appbar-h) 0 0 0;
+    z-index: 8;
+    width: min(18rem, 100vw);
+    max-width: 18rem;
+    box-shadow: var(--abey-shadow-lg);
+    transform: translateX(-100%);
+    transition: transform 0.2s ease, visibility 0.2s;
+    visibility: hidden;
+  }
+
+  .abey-sidebar[data-abey-open="true"] {
+    transform: translateX(0);
+    visibility: visible;
+  }
+
+  .abey-sidebar__toggle {
+    display: inline-flex;
+  }
+
+  .abey-sidebar__inner {
+    padding-bottom: 2.5rem;
+  }
+
+  .abey-outlet {
+    width: 100%;
+  }
+}
+

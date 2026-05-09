@@ -1,0 +1,28 @@
+/* --- AbeyJs Control Components (Checkboxes and Radios) --- */
+
+abey-checkbox,
+abey-radio {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  max-width: 100%;
+}
+
+.abey-checkbox,
+.abey-radio {
+  width: 1.125rem;
+  height: 1.125rem;
+  max-width: none;
+  margin: 0;
+  flex-shrink: 0;
+  accent-color: var(--abey-accent);
+  cursor: pointer;
+}
+
+.abey-checkbox:focus-visible,
+.abey-radio:focus-visible {
+  outline: 2px solid var(--abey-accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}

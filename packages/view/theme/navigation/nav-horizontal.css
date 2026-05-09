@@ -1,0 +1,94 @@
+/* --- AbeyJs Navigation (Horizontal Mode) --- */
+
+.abey-shell[data-abey-nav-mode="horizontal"].abey-shell--dashboard .abey-appbar--dashboard {
+  overflow: visible;
+  background: var(--abey-surface);
+  border-bottom: 1px solid var(--abey-border);
+  box-shadow: 0 1px 0 rgba(15, 23, 42, 0.04);
+}
+
+.abey.abey--dark .abey-shell[data-abey-nav-mode="horizontal"].abey-shell--dashboard .abey-appbar--dashboard {
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.35);
+}
+
+.abey-shell[data-abey-nav-mode="horizontal"] .abey-appbar__row .abey-shell__nav-horizontal {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.0625rem;
+  padding: 0 0.35rem;
+  overflow: visible;
+}
+
+.abey-shell__nav-horizontal>.abey-nav-link--horizontal {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border-radius: 0.4rem;
+  border: 1px solid transparent;
+  font-size: 0.8125rem;
+  font-weight: 550;
+  padding: 0.34rem 0.62rem;
+  color: color-mix(in srgb, var(--abey-text) 94%, var(--abey-text-muted));
+  transition: all 0.12s ease;
+}
+
+.abey-shell__nav-horizontal>.abey-nav-link--horizontal.abey-nav-link--active,
+.abey-shell__nav-horizontal>.abey-nav-link--horizontal[aria-current="page"] {
+  color: var(--abey-accent, #2563eb);
+  background: color-mix(in srgb, var(--abey-accent) 11%, transparent);
+  border-color: color-mix(in srgb, var(--abey-accent) 26%, transparent);
+}
+
+/* Dropdown Submenus (Horizontal) */
+.abey-shell__nav-horizontal .abey-nav-hz {
+  position: relative;
+  display: block;
+}
+
+.abey-shell__nav-horizontal>.abey-nav-hz>.abey-nav-hz__summary {
+  list-style: none;
+  cursor: pointer;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.34rem;
+  padding: 0.34rem 1.6rem 0.34rem 0.62rem;
+  border-radius: 0.4rem;
+  font-size: 0.8125rem;
+  font-weight: 550;
+  color: var(--abey-text);
+}
+
+.abey-shell__nav-horizontal>.abey-nav-hz>.abey-nav-hz__summary::after {
+  content: "";
+  position: absolute;
+  right: 0.62rem;
+  top: 50%;
+  width: 0.38rem;
+  height: 0.38rem;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: translateY(-50%) rotate(45deg);
+  opacity: 0.72;
+}
+
+.abey-shell__nav-horizontal .abey-nav-hz__panel {
+  position: absolute;
+  left: 0;
+  top: calc(100% + 6px);
+  min-width: 11.75rem;
+  padding: 0.3rem;
+  border-radius: var(--abey-radius-sm);
+  border: 1px solid var(--abey-border);
+  background: var(--abey-surface-elev);
+  box-shadow: 0 8px 28px rgba(15, 23, 42, 0.1);
+  z-index: 200;
+}
+
+.abey.abey--dark .abey-shell__nav-horizontal .abey-nav-hz__panel {
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4), 0 0 0 1px color-mix(in srgb, var(--abey-border) 70%, transparent);
+}

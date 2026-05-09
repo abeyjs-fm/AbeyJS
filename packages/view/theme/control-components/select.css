@@ -1,0 +1,127 @@
+/* --- AbeyJs Control Components (Selects and Combos) --- */
+
+.abey-form abey-select.abey-field__combo {
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+abey-select.abey-field__combo {
+  display: block;
+  position: relative;
+  width: 100%;
+  max-width: 32rem;
+}
+
+.abey-form.abey-form--full abey-select.abey-field__combo,
+abey-form.abey-form.abey-form--full abey-select.abey-field__combo {
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.abey-select-comboRow {
+  display: flex;
+  align-items: stretch;
+  gap: 0.35rem;
+  width: 100%;
+}
+
+.abey-select-comboRow>.abey-input {
+  flex: 1;
+  min-width: 0;
+}
+
+button.abey-select-clear {
+  flex-shrink: 0;
+  align-self: center;
+  width: 2rem;
+  height: 2rem;
+  margin: 0;
+  padding: 0;
+  font: inherit;
+  font-size: 1.25rem;
+  line-height: 1;
+  color: var(--abey-text-muted);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--abey-radius-sm);
+  cursor: pointer;
+  transition: color 0.12s, background 0.12s, border-color 0.12s;
+}
+
+button.abey-select-clear:hover:not(:disabled) {
+  color: var(--abey-text);
+  background: var(--abey-surface-elev);
+  border-color: var(--abey-border);
+}
+
+button.abey-select-clear:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.abey .abey-select-menu {
+  box-shadow: var(--abey-shadow-lg);
+  border-radius: var(--abey-radius-sm) !important;
+}
+
+.abey .abey-select-option {
+  font: inherit;
+  font-size: 0.875rem;
+  color: var(--abey-text);
+  cursor: pointer;
+  transition: background 0.1s ease;
+}
+
+.abey .abey-select-option:hover {
+  background: var(--abey-surface-elev) !important;
+}
+
+.abey select {
+  display: block;
+  max-width: 100%;
+  margin-top: 0;
+  padding: 0.55rem 0.75rem;
+  font: inherit;
+  font-size: 0.9375rem;
+  line-height: 1.45;
+  color: var(--abey-text);
+  background-color: var(--abey-surface);
+  border: 1px solid var(--abey-border);
+  border-radius: var(--abey-radius-sm);
+  accent-color: var(--abey-accent);
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.abey select:hover:not(:disabled) {
+  border-color: var(--abey-border-strong);
+}
+
+.abey select:focus,
+.abey select:focus-visible {
+  outline: none;
+  border-color: var(--abey-accent);
+  box-shadow: 0 0 0 3px var(--abey-focus);
+}
+
+.abey select:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  background: var(--abey-surface-elev);
+}
+
+.abey-field__select-wrap {
+  display: grid;
+  gap: var(--abey-space-2);
+  max-width: 32rem;
+}
+
+.abey-form .abey-field__select-wrap,
+.abey-form.abey-form--full .abey-field__select-wrap,
+abey-form.abey-form.abey-form--full .abey-field__select-wrap {
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
+}

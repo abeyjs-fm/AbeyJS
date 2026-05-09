@@ -1,7 +1,7 @@
 import type { LineItemsColumnDef } from "./mount-line-items-table.js";
 import type { LineItemsEmptyRowOptions } from "./line-items-generated.js";
 import { createLineItemsEmptyRow } from "./line-items-generated.js";
-import type { AbeyFormElement } from "./abey-form.js";
+import type { AbeyFormElement } from "./abey-form-impl.js";
 
 export type AbeyLineItemsConfig = {
   name?: string;
@@ -37,7 +37,14 @@ function validateCell(col: LineItemsColumnDef, v: unknown): string | null {
 
 export class AbeyLineItemsElement extends HTMLElement {
   static get observedAttributes(): string[] {
-    return ["name", "blockclass", "addrowlabel", "arialabel", "columns-json", "empty-row-json"];
+    return [
+      "name",
+      "blockclass",
+      "addrowlabel",
+      "arialabel",
+      "columns-json",
+      "empty-row-json",
+    ];
   }
 
   #cfg: AbeyLineItemsConfig | null = null;
@@ -103,8 +110,14 @@ export class AbeyLineItemsElement extends HTMLElement {
     this.addEventListener("input", this.#onInput, { capture: true });
 
     // Sync con reset y cambios de store.
-    this.#form?.addEventListener("abeyformreset", this.#onFormReset as EventListener);
-    this.#form?.addEventListener("abeyformstorechange", this.#onStoreChange as EventListener);
+    this.#form?.addEventListener(
+      "abeyformreset",
+      this.#onFormReset as EventListener,
+    );
+    this.#form?.addEventListener(
+      "abeyformstorechange",
+      this.#onStoreChange as EventListener,
+    );
     this.#render();
 
     // Si el host se mueve a un tabpanel después (autoslot), re-intentar enlace al <abey-form>.
@@ -112,8 +125,14 @@ export class AbeyLineItemsElement extends HTMLElement {
       if (!this.isConnected) return;
       if (!this.#form) {
         this.#form = this.closest("abey-form") as AbeyFormElement | null;
-        this.#form?.addEventListener("abeyformreset", this.#onFormReset as EventListener);
-        this.#form?.addEventListener("abeyformstorechange", this.#onStoreChange as EventListener);
+        this.#form?.addEventListener(
+          "abeyformreset",
+          this.#onFormReset as EventListener,
+        );
+        this.#form?.addEventListener(
+          "abeyformstorechange",
+          this.#onStoreChange as EventListener,
+        );
       }
       this.#render();
     });
@@ -121,13 +140,25 @@ export class AbeyLineItemsElement extends HTMLElement {
 
   disconnectedCallback(): void {
     this.removeEventListener("click", this.#onClick);
-    this.removeEventListener("input", this.#onInput, { capture: true } as AddEventListenerOptions);
-    this.#form?.removeEventListener("abeyformreset", this.#onFormReset as EventListener);
-    this.#form?.removeEventListener("abeyformstorechange", this.#onStoreChange as EventListener);
+    this.removeEventListener("input", this.#onInput, {
+      capture: true,
+    } as AddEventListenerOptions);
+    this.#form?.removeEventListener(
+      "abeyformreset",
+      this.#onFormReset as EventListener,
+    );
+    this.#form?.removeEventListener(
+      "abeyformstorechange",
+      this.#onStoreChange as EventListener,
+    );
     this.#form = null;
   }
 
-  attributeChangedCallback(_name: string, oldValue: string | null, newValue: string | null): void {
+  attributeChangedCallback(
+    _name: string,
+    oldValue: string | null,
+    newValue: string | null,
+  ): void {
     if (oldValue === newValue) return;
     this.#readAttrs();
     if (this.isConnected) this.#render();
@@ -135,7 +166,10 @@ export class AbeyLineItemsElement extends HTMLElement {
 
   static define(tagName = "abey-line-items"): void {
     if (!customElements.get(tagName)) {
-      customElements.define(tagName, AbeyLineItemsElement as CustomElementConstructor);
+      customElements.define(
+        tagName,
+        AbeyLineItemsElement as CustomElementConstructor,
+      );
     }
   }
 
@@ -194,7 +228,8 @@ export class AbeyLineItemsElement extends HTMLElement {
     // Debug-friendly fallbacks: avoid rendering "nothing" silently.
     if (!this.#columns.length) {
       this.setAttribute("data-abey-line-items", "no-columns");
-      this.textContent = "abey-line-items: falta `columns-json` (o JSON inválido).";
+      this.textContent =
+        "abey-line-items: falta `columns-json` (o JSON inválido).";
       return;
     }
     this.setAttribute("data-abey-line-items", "ready");
@@ -257,7 +292,11 @@ export class AbeyLineItemsElement extends HTMLElement {
     });
   }
 
-  #buildRow(trIndex: number, row: Record<string, unknown>, block: string): HTMLTableRowElement {
+  #buildRow(
+    trIndex: number,
+    row: Record<string, unknown>,
+    block: string,
+  ): HTMLTableRowElement {
     const tr = document.createElement("tr");
     tr.dataset.itemRow = "1";
     tr.dataset.rowIndex = String(trIndex);
@@ -306,13 +345,29 @@ export class AbeyLineItemsElement extends HTMLElement {
     const tbody = this.#tbody;
     if (!tbody) return [];
     const out: Record<string, unknown>[] = [];
-    const rowsEls = Array.from(tbody.querySelectorAll<HTMLTableRowElement>("tr[data-item-row]"));
+    const rowsEls = Array.from(
+      tbody.querySelectorAll<HTMLTableRowElement>("tr[data-item-row]"),
+    );
     for (const tr of rowsEls) {
       const row: Record<string, unknown> = {};
       for (const col of this.#columns) {
-        const el = tr.querySelector<HTMLInputElement | HTMLTextAreaElement>(`[data-field="${col.name}"]`);
-        const raw = el?.value ?? "";
-        row[col.name] = coerceCell(col, raw);
+        const el = tr.querySelector<HTMLInputElement | HTMLTextAreaElement>(
+          `[data-field="${col.name}"]`,
+        );
+
+        let raw: unknown = "";
+        if (el && "type" in el && el.type === "checkbox") {
+          raw = (el as HTMLInputElement).checked;
+        } else if (el && "type" in el && el.type === "radio") {
+          const checkedRadio = tr.querySelector<HTMLInputElement>(
+            `input[data-field="${col.name}"]:checked`,
+          );
+          raw = checkedRadio?.value ?? "";
+        } else {
+          raw = el?.value ?? "";
+        }
+
+        row[col.name] = coerceCell(col, String(raw));
       }
       out.push(row);
     }
@@ -338,12 +393,17 @@ export class AbeyLineItemsElement extends HTMLElement {
     }
     if (action === "del") {
       const tr = btn.closest("tr");
-      if (!(tr instanceof HTMLTableRowElement) || !this.#tbody?.contains(tr)) return;
-      const rowsEls = Array.from(this.#tbody.querySelectorAll<HTMLTableRowElement>("tr[data-item-row]"));
+      if (!(tr instanceof HTMLTableRowElement) || !this.#tbody?.contains(tr))
+        return;
+      const rowsEls = Array.from(
+        this.#tbody.querySelectorAll<HTMLTableRowElement>("tr[data-item-row]"),
+      );
       const idx = rowsEls.indexOf(tr);
       const items = this.#collect();
       items.splice(idx, 1);
-      const normalized = items.length ? items : [createLineItemsEmptyRow(this.#columns, this.#emptyRow)];
+      const normalized = items.length
+        ? items
+        : [createLineItemsEmptyRow(this.#columns, this.#emptyRow)];
       this.#suppressStoreChange = true;
       this.#setItems(normalized);
       queueMicrotask(() => {
@@ -355,7 +415,8 @@ export class AbeyLineItemsElement extends HTMLElement {
 
   #onInput = (ev: Event): void => {
     const t = ev.target;
-    if (!(t instanceof HTMLInputElement || t instanceof HTMLTextAreaElement)) return;
+    if (!(t instanceof HTMLInputElement || t instanceof HTMLTextAreaElement))
+      return;
     if (!t.dataset.field) return;
     // snapshot simple: en inputs de tabla, sync al store
     const items = this.#collect();
@@ -389,4 +450,3 @@ export class AbeyLineItemsElement extends HTMLElement {
     }
   };
 }
-

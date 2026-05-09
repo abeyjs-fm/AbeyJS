@@ -1,0 +1,60 @@
+/* --- AbeyJs Navigation (Links) --- */
+
+.abey-nav-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.abey-nav-link {
+  text-decoration: none;
+  color: var(--abey-text-muted);
+  font-size: 0.88rem;
+  font-weight: 500;
+  padding: 0.5rem 0.65rem;
+  border-radius: var(--abey-radius-sm);
+  border: 1px solid transparent;
+  transition: background 0.12s, color 0.12s;
+}
+
+.abey-nav-link:hover {
+  color: var(--abey-text);
+  background: rgba(37, 99, 235, 0.08);
+}
+
+.abey-nav-link--active,
+.abey-nav-link[aria-current="page"] {
+  color: var(--abey-accent);
+  background: rgba(37, 99, 235, 0.1);
+  border-color: rgba(37, 99, 235, 0.2);
+  font-weight: 600;
+}
+
+.abey.abey--dark .abey-nav-link[aria-current="page"] {
+  background: rgba(56, 189, 248, 0.1);
+  border-color: rgba(56, 189, 248, 0.25);
+}
+
+.abey-nav-link--with-icon {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.abey-nav-link__ic {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.65rem;
+  height: 1.65rem;
+  border-radius: 0.45rem;
+  background: rgba(37, 99, 235, 0.08);
+  color: var(--abey-text);
+}
+
+.abey-nav-link--active .abey-nav-link__ic,
+.abey-nav-link[aria-current="page"] .abey-nav-link__ic {
+  background: rgba(37, 99, 235, 0.16);
+  color: var(--abey-accent);
+}

@@ -1,0 +1,47 @@
+/* --- AbeyJs UI Data (Traces/Logs) --- */
+
+.abey-trace {
+  display: block;
+  margin: var(--abey-space-4) auto;
+  background: var(--abey-surface);
+  border: 1px solid var(--abey-border);
+  border-radius: var(--abey-radius);
+  box-shadow: var(--abey-shadow);
+  max-width: 960px;
+}
+
+.abey-trace__head {
+  font-size: 1.05rem;
+  font-weight: 600;
+  padding: var(--abey-space-3) var(--abey-space-4);
+  color: var(--abey-text);
+  border-bottom: 1px solid var(--abey-border);
+  background: var(--abey-surface-elev);
+  display: flex;
+  align-items: center;
+  gap: var(--abey-space-2);
+}
+
+.abey-trace__list {
+  list-style: none;
+  margin: 0;
+  padding: var(--abey-space-3) var(--abey-space-4);
+  font-family: var(--abey-font-mono);
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--abey-text-muted);
+  max-height: 18rem;
+  overflow: auto;
+  background: var(--abey-bg);
+}
+
+.abey-trace__item {
+  margin-bottom: var(--abey-space-2);
+  word-break: break-word;
+}
+
+.abey-trace__code {
+  white-space: pre-wrap;
+  color: var(--abey-text);
+  font-size: 12px;
+}

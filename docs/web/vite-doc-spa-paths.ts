@@ -39,5 +39,6 @@ export const DOC_SPA_HTML_FALLBACK_PATHS = [
   "/packages/validation",
   "/packages/view",
   "/panel",
+  "/students",
   "/utils",
 ] as const satisfies readonly string[];

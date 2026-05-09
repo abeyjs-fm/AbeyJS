@@ -69,14 +69,18 @@ function keyToLabel(key: string): string {
   return spaced.charAt(0).toUpperCase() + spaced.slice(1);
 }
 
-function applyRequired(base: ZodTypeAny, message: string, kind: FieldKindHint | undefined): ZodTypeAny {
+function applyRequired(
+  base: ZodTypeAny,
+  message: string,
+  kind: FieldKindHint | undefined,
+): ZodTypeAny {
   const msg = String(message ?? "").trim() || "Obligatorio";
   if (kind === "number") {
     // For number, "required" is already represented by the coercion + finite check.
     return base;
   }
   if (kind === "checkbox") {
-    return base;
+    return (base as any).refine?.((v: unknown) => v === true, msg) ?? base;
   }
   if (kind === "file") {
     return base;
@@ -85,7 +89,10 @@ function applyRequired(base: ZodTypeAny, message: string, kind: FieldKindHint | 
   return (base as any).min?.(1, msg) ?? base;
 }
 
-function baseZodFor(kind: FieldKindHint | undefined, label: string): ZodTypeAny {
+function baseZodFor(
+  kind: FieldKindHint | undefined,
+  label: string,
+): ZodTypeAny {
   const l = label.trim() || "Campo";
   if (kind === "number") {
     return z.coerce.number().finite(`${l}: número inválido`);
@@ -103,8 +110,16 @@ function baseZodFor(kind: FieldKindHint | undefined, label: string): ZodTypeAny 
       if (typeof v === "string") {
         const s = v.trim().toLowerCase();
         if (!s) return false;
-        if (s === "on" || s === "true" || s === "1" || s === "yes" || s === "si") return true;
-        if (s === "off" || s === "false" || s === "0" || s === "no") return false;
+        if (
+          s === "on" ||
+          s === "true" ||
+          s === "1" ||
+          s === "yes" ||
+          s === "si"
+        )
+          return true;
+        if (s === "off" || s === "false" || s === "0" || s === "no")
+          return false;
       }
       // Fallback: any truthy value -> true
       return Boolean(v);
@@ -127,9 +142,19 @@ function schemaForField(f: FieldMeta): ZodTypeAny {
   const kind = f.kind;
 
   let zod: ZodTypeAny;
-  if (kind === "radio" && Array.isArray(f.radioStaticItems) && f.radioStaticItems.length > 0) {
+  if (
+    kind === "radio" &&
+    Array.isArray(f.radioStaticItems) &&
+    f.radioStaticItems.length > 0
+  ) {
     const vals = f.radioStaticItems.map((i) => String(i.value)).filter(Boolean);
-    zod = vals.length ? z.enum(vals as [string, ...string[]], { message: `${label}: obligatorio` }) : z.string().trim();
+    const reqRule = f.rules.find((r) => r.kind === "required");
+    const reqMsg = reqRule ? String(reqRule.message ?? "").trim() || `${label}: obligatorio` : `${label}: obligatorio`;
+    zod = vals.length
+      ? z.enum(vals as [string, ...string[]], {
+          message: reqMsg,
+        })
+      : z.string().trim();
   } else {
     zod = baseZodFor(kind, label);
   }
@@ -143,12 +168,14 @@ function schemaForField(f: FieldMeta): ZodTypeAny {
       continue;
     }
     if (r.kind === "regex") {
-      const msg = String(r.message ?? "").trim() || `${label}: formato inválido`;
+      const msg =
+        String(r.message ?? "").trim() || `${label}: formato inválido`;
       zod = (zod as any).regex?.(r.pattern, msg) ?? zod;
       continue;
     }
     if (r.kind === "checkedTrue") {
-      const msg = String(r.message ?? "").trim() || `${label}: debe estar marcado`;
+      const msg =
+        String(r.message ?? "").trim() || `${label}: debe estar marcado`;
       zod = (zod as any).refine?.((v: unknown) => v === true, msg) ?? zod;
     }
   }
@@ -158,7 +185,10 @@ function schemaForField(f: FieldMeta): ZodTypeAny {
 
   // Optional normalization aligned with `inferBasicFormSchema` behavior.
   if (kind === "email") {
-    return z.union([z.literal(""), z.string().trim().email(`${label}: correo inválido`)]);
+    return z.union([
+      z.literal(""),
+      z.string().trim().email(`${label}: correo inválido`),
+    ]);
   }
   if (kind === "select" || kind === "radio" || kind === "date") {
     return z.union([z.literal(""), z.string().trim()]);
@@ -213,7 +243,9 @@ export function SelectStatic(items: SelectStaticItem[]): PropertyDecorator {
     const key = String(propertyKey);
     const f = fieldOf(ctor, key);
     f.kind = "select";
-    f.selectStaticItems = Array.isArray(items) ? items.map((i) => ({ value: String(i.value), label: String(i.label) })) : [];
+    f.selectStaticItems = Array.isArray(items)
+      ? items.map((i) => ({ value: String(i.value), label: String(i.label) }))
+      : [];
   };
 }
 
@@ -242,14 +274,20 @@ export function Checked(message = "Debe estar marcado"): PropertyDecorator {
     const key = String(propertyKey);
     const f = fieldOf(ctor, key);
     f.kind = "checkbox";
-    f.rules.unshift({ kind: "checkedTrue", message: String(message ?? "").trim() });
+    f.rules.unshift({
+      kind: "checkedTrue",
+      message: String(message ?? "").trim(),
+    });
   };
 }
 
 export type RadioStaticItem = { value: string; label: string };
 
 /** Renderiza un grupo de radios con opciones estáticas. Guarda el valor en el `key` del campo. */
-export function RadioStatic(items: RadioStaticItem[], opts?: { group?: string }): PropertyDecorator {
+export function RadioStatic(
+  items: RadioStaticItem[],
+  opts?: { group?: string },
+): PropertyDecorator {
   return (target, propertyKey) => {
     const ctor = (target as any)?.constructor as Function | undefined;
     if (!ctor) return;
@@ -307,7 +345,10 @@ export function Required(message: string): PropertyDecorator {
     const key = String(propertyKey);
     const f = fieldOf(ctor, key);
     // TS legacy executes decorators bottom-up; unshift preserves author order top-down.
-    f.rules.unshift({ kind: "required", message: String(message ?? "").trim() });
+    f.rules.unshift({
+      kind: "required",
+      message: String(message ?? "").trim(),
+    });
   };
 }
 
@@ -344,11 +385,16 @@ function classToZodObject<T extends object>(
   return z.object(shape).passthrough();
 }
 
-export function classToSchema<T extends object>(ctor: Ctor<T>): ZodType<Record<string, unknown>> {
+export function classToSchema<T extends object>(
+  ctor: Ctor<T>,
+): ZodType<Record<string, unknown>> {
   return classToZodObject(ctor as any);
 }
 
-export function parseClassJson<T extends object>(ctor: Ctor<T>, input: unknown): T {
+export function parseClassJson<T extends object>(
+  ctor: Ctor<T>,
+  input: unknown,
+): T {
   return classToZodObject(ctor as any).parse(input) as unknown as T;
 }
 
@@ -357,7 +403,10 @@ export function classToAbeyFormConfig<T extends object>(
   opts?: ClassToAbeyFormConfigOptions,
 ): AbeyFormConfig {
   const m = metaOf(ctor);
-  const title = String(opts?.title ?? m.model?.title ?? keyToLabel(ctor.name ?? "Formulario")).trim() || "Formulario";
+  const title =
+    String(
+      opts?.title ?? m.model?.title ?? keyToLabel(ctor.name ?? "Formulario"),
+    ).trim() || "Formulario";
 
   const fields: ViewField[] = [];
   for (const key of m.order) {
@@ -365,7 +414,11 @@ export function classToAbeyFormConfig<T extends object>(
     if (!fm || fm.hidden === true) continue;
     const label = fm.label?.trim() || keyToLabel(key);
     const kind = toViewKind(fm.kind);
-    if (kind === "radio" && Array.isArray(fm.radioStaticItems) && fm.radioStaticItems.length > 0) {
+    if (
+      kind === "radio" &&
+      Array.isArray(fm.radioStaticItems) &&
+      fm.radioStaticItems.length > 0
+    ) {
       const group = (fm.radioGroup ?? key).trim() || key;
       for (const it of fm.radioStaticItems) {
         fields.push({
@@ -388,7 +441,9 @@ export function classToAbeyFormConfig<T extends object>(
     });
   }
 
-  const schema: ZodType<Record<string, unknown>> = classToZodObject(ctor as any);
+  const schema: ZodType<Record<string, unknown>> = classToZodObject(
+    ctor as any,
+  );
   return {
     title,
     fields,
@@ -396,4 +451,3 @@ export function classToAbeyFormConfig<T extends object>(
     inferBasicSchema: false,
   };
 }
-

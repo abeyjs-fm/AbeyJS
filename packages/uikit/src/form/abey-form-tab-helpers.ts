@@ -1,4 +1,4 @@
-import type { AbeyFormElement } from "./abey-form.js";
+import type { AbeyFormElement } from "./abey-form-impl.js";
 
 /** Mueve Restablecer/Enviar al final del bloque `.abey-form__tabs` (misma idea que invoice / docgen-demo). */
 export function moveAbeyFormActionsIntoTabShell(form: AbeyFormElement): boolean {

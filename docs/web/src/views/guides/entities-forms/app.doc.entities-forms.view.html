@@ -16,7 +16,7 @@
 </ul>
 <hr>
 <h2>1) Entity (class) with decorators</h2>
-<p>Real example: <code>AlumnoEntity</code> in <code>examples/MyMiusic/src/ecosystems/alumnos/model/alumnos.types.ts</code>.</p>
+<p>Real example: <code>StudentEntity</code> in <code>examples/MyMiusic/src/ecosystems/Students/model/students.types.ts</code>.</p>
 <p>Main ideas:</p>
 <ul>
 <li><strong>UI + JSON fields</strong>: normal class properties.</li>
@@ -40,11 +40,11 @@
 <h2>2) Auto-generate the form (<code>&lt;abey-form&gt;</code>)</h2>
 <p>From the class you get <code>AbeyFormConfig</code> (fields + schema):</p>
 <pre><code class="language-ts">import { classToAbeyFormConfig, AbeyFormElement } from &quot;@abeyjs/uikit&quot;;
-import { AlumnoEntity } from &quot;./model/alumnos.types.js&quot;;
+import { StudentEntity } from &quot;./model/students.types.js&quot;;
 
 AbeyFormElement.define(&quot;abey-form&quot;);
 const form = document.querySelector(&quot;abey-form&quot;)!;
-form.config = classToAbeyFormConfig(AlumnoEntity);
+form.config = classToAbeyFormConfig(StudentEntity);
 </code></pre>
 <p><code>classToAbeyFormConfig(...)</code> yields:</p>
 <ul>
@@ -55,14 +55,14 @@ form.config = classToAbeyFormConfig(AlumnoEntity);
 <h2>3) Typed / validated JSON for the API</h2>
 <p>Turn form or network input into valid typed JSON:</p>
 <pre><code class="language-ts">import { parseClassJson } from &quot;@abeyjs/uikit&quot;;
-import { AlumnoEntity } from &quot;./model/alumnos.types.js&quot;;
+import { StudentEntity } from &quot;./model/students.types.js&quot;;
 
-const dto = parseClassJson(AlumnoEntity, input); // throws if invalid
+const dto = parseClassJson(StudentEntity, input); // throws if invalid
 // JSON.stringify(dto) → ready for API
 </code></pre>
 <p><strong>Zod schema only:</strong></p>
 <pre><code class="language-ts">import { classToSchema } from &quot;@abeyjs/uikit&quot;;
-const schema = classToSchema(AlumnoEntity);
+const schema = classToSchema(StudentEntity);
 </code></pre>
 <hr>
 <h2>4) Select / FK (static list or API)</h2>
@@ -120,7 +120,7 @@ genreId?: string;
 </ul>
 <p>Example (Deezer genres) in this repo:</p>
 <ul>
-<li><code>examples/MyMiusic/src/ecosystems/alumnos/ui/app-alumnos.ts</code> (<code>resolveSelectOptions</code>)</li>
+<li><code>examples/MyMiusic/src/ecosystems/Students/ui/app-students.ts</code> (<code>resolveSelectOptions</code>)</li>
 <li>Same ecosystem’s agent/flow/registration TS next to <code>ui/</code> (<code>http.getJson</code> / <code>postJson</code>, intents, lifecycle—open the ecosystem folder in the repo to follow imports).</li>
 </ul>
 <hr>
@@ -133,7 +133,7 @@ id?: string;
 </code></pre>
 <p>Read from code:</p>
 <pre><code class="language-ts">import { classPrimaryKey } from &quot;@abeyjs/uikit&quot;;
-const pk = classPrimaryKey(AlumnoEntity); // `&quot;id&quot;` if not declared
+const pk = classPrimaryKey(StudentEntity); // `&quot;id&quot;` if not declared
 </code></pre>
   </article>
 </section>

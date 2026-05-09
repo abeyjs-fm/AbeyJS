@@ -1,0 +1,81 @@
+/* --- AbeyJs Form Navigation (Tabs, Pager, Pages) --- */
+
+.abey-form__pages {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  width: 100%;
+  min-width: 0;
+}
+
+.abey-form__page {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.abey-form__pager {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--abey-space-3);
+  margin-bottom: var(--abey-space-3);
+}
+
+.abey-form__pager-info {
+  flex: 1 1 8rem;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--abey-text-muted);
+}
+
+.abey-form__tabs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--abey-space-3);
+  flex: 0 0 auto;
+  min-height: 0;
+  border-top: 1px solid var(--abey-border);
+  padding-top: var(--abey-space-3);
+}
+
+.abey-form__tablist {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--abey-space-2);
+}
+
+.abey-form__tab {
+  padding: 0.45rem 0.85rem;
+  border-radius: var(--abey-radius-sm);
+  border: 1px solid var(--abey-border);
+  background: var(--abey-surface-elev);
+  color: var(--abey-text-muted);
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.abey-form__tab[aria-selected="true"] {
+  border-color: var(--abey-accent);
+  background: rgba(37, 99, 235, 0.08);
+  color: var(--abey-text);
+  font-weight: 600;
+}
+
+.abey-form__tabpanels {
+  min-height: 0;
+}
+
+.abey-form__tabpanel {
+  overflow-y: auto;
+  max-height: min(40vh, 20rem);
+  padding-right: 2px;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.abey-form__tabpanel[hidden],
+.abey-form__page[hidden] {
+  display: none !important;
+}

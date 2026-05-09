@@ -1,0 +1,18 @@
+/* --- AbeyJs Field Decorators (Errors and Feedback) --- */
+
+.abey-field__error {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--abey-error);
+  margin-top: var(--abey-space-1);
+  font-weight: 500;
+}
+
+.abey-input[aria-invalid="true"] {
+  border-color: var(--abey-error);
+  background: var(--abey-error-bg);
+}
+
+.abey-input[aria-invalid="true"]:focus {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--abey-error) 45%, transparent);
+}

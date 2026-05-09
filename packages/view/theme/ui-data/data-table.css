@@ -1,0 +1,121 @@
+/* --- AbeyJs UI Data (Tables) --- */
+
+.abey-list__table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.abey-list__table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.9rem;
+  min-width: 640px;
+}
+
+.abey-list__table thead th {
+  text-align: left;
+  font-weight: 600;
+  color: var(--abey-text-muted);
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  padding: var(--abey-space-2) var(--abey-space-3);
+  border-bottom: 1px solid var(--abey-border);
+  background: var(--abey-surface-elev);
+  white-space: nowrap;
+}
+
+.abey-list__table td {
+  padding: var(--abey-space-3) var(--abey-space-3);
+  border-bottom: 1px solid var(--abey-border);
+  color: var(--abey-text);
+  vertical-align: middle;
+}
+
+.abey-list__table tbody tr[data-row-id]:nth-child(odd) td {
+  background: var(--abey-surface-elev, #fcfcfd);
+}
+
+.abey.abey--dark .abey-list__table tbody tr[data-row-id]:nth-child(odd) td {
+  background: #151b2a;
+}
+
+.abey-list__table tbody tr:hover td {
+  background: rgba(37, 99, 235, 0.04) !important;
+}
+
+.abey.abey--dark .abey-list__table tbody tr:hover td {
+  background: rgba(56, 189, 248, 0.08) !important;
+}
+
+td.abey-list__actions {
+  text-align: end;
+}
+
+.abey-list__status {
+  text-align: center;
+  color: var(--abey-text-muted);
+  font-style: italic;
+  padding: var(--abey-space-5) !important;
+}
+
+td.abey-list__status[role="alert"] {
+  color: var(--abey-error) !important;
+  font-style: normal;
+  font-weight: 500;
+  background: var(--abey-error-bg);
+}
+
+/* Row actions menu (kebab) rendered as portal on document.body */
+.abey-table-menu {
+  min-width: 11.5rem;
+  padding: 0.35rem;
+  border-radius: 0.8rem;
+  border: 1px solid color-mix(in srgb, var(--abey-border) 88%, var(--abey-text) 12%);
+  background: var(--abey-surface);
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.14);
+}
+
+.abey-table-menu button[role="menuitem"] {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0.5rem 0.62rem;
+  border: 0;
+  border-radius: 0.6rem;
+  background: transparent;
+  color: var(--abey-text);
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+}
+
+.abey-table-menu button[role="menuitem"]:hover,
+.abey-table-menu button[role="menuitem"]:focus-visible {
+  outline: none;
+  background: color-mix(in srgb, var(--abey-accent) 10%, var(--abey-surface));
+  color: var(--abey-text);
+}
+
+.abey-table-menu button[role="menuitem"]:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+body:has(.abey.abey--dark) .abey-table-menu {
+  border-color: color-mix(in srgb, var(--abey-border) 74%, transparent);
+  background: color-mix(in srgb, var(--abey-surface-elev, #111827) 94%, #000 6%);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.5), 0 0 0 1px color-mix(in srgb, var(--abey-accent) 14%, transparent);
+}
+
+body:has(.abey.abey--dark) .abey-table-menu button[role="menuitem"] {
+  color: color-mix(in srgb, var(--abey-text) 94%, #fff 6%);
+}
+
+body:has(.abey.abey--dark) .abey-table-menu button[role="menuitem"]:hover,
+body:has(.abey.abey--dark) .abey-table-menu button[role="menuitem"]:focus-visible {
+  background: color-mix(in srgb, var(--abey-accent) 16%, var(--abey-surface-elev));
+}

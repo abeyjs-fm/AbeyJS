@@ -3,9 +3,15 @@
  *
  * **`README.md`** summarizes **`package.json` `exports`**; **`docs/abey-table.md`** covers **`abey-table`**.
  */
-export type { ButtonVariant, OmegaButtonOptions } from "./button/omega-button.js";
+export type {
+  ButtonVariant,
+  OmegaButtonOptions,
+} from "./button/omega-button.js";
 export { createOmegaButton } from "./button/omega-button.js";
-export { AbeyButtonElement, type AbeyButtonVariant } from "./button/abey-button.js";
+export {
+  AbeyButtonElement,
+  type AbeyButtonVariant,
+} from "./button/abey-button.js";
 
 export { ABEY, ABEY_TAG } from "./abey-form-classes.js";
 export type { OmegaFormFieldUi } from "./form-field-ui-types.js";
@@ -15,19 +21,28 @@ export {
   AbeyCheckboxElement,
   ensureAbeyCheckboxElementDefined,
 } from "./checkbox/index.js";
-export { mountRadioField, AbeyRadioElement, ensureAbeyRadioElementDefined } from "./radio/index.js";
-export { mountSelectField, AbeySelectElement, ensureAbeySelectElementDefined } from "./select/index.js";
-export { mountTextInputField, AbeyInputElement, ensureAbeyInputElementDefined } from "./input/index.js";
+export {
+  mountRadioField,
+  AbeyRadioElement,
+  ensureAbeyRadioElementDefined,
+} from "./radio/index.js";
+export {
+  mountSelectField,
+  AbeySelectElement,
+  ensureAbeySelectElementDefined,
+} from "./select/index.js";
+export {
+  mountTextInputField,
+  AbeyInputElement,
+  ensureAbeyInputElementDefined,
+} from "./input/index.js";
+
+
 
 export {
-  AbeyTableElement,
-  createAbeyTable,
-  avatar,
-  statusPill,
-} from "./table/abey-table.js";
-
-export { AbeyFormElement } from "./form/abey-form.js";
-export { AbeyLineItemsElement, type AbeyLineItemsConfig } from "./form/abey-line-items.js";
+  AbeyLineItemsElement,
+  type AbeyLineItemsConfig,
+} from "./form/abey-line-items.js";
 export {
   classToAbeyFormConfig,
   classToSchema,
@@ -62,7 +77,13 @@ export {
   applyViewTheme,
 } from "./form/mount-form.js";
 
+
+
+
+export { ensureAbeyFormElementDefined } from "./form/abey-form.js";
+
 export { mountIntentButton } from "./form/intent-button.js";
+
 
 export type {
   FieldKind,
@@ -84,10 +105,14 @@ export type {
   AbeyTableStatusTone,
   AbeyTableLoadNetworkDetail,
 } from "./table/abey-table.types.js";
+export { ensureAbeyTableElementDefined } from "./table/index.js";
 
 export type { AbeyFormConfig } from "./form/abey-form.types.js";
 
-export { inferBasicFormSchema, zodForViewField } from "./form/infer-basic-form-schema.js";
+export {
+  inferBasicFormSchema,
+  zodForViewField,
+} from "./form/infer-basic-form-schema.js";
 
 export {
   mapJsonToFieldSelectItems,
@@ -109,7 +134,10 @@ export {
   type LineItemsEmptyRowOptions,
   type LineItemsEmptyRowOverrides,
 } from "./form/line-items-generated.js";
-export { createLineItemsRowSchema, type LineItemsZodOptions } from "./form/line-items-zod.js";
+export {
+  createLineItemsRowSchema,
+  type LineItemsZodOptions,
+} from "./form/line-items-zod.js";
 export {
   moveAbeyFormActionsIntoTabShell,
   slotHostIntoAbeyFormTabPanel,
@@ -125,7 +153,10 @@ export {
   attachAsyncValidator,
 } from "./form/reactive-draft.js";
 
-export { wireNativeFormDraft, flushNativeDraftField } from "./form/wire-native-form-draft.js";
+export {
+  wireNativeFormDraft,
+  flushNativeDraftField,
+} from "./form/wire-native-form-draft.js";
 
 export type {
   Unsubscribe,
@@ -152,3 +183,8 @@ export {
   setGlobalRegistryPath,
   getGlobalRegistryPath,
 } from "./utils/global-registry.js";
+export { useChannel } from "./utils/use-channel.js";
+export type { TableChannel, FormChannel } from "./utils/use-channel.js";
+export { createRemoteSelectResolver, createReqId } from "./form/remote-select-resolver.js";
+export { wireCrudBridge } from "./utils/crud-bridge.js";
+
