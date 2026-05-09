@@ -1,4 +1,4 @@
-import { AbeyComponent, AbeyComponentElement } from "@abeyjs/view/dom/define-abey-component";
+import { AbeyComponent, AbeyComponentElement } from "@abeyjs/runtime";
 import template from "./abey-dialog.html?raw";
 import styles from "./abey-dialog.css?inline";
 

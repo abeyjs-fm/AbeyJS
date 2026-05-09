@@ -35,7 +35,7 @@
   },
   "dependencies": {
     "@abeyjs/core": "0.1.1",
-    "@abeyjs/runtime": "0.1.2",
+    "@abeyjs/runtime": "0.1.3",
     "ws": "^8.18.3"
   },
   "devDependencies": {

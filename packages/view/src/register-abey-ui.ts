@@ -8,7 +8,7 @@ import {
   ensureAbeyFormElementDefined,
   ensureAbeyTableElementDefined,
 } from "@abeyjs/uikit";
-import { AbeyProvideElement } from "./di/dom-di.js";
+import { AbeyProvideElement } from "@abeyjs/runtime";
 import { AbeyWidgetElement } from "./dom/abey-widget.js";
 
 /**

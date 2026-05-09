@@ -9,6 +9,7 @@
     "experimentalDecorators": true,
     "declaration": true,
     "declarationMap": true,
+    "sourceMap": true,
     "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {

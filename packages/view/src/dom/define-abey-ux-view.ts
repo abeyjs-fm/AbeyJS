@@ -1,5 +1,5 @@
 import { createTemplateView, type TemplateView } from "./template-view.js";
-import { mountModuleStyles, type ModuleStylesHandle } from "./mount-module-styles.js";
+import { mountModuleStyles, type ModuleStylesHandle } from "@abeyjs/runtime";
 
 export type AbeyUxViewMeta = {
   /** Raw HTML template (usually `import x from "./view.html?raw"`). */

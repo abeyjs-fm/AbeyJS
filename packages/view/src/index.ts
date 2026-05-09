@@ -65,7 +65,7 @@ export {
 } from "./bootstrap/omega-bootstrap.js";
 export { getBootstrapRuntime } from "./bootstrap/omega-runtime.js";
 export { inject, tryInject } from "./di/inject.js";
-export { injectFromDom, tryInjectFromDom, AbeyProvideElement, type DomDiToken, type DomDiFactory } from "./di/dom-di.js";
+export { injectFromDom, tryInjectFromDom, AbeyProvideElement, type DomDiToken, type DomDiFactory } from "@abeyjs/runtime";
 export {
   DOM_CHANNEL_TOKEN,
   DOM_CHANNEL_FACTORY,
@@ -78,14 +78,14 @@ export { mountListView } from "./dom/mount-list.js";
 export { mountListViewSync } from "./dom/mount-list-sync.js";
 export { mountBoundText } from "./dom/mount-text.js";
 export { bindActions, type ActionMap, type ActionHandler } from "./dom/bind-actions.js";
-export { bindAbeyTemplate, type BoundTemplate, type AbeyTemplateContext } from "./dom/bind-abey-template.js";
+export { bindAbeyTemplate, type BoundTemplate, type AbeyTemplateContext } from "@abeyjs/runtime";
 export { AbeyWidgetElement, type AbeyWidgetState } from "./dom/abey-widget.js";
 export {
   defineAbeyComponent,
   AbeyComponent,
   AbeyComponentElement,
   type AbeyComponentMeta,
-} from "./dom/define-abey-component.js";
+} from "@abeyjs/runtime";
 export { componentRoute, type ComponentRouteNav, type ComponentRouteSpec } from "./dom/component-route.js";
 export { getRole, tryGetRole } from "./dom/roles.js";
 export { mountSignalList, type MountedSignalList, type SignalListOptions } from "./dom/mount-signal-list.js";
@@ -104,7 +104,7 @@ export {
   type ReactiveInterpolationBindings,
 } from "./dom/mount-reactive-template.js";
 export { mountTracePanel, type TracePanelOptions } from "./dom/trace-panel.js";
-export { mountModuleStyles, type ModuleStylesHandle } from "./dom/mount-module-styles.js";
+export { mountModuleStyles, type ModuleStylesHandle } from "@abeyjs/runtime";
 export { defineAbeyUxView, type AbeyUxViewInitCtx, type AbeyUxViewMeta } from "./dom/define-abey-ux-view.js";
 export { withModuleStyles } from "./dom/with-module-styles.js";
 export {

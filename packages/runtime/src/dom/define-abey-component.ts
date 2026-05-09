@@ -3,7 +3,7 @@
  *
  * With **`stylesText`** (raw CSS, e.g. Vite `import css from "./x.css?inline"`), markup is mounted under **open Shadow DOM** so styles ship in the same JS chunk as the lazy route and stay scoped to the component.
  */
-import type { OmegaRuntime } from "@abeyjs/runtime";
+import type { OmegaRuntime } from "../runtime.js";
 import { mountModuleStyles, type ModuleStylesHandle } from "./mount-module-styles.js";
 import { bindAbeyTemplate, type BoundTemplate } from "./bind-abey-template.js";
 import { tryInjectFromDom } from "../di/dom-di.js";
@@ -407,4 +407,3 @@ export function AbeyComponent(meta: AbeyComponentMeta): ClassDecorator {
     defineAbeyComponent(meta, target as unknown as CustomElementConstructor);
   };
 }
-

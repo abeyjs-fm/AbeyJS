@@ -1,6 +1,6 @@
 import { tryInjectFromDom } from "../di/dom-di.js";
 import { intentOf } from "@abeyjs/core";
-import type { OmegaRuntime } from "@abeyjs/runtime";
+import type { OmegaRuntime } from "../runtime.js";
 
 export type AbeyTemplateContext = {
   runtime?: OmegaRuntime | null;
@@ -274,4 +274,3 @@ export function bindAbeyTemplate(root: Element, ctx: AbeyTemplateContext): Bound
     },
   };
 }
-

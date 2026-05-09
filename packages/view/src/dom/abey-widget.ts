@@ -1,7 +1,6 @@
 import { intentOf } from "@abeyjs/core";
 import type { OmegaRuntime } from "@abeyjs/runtime";
-import type { BoundTemplate } from "./bind-abey-template.js";
-import { bindAbeyTemplate } from "./bind-abey-template.js";
+import { bindAbeyTemplate, type BoundTemplate } from "@abeyjs/runtime";
 
 type WidgetBannerTone = "idle" | "ok" | "err";
 

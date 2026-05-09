@@ -1,4 +1,4 @@
-import { mountModuleStyles } from "./mount-module-styles.js";
+import { mountModuleStyles } from "@abeyjs/runtime";
 
 /**
  * Wraps a mount function with module-local styles lifecycle.
