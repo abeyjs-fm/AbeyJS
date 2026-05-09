@@ -22,7 +22,7 @@
     "build": "tsc -p tsconfig.json"
   },
   "dependencies": {
-    "@abeyjs/agents": "0.1.1",
+    "@abeyjs/agents": "0.1.2",
     "@abeyjs/core": "0.1.1",
     "@abeyjs/runtime": "0.1.2",
     "@abeyjs/state": "0.1.1",
