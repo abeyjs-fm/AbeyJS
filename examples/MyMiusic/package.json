@@ -16,7 +16,7 @@
     "gen:doc:demo": "node ../../scripts/document-from-json.cjs ./src/generate/docgen-demo.input.json --name docgen-demo --minimal --no-sample"
   },
   "dependencies": {
-    "@abeyjs/agents": "^0.1.1",
+    "@abeyjs/agents": "^0.1.2",
     "@abeyjs/core": "^0.1.1",
     "@abeyjs/flows": "^0.1.1",
     "@abeyjs/http": "^0.1.1",
@@ -28,7 +28,7 @@
     "zod": "^3.24.0"
   },
   "devDependencies": {
-    "@abeyjs/cli": "^0.1.9",
+    "@abeyjs/cli": "^0.1.10",
     "typescript": "^5.7.0",
     "vite": "^6.0.0"
   }

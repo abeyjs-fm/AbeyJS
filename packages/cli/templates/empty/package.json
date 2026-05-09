@@ -16,7 +16,7 @@
     "abeyjs:generate:views": "abeyjs generate views"
   },
   "dependencies": {
-    "@abeyjs/agents": "^0.1.1",
+    "@abeyjs/agents": "^0.1.2",
     "@abeyjs/core": "^0.1.1",
     "@abeyjs/http": "^0.1.1",
     "@abeyjs/inspector": "^0.1.2",
@@ -26,7 +26,7 @@
     "@abeyjs/flows": "^0.1.1"
   },
   "devDependencies": {
-    "@abeyjs/cli": "^0.1.9",
+    "@abeyjs/cli": "^0.1.10",
     "@abeyjs/compiler": "^0.1.2",
     "typescript": "^5.7.0",
     "vite": "^6.0.0"
