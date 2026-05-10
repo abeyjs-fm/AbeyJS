@@ -1,6 +1,6 @@
 {
   "name": "@abeyjs/view",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "license": "MIT",
   "publishConfig": {
     "access": "public"
@@ -73,7 +73,7 @@
     "@abeyjs/core": "0.1.1",
     "@abeyjs/runtime": "^0.1.4",
     "@abeyjs/state": "0.1.1",
-    "@abeyjs/uikit": "0.1.5",
+    "@abeyjs/uikit": "0.1.6",
     "@abeyjs/validation": "0.1.1",
     "typescript": "^5.7.0"
   }

@@ -19,8 +19,8 @@
     "@abeyjs/flows": "^0.1.1",
     "@abeyjs/http": "^0.1.1",
     "@abeyjs/runtime": "^0.1.4",
-    "@abeyjs/uikit": "^0.1.5",
-    "@abeyjs/view": "^0.1.7"
+    "@abeyjs/uikit": "^0.1.6",
+    "@abeyjs/view": "^0.1.8"
   },
   "devDependencies": {
     "@abeyjs/compiler": "^0.1.2",
