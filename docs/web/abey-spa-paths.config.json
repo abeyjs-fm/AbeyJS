@@ -9,15 +9,9 @@
     "Config: `abey-spa-paths.config.json` in this folder."
   ],
   "files": [
-    { "path": "src/routes.ts", "navChildrenVar": "navChildren" },
     {
-      "path": "src/omega-pkg-routes.ts",
-      "packageSlugs": {
-        "arrayName": "PKGS",
-        "slugField": "slug",
-        "pathPrefix": "/packages"
-      }
-    },
-    { "path": "src/utils-routes.ts", "pageRouteInlineNavChildren": true }
+      "path": "src/routes.generated.ts",
+      "pageRouteInlineNavChildren": true
+    }
   ]
 }

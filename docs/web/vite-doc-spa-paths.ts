@@ -6,7 +6,6 @@
  * Config: `abey-spa-paths.config.json` in this folder.
  */
 export const DOC_SPA_HTML_FALLBACK_PATHS = [
-  "/abey-table",
   "/guides",
   "/guides/abey-component",
   "/guides/abey-templates",
@@ -39,6 +38,7 @@ export const DOC_SPA_HTML_FALLBACK_PATHS = [
   "/packages/validation",
   "/packages/view",
   "/panel",
-  "/students",
   "/utils",
+  "/utils/abey-table",
+  "/utils/students",
 ] as const satisfies readonly string[];
