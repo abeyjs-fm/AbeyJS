@@ -14,7 +14,11 @@
 </thead>
 <tbody><tr>
 <td><code>path</code></td>
-<td>Route (<strong>no</strong> hashes). Use <strong><code>&quot;/&quot;</code></strong> for home. <strong><code>&quot;*&quot;</code></strong> = catch-all (usually last row → 404).</td>
+<td>Route (<strong>no</strong> hashes). Use <strong><code>&quot;/&quot;</code></strong> for home. Supports <strong>parameters</strong> (e.g., <strong><code>&quot;/users/:id&quot;</code></strong>). <strong><code>&quot;*&quot;</code></strong> = catch-all (usually last row → 404).</td>
+</tr>
+<tr>
+<td><code>order?</code></td>
+<td>Numeric value (default 1000). Lower numbers appear first in the sidebar menu. If tied, sorts alphabetically by <code>label</code>.</td>
 </tr>
 <tr>
 <td><code>label</code></td>
@@ -33,8 +37,8 @@
 <td>Sidebar tree/groups (<strong><code>&lt;details&gt;</code></strong> in admin). Leaves are paths but <strong>mountable implementations</strong> must be <strong>another row</strong> in the same array.</td>
 </tr>
 <tr>
-<td><code>mount(outlet)</code></td>
-<td>Imperative: replace outlet (<strong><code>HTMLElement</code></strong>) when route wins.<strong>May return <code>dispose</code></strong> (runs before next mount). Without dispose we still clean the outlet—avoid leaks if timers/subs heavy.</td>
+<td><code>mount(outlet, params)</code></td>
+<td>Imperative: replace outlet (<strong><code>HTMLElement</code></strong>) when route wins. <strong><code>params</code></strong> contains extracted URL values (e.g. <code>{ id: "123" }</code>). <strong>May return <code>dispose</code></strong> (runs before next mount). Without dispose we still clean the outlet—avoid leaks if timers/subs heavy.</td>
 </tr>
 <tr>
 <td><code>navIcon?</code> · <code>navIconFa?</code></td>
@@ -105,6 +109,11 @@ componentRoute(&quot;/sales/orders&quot;, { label: &quot;&quot;, title: &quot;Or
 componentRoute(&quot;/sales/clients&quot;, { label: &quot;&quot;, title: &quot;Clients&quot;, showInNav: false }, {
   selector: &quot;app-sales-clients&quot;,
   load: () =&gt; import(&quot;./views/sales/app.sales-clients.view.js&quot;),
+}),
+// Detail route: dynamic parameter and hidden from navigation
+componentRoute(&quot;/sales/clients/:id&quot;, { label: &quot;Detail&quot;, title: &quot;Client Detail&quot;, showInNav: false }, {
+  selector: &quot;app-client-detail&quot;,
+  load: () =&gt; import(&quot;./views/sales/app.client-detail.view.js&quot;),
 }),
 </code></pre>
 <p><code>/sales/orders</code> <strong>must</strong> exist as its own <strong><code>AppRoute</code></strong> row if users can type that URL—<strong>navChildren</strong> alone does not create mounts.<strong>The <code>/sales</code> group</strong> can be index page only or redirect—your call via <code>pageRoute</code> index or <code>fallbackPath</code>.</p>

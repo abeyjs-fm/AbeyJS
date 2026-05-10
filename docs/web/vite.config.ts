@@ -20,9 +20,9 @@ import {
 } from "@abeyjs/view/dev/vite-docs-static-site";
 import { createAbeyViteLogger } from "@abeyjs/view/dev/vite-logger";
 import { abeyViteMalformedUriGuard } from "@abeyjs/view/dev/vite-malformed-uri-guard";
+import { abeyViteRoutePlugin } from "@abeyjs/view/dev/abey-route-plugin";
 import { abeyVitePlugin } from "@abeyjs/compiler";
 import { DOC_SPA_HTML_FALLBACK_PATHS } from "./vite-doc-spa-paths.js";
-
 
 const configDir = path.dirname(fileURLToPath(import.meta.url));
 
@@ -42,17 +42,27 @@ export default defineConfig(({ mode }) => {
     base: abeyViteDeployBase(),
     publicDir: "public",
     clearScreen: false,
-    customLogger: createAbeyViteLogger(),
-    plugins: [abeyViteMalformedUriGuard({ locale: "es" }), abeyViteCanonicalSitePlugin({
-      getOrigin: origin,
-      jsonLd: {
-        siteName: "AbeyJs Documentation",
-        description: SITE_DESCRIPTION,
-        inLanguage: "en",
-      },
-    }), abeyVitePlugin(), abeyViteSpaHtmlFallbackDirs({
-      paths: DOC_SPA_HTML_FALLBACK_PATHS,
-    })],
+    customLogger: createAbeyViteLogger({ tag: "abeyJs" }),
+    plugins: [
+      abeyViteMalformedUriGuard({ locale: "es" }),
+      abeyViteCanonicalSitePlugin({
+        getOrigin: origin,
+        jsonLd: {
+          siteName: "AbeyJs Documentation",
+          description: SITE_DESCRIPTION,
+          inLanguage: "en",
+        },
+      }),
+      abeyViteRoutePlugin({
+        viewsDir: "src",
+        outputFile: "src/routes.generated.ts",
+        appTitle: "AbeyJs Docs",
+      }),
+      abeyVitePlugin(),
+      abeyViteSpaHtmlFallbackDirs({
+        paths: DOC_SPA_HTML_FALLBACK_PATHS,
+      }),
+    ],
     server: {
       port: 5190,
       proxy: {

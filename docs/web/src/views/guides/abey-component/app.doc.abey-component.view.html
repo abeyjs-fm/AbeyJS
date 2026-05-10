@@ -28,6 +28,8 @@ export class AppDashboard extends AbeyComponentElement {
   }
 }
 </code></pre>
+<h3>Accessing Route Parameters</h3>
+<p>When using dynamic routes (e.g. <code>route: &quot;users/:id&quot;</code>), the router automatically injects the parameters as **attributes** on the component instance. You can access them via <strong><code>this.getAttribute(&quot;id&quot;)</code></strong> inside <strong><code>connectedCallback</code></strong>.</p>
 <h3>Why <code>DOM_CHANNEL_*</code></h3>
 <p>Binder code consults <strong><code>DOM_CHANNEL_TOKEN</code></strong> to publish intents without importing global <strong><code>OmegaRuntime</code></strong>. Omit provider ⇒ advanced bindings fail. <strong>Admin</strong> templates include default—keep until you inject <strong><code>runtime.channel</code></strong> via custom factory.</p>
 <hr>
@@ -61,11 +63,11 @@ export class AppDashboard extends AbeyComponentElement {
 <p>Knowing the logs helps—you can grep the codebase for <strong><code>stylesHrefs</code></strong> + <strong><code>inline</code></strong> immediately.</p>
 <h4>Terminal (CLI templates ship <strong><code>abeyViteMalformedUriGuard</code></strong>)</h4>
 <p>Repeated one-line warns (same URL may be suppressed for ~12s):</p>
-<pre><code>[abey/vite] Malformed request URL — answered 400 (no Internal Server Error).
+<pre><code>[abeyJs] Malformed request URL — answered 400 (no Internal Server Error).
   /.abey-artist %20%7B %20 ...
   (Repeats throttled … per distinct URL)
 </code></pre>
-<p>(or the Spanish‑locale variant: <strong><code>[abey/vite] URL mal formada — respondiendo 400</code></strong>)</p>
+<p>(or the Spanish‑locale variant: <strong><code>[abeyJs] URL mal formada — respondiendo 400</code></strong>)</p>
 <p>This is <strong>not random noise</strong>: the path snippet often <strong>starts like a CSS class</strong> (<code>.something</code>) and <strong><code>%7B</code></strong> is <strong><code>{</code></strong>—decoded bits look like stylesheet content.</p>
 <p>If you <strong>removed</strong> the guard plugin, Vite spills a long stack repeatedly:</p>
 <pre><code>Malformed URI sequence in request URL
@@ -102,7 +104,7 @@ export class AppDashboard extends AbeyComponentElement {
 <td><strong><code>?inline</code></strong> → campo <strong><code>stylesText</code></strong>; <strong><code>?url</code></strong> / URL real → <strong><code>stylesHrefs</code></strong>.</td>
 </tr>
 <tr>
-<td><strong><code>[abey/vite] URL mal formada</code></strong> y un path tipo <strong><code>.algo %7B …</code></strong></td>
+<td><strong><code>[abeyJs] URL mal formada</code></strong> y un path tipo <strong><code>.algo %7B …</code></strong></td>
 <td>Mismo problema: contenido CSS en <strong><code>href</code></strong> de un <strong><code>&lt;link&gt;</code></strong>.</td>
 <td>Igual que arriba: no mezcles <strong><code>stylesHrefs</code></strong> con texto de <strong><code>?inline</code></strong>.</td>
 </tr>

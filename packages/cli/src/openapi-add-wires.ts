@@ -116,59 +116,50 @@ export function getOpenApi(): AppWithOpenApi {
   const crud = `// ${MARK}
 import { intentOf } from "@abeyjs/core";
 import { mountOpenApiCrudView } from "@abeyjs/openapi";
+import { DOM_CHANNEL_FACTORY, DOM_CHANNEL_TOKEN, AbeyComponent, AbeyComponentElement } from "@abeyjs/view";
 import { getOpenApi } from "../../omegaSetup.js";
 
-export function mountCrudOpenApiView(outlet: HTMLElement): (() => void) | void {
-  const b = getOpenApi();
-  const m = mountOpenApiCrudView({
-    root: outlet,
-    discovered: b.discovered,
-    agent: b.agent,
-    runtime: b.runtime,
-    listIntent: b.listIntent,
-    createIntent: b.createIntent,
-    updateIntent: b.updateIntent,
-    deleteIntent: b.deleteIntent,
-    showToolbar: true,
-    showTrace: true,
-    showFlowMessage: true,
-  });
-  void b.runtime.dispatch(intentOf(b.listIntent, undefined), { source: "crud-api" });
-  return m.dispose;
+@AbeyComponent({
+  selector: "app-crud-api",
+  route: "/crud-api",
+  label: "CRUD (API)",
+  navIconFa: "fa-solid fa-bolt",
+  providers: [{ token: DOM_CHANNEL_TOKEN, useFactory: DOM_CHANNEL_FACTORY }],
+} as any)
+export class AppCrudApiElement extends AbeyComponentElement {
+  #disposed = false;
+  #cleanup: (() => void) | undefined;
+
+  connectedCallback(): void {
+    const b = getOpenApi();
+    const mounted = mountOpenApiCrudView({
+      root: this,
+      discovered: b.discovered,
+      agent: b.agent,
+      runtime: b.runtime,
+      listIntent: b.listIntent,
+      createIntent: b.createIntent,
+      updateIntent: b.updateIntent,
+      deleteIntent: b.deleteIntent,
+      showToolbar: true,
+      showTrace: true,
+      showFlowMessage: true,
+    });
+    this.#cleanup = mounted.dispose;
+    void b.runtime.dispatch(intentOf(b.listIntent, undefined), { source: "crud-api" });
+    super.connectedCallback();
+  }
+
+  disconnectedCallback(): void {
+    this.#disposed = true;
+    this.#cleanup?.();
+    super.disconnectedCallback();
+  }
 }
 `;
   await writeFile(join(root, "src", "views", "crud-api", "crud-api.ts"), crud, "utf-8");
 
-  const routesPath = join(root, "src", "routes.ts");
-  const routes = await readFile(routesPath, "utf-8");
-  if (!routes.includes("crud-api") && !routes.includes("mountCrudOpenApiView")) {
-    const needle = `    pageRoute(
-      "*",`;
-    if (routes.includes(needle)) {
-      const block = `    {
-      path: "/crud-api",
-      label: "CRUD (API)",
-      title: "CRUD (OpenAPI)",
-      navIconFa: "fa-solid fa-bolt",
-      mount: lazyViewMount(
-        () => import("./views/crud-api/crud-api.js"),
-        "mountCrudOpenApiView",
-      ),
-    },
-    {
-      path: "/api-crud",
-      label: "",
-      title: "CRUD (OpenAPI)",
-      showInNav: false,
-      mount: lazyViewMount(
-        () => import("./views/crud-api/crud-api.js"),
-        "mountCrudOpenApiView",
-      ),
-    },
-`;
-      await writeFile(routesPath, routes.replace(needle, block + needle), "utf-8");
-    }
-  }
+  // Manual route patching is disabled. Auto-routing handles discovery via @AbeyComponent.
 
   const mainPath = join(root, "src", "main.ts");
   const main = await readFile(mainPath, "utf-8").catch(() => "");

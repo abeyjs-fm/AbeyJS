@@ -82,7 +82,7 @@ export function createPageViewElement(spec: PageViewSpec): HTMLElement {
 /**
  * Outlet **mount** thunk: clears host and appends **`createPageViewElement(spec)`**.
  */
-export function buildPageView(spec: PageViewSpec): (outlet: HTMLElement) => void {
+export function buildPageView(spec: PageViewSpec): (outlet: HTMLElement, params: Record<string, string>) => void {
   return (outlet) => {
     outlet.textContent = "";
     outlet.appendChild(createPageViewElement(spec));

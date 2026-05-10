@@ -5,6 +5,10 @@ import viewStyles from "./app.doc.abey-templates.view.css?inline";
 
 @AbeyComponent({
   selector: "app-doc-abey-templates",
+  route: "abey-templates",
+  parent: "/guides",
+  label: "Abey Templates",
+  navIconFa: "fa-solid fa-file-code",
   template,
   stylesText: [docMarkdownBase, viewStyles],
   providers: [{ token: DOM_CHANNEL_TOKEN, useFactory: DOM_CHANNEL_FACTORY }],

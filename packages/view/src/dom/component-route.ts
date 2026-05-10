@@ -34,8 +34,8 @@ export function componentRoute(path: string, nav: ComponentRouteNav, spec: Compo
   return {
     ...nav,
     path,
-    mount: (outlet) => {
-      const attrs = spec.attrs ?? {};
+    mount: (outlet, params) => {
+      const attrs = { ...(spec.attrs ?? {}), ...(params ?? {}) };
 
       if (!spec.load) {
         const el = document.createElement(selector);

@@ -6,8 +6,8 @@
  * - `ui/` — `app.<kebab>.view.ts` / `.view.html` / `.view.css` (misma convención que **views/home** en la plantilla admin: OM + **`stylesText`** + **`?inline`**).
  * - `model/`, `data/` — empty placeholders for DTOs and repositories.
  *
- * When `src/omegaSetup.ts` and `src/routes.ts` exist, best-effort patches add the installer import/call
- * and a `componentRoute` entry before the 404 handler. **`showInNav`** is chosen interactively (TTY) or via **`--show-nav` / `--no-show-nav`**.
+ * When `src/omegaSetup.ts` exists, best-effort patches add the installer import/call.
+ * Routes are handled automatically via @AbeyComponent metadata and the auto-route generator.
  */
 
 import { access, mkdir, readFile, writeFile } from "node:fs/promises";
@@ -348,18 +348,22 @@ function uiCss(kebab: string): string {
 `;
 }
 
-function uiTs(pascal: string, kebab: string, importSemanticsRelative: string): string {
+function uiTs(pascal: string, kebab: string, importSemanticsRelative: string, showInNav: boolean): string {
   const selector = `app-${kebab}`;
   const viewBase = `app.${kebab}.view`;
   const sliceCss = "sliceCss";
   return `import { intentOf } from "@abeyjs/core";
 import { DOM_CHANNEL_FACTORY, DOM_CHANNEL_TOKEN, AbeyComponent, AbeyComponentElement } from "@abeyjs/view";
-import { template } from "./${viewBase}.html";
+import template from "./${viewBase}.html?raw";
 import ${sliceCss} from "./${viewBase}.css?inline";
 import { ${pascal}Ecosystem } from "${importSemanticsRelative}";
 
 @AbeyComponent({
   selector: "${selector}",
+  route: "/${kebab}",
+  label: "${pascal}",
+  navIconFa: "fa-solid fa-cube",
+  showInNav: ${showInNav},
   template,
   stylesText: [${sliceCss}],
   providers: [{ token: DOM_CHANNEL_TOKEN, useFactory: DOM_CHANNEL_FACTORY }],
@@ -479,11 +483,11 @@ export async function runGenerateEcosystem(opts: GenerateEcosystemOptions): Prom
   await writeFile(join(omegaDir, `flow.ts`), flowTs(pascal), "utf-8");
   await writeFile(join(omegaDir, `register.ts`), registerTs(pascal, kebab), "utf-8");
 
+  const showInNav = opts.showInNav ?? true;
+
   await writeFile(join(uiDir, `app.${kebab}.view.html`), uiHtml(pascal, kebab), "utf-8");
   await writeFile(join(uiDir, `app.${kebab}.view.css`), uiCss(kebab), "utf-8");
-  await writeFile(join(uiDir, `app.${kebab}.view.ts`), uiTs(pascal, kebab, semanticsImport), "utf-8");
-
-  const showInNav = opts.showInNav ?? true;
+  await writeFile(join(uiDir, `app.${kebab}.view.ts`), uiTs(pascal, kebab, semanticsImport, showInNav), "utf-8");
 
   const result: GenerateEcosystemResult = {
     pascal,
@@ -499,33 +503,24 @@ export async function runGenerateEcosystem(opts: GenerateEcosystemOptions): Prom
 }
 
 /**
- * No-op unless both omega setup and routing files resolve. Tries `src/omegaSetup.ts` + `src/routes.ts`, then
- * `omegaSetup.ts` + `routes.ts` at the project root.
+ * No-op unless omega setup exists. Tries `src/omegaSetup.ts`, then
+ * `omegaSetup.ts` at the project root.
  */
 async function tryWireProjectFiles(projectRoot: string, result: GenerateEcosystemResult): Promise<void> {
-  // Supports two layouts:
-  // - target = app root → `src/omegaSetup.ts` + `src/routes.ts`
-  // - target = `src/`   → `omegaSetup.ts` + `routes.ts`
   const omegaSetupCandidates = [join(projectRoot, "src", "omegaSetup.ts"), join(projectRoot, "omegaSetup.ts")];
-  const routesCandidates = [join(projectRoot, "src", "routes.ts"), join(projectRoot, "routes.ts")];
 
   const omegaSetupPath = (await pathExists(omegaSetupCandidates[0]!))
     ? omegaSetupCandidates[0]!
     : (await pathExists(omegaSetupCandidates[1]!))
       ? omegaSetupCandidates[1]!
       : null;
-  const routesPath = (await pathExists(routesCandidates[0]!))
-    ? routesCandidates[0]!
-    : (await pathExists(routesCandidates[1]!))
-      ? routesCandidates[1]!
-      : null;
 
-  if (!omegaSetupPath || !routesPath) {
+  if (!omegaSetupPath) {
     return;
   }
 
   await wireOmegaSetup(omegaSetupPath, result);
-  await wireRoutes(routesPath, result);
+  // wireRoutes is no longer needed with auto-routing
 }
 
 /**
@@ -547,26 +542,33 @@ async function wireOmegaSetup(omegaSetupPath: string, result: GenerateEcosystemR
   // 1) Import: insert after last import line.
   let out = before;
   if (!out.includes(importLine)) {
-    const m = out.match(/^(import .*;\r?\n)+/m);
-    if (m && m.index === 0) {
-      out = out.slice(0, m[0].length) + importLine + "\n" + out.slice(m[0].length);
+    const lines = out.split("\n");
+    let lastImportIdx = -1;
+    for (let i = 0; i < lines.length; i++) {
+      if (lines[i]!.trim().startsWith("import ")) {
+        lastImportIdx = i;
+      }
+    }
+    if (lastImportIdx >= 0) {
+      lines.splice(lastImportIdx + 1, 0, importLine);
+      out = lines.join("\n");
     } else {
       out = importLine + "\n" + out;
     }
   }
 
-  // 2) Call: insert after `runtime.registerModule(registerCommon);` when present (DI must be ready),
-  // otherwise after `const runtime = createOmegaRuntime();`.
-  const registerCommonRe = /runtime\.registerModule\(\s*registerCommon\s*\)\s*;\r?\n/;
-  if (registerCommonRe.test(out)) {
-    out = out.replace(registerCommonRe, (s) => s + "  " + callLine + "\n");
+  // 2) Call: insert after `const runtime = createOmegaRuntime();`.
+  const runtimeLineRe = /(const\s+runtime\s*=\s*createOmegaRuntime\(\)\s*;?\r?\n?)/i;
+  if (runtimeLineRe.test(out)) {
+    out = out.replace(runtimeLineRe, (s) => s + "  " + callLine + "\n");
   } else {
-    const runtimeLineRe = /const\s+runtime\s*=\s*createOmegaRuntime\(\)\s*;\r?\n/;
-    if (runtimeLineRe.test(out)) {
-      out = out.replace(runtimeLineRe, (s) => s + "  " + callLine + "\n");
+    // fallback: find any registerModule call
+    const registerModuleRe = /(runtime\.registerModule\(.*\)\s*;?\r?\n?)/i;
+    if (registerModuleRe.test(out)) {
+      out = out.replace(registerModuleRe, (s) => s + "  " + callLine + "\n");
     } else {
       // fallback: insert before return
-      out = out.replace(/return\s+\{\s*runtime\s*\}\s*;\r?\n/, (s) => "  " + callLine + "\n" + s);
+      out = out.replace(/(return\s+\{\s*runtime\s*\}\s*;?)/, (s) => "  " + callLine + "\n  " + s);
     }
   }
 
@@ -579,65 +581,6 @@ async function wireOmegaSetup(omegaSetupPath: string, result: GenerateEcosystemR
  * Adds `componentRoute('/<kebab>', …, { selector: 'app-<kebab>', load: () => import('…/ui/app.<kebab>.view.js') })` before the
  * first `pageRoute(` (404 catch-all). Ensures `componentRoute` is imported from `@abeyjs/view`. Skips if `/kebab` already exists.
  */
-async function wireRoutes(routesPath: string, result: GenerateEcosystemResult): Promise<void> {
-  const before = await readFile(routesPath, "utf-8");
-  const uiTsPath = join(result.featureAbs, "ui", `app.${result.kebab}.view.ts`);
-  const importMount = tsImportPath(routesPath, uiTsPath);
-  const selector = `app-${result.kebab}`;
-  const navInner = result.showInNav
-    ? `label: "${result.pascal}", title: "${result.pascal}", navIconFa: "fa-solid fa-cube"`
-    : `label: "${result.pascal}", title: "${result.pascal}", showInNav: false, navIconFa: "fa-solid fa-cube"`;
-  const routeSnippet =
-    `    componentRoute(\n` +
-    `      "/${result.kebab}",\n` +
-    `      { ${navInner} },\n` +
-    `      { selector: "${selector}", load: () => import("${importMount}") },\n` +
-    `    ),\n`;
-
-  if (before.includes(`path: "/${result.kebab}"`)) {
-    return;
-  }
-
-  let out = before;
-  // Ensure componentRoute import exists.
-  if (!out.includes("componentRoute")) {
-    const merged = out.replace(
-      /import\s+\{\s*pageRoute\s*\}\s+from\s+"@abeyjs\/view";\r?\n/,
-      `import { componentRoute, pageRoute } from "@abeyjs/view";\n`,
-    );
-    if (merged !== out) {
-      out = merged;
-    } else {
-      out = `import { componentRoute } from "@abeyjs/view";\n` + out;
-    }
-  }
-  if (out.includes("componentRoute") && !/^import\s+\{\s*[^}]*componentRoute/m.test(out)) {
-    const merged = out.replace(
-      /import\s+\{\s*pageRoute\s*\}\s+from\s+"@abeyjs\/view";\r?\n/,
-      `import { componentRoute, pageRoute } from "@abeyjs/view";\n`,
-    );
-    if (merged !== out) {
-      out = merged;
-    } else {
-      out = `import { componentRoute } from "@abeyjs/view";\n` + out;
-    }
-  }
-
-  // Insert before the 404 pageRoute("*", ...).
-  const ix = out.indexOf("pageRoute(");
-  if (ix >= 0) {
-    out = out.slice(0, ix) + routeSnippet + out.slice(ix);
-  } else {
-    // fallback: append near end of routes array (best-effort)
-    out = out.replace(/\]\s*;\r?\n\}\r?\n?$/, (m) => routeSnippet + m);
-  }
-
-  if (out !== before) {
-    // Keep formatting: ensure 2-space indentation before `pageRoute(...)`.
-    out = out.replace(/\npageRoute\(/g, "\n    pageRoute(");
-    await writeFile(routesPath, out, "utf-8");
-  }
-}
 
 /** Relative ESM specifier from one `.ts` file to another (`../../foo/bar.js`). */
 function tsImportPath(fromFile: string, toFile: string): string {
@@ -659,7 +602,7 @@ export function buildEcosystemWireInstructions(_projectRoot: string, result: Gen
     "",
     "Manual wiring checklist (if not auto-patched):",
     `  - omega/register.ts exports ${result.installFn} → import + call inside createOmega()/omegaSetup.`,
-    `  - routes.ts: add componentRoute for /${result.kebab} → lazy-load ui/app.${result.kebab}.view.ts (showInNav: ${result.showInNav}).`,
+    `  - Routing: Automatically discovered via @AbeyComponent in ui/app.${result.kebab}.view.ts.`,
     "",
     `Generated tree: ${result.featureAbs}`,
   ];

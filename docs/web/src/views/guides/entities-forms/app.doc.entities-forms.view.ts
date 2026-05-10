@@ -5,6 +5,10 @@ import viewStyles from "./app.doc.entities-forms.view.css?inline";
 
 @AbeyComponent({
   selector: "app-doc-entities-forms",
+  route: "entities-forms",
+  parent: "/guides",
+  label: "Entities Forms",
+  navIconFa: "fa-solid fa-rectangle-list",
   template,
   stylesText: [docMarkdownBase, viewStyles],
   providers: [{ token: DOM_CHANNEL_TOKEN, useFactory: DOM_CHANNEL_FACTORY }],

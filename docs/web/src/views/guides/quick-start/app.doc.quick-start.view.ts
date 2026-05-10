@@ -5,6 +5,11 @@ import viewStyles from "./app.doc.quick-start.view.css?inline";
 
 @AbeyComponent({
   selector: "app-doc-quick-start",
+  route: "quick-start",
+  parent: "/guides",
+  order: 2,
+  label: "Quick start",
+  navIconFa: "fa-solid fa-rocket",
   template,
   stylesText: [docMarkdownBase, viewStyles],
   providers: [{ token: DOM_CHANNEL_TOKEN, useFactory: DOM_CHANNEL_FACTORY }],

@@ -5,6 +5,10 @@ import viewStyles from "./app.doc.bootstrap-shell.view.css?inline";
 
 @AbeyComponent({
   selector: "app-doc-bootstrap-shell",
+  route: "bootstrap-shell",
+  parent: "/guides",
+  label: "Bootstrap Shell",
+  navIconFa: "fa-solid fa-window-maximize",
   template,
   stylesText: [docMarkdownBase, viewStyles],
   providers: [{ token: DOM_CHANNEL_TOKEN, useFactory: DOM_CHANNEL_FACTORY }],

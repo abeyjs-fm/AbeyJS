@@ -5,6 +5,11 @@ import viewStyles from "./app.doc.intro.view.css?inline";
 
 @AbeyComponent({
   selector: "app-doc-intro",
+  route: "intro",
+  parent: "/guides",
+  order: 1,
+  label: "Introduction",
+  navIconFa: "fa-solid fa-flag",
   template,
   stylesText: [docMarkdownBase, viewStyles],
   providers: [{ token: DOM_CHANNEL_TOKEN, useFactory: DOM_CHANNEL_FACTORY }],

@@ -1,6 +1,6 @@
 import type { AppRoute, AppRouteNavChild } from "@abeyjs/view";
 import { normalizePathname } from "@abeyjs/view";
-import { getRoutes } from "./routes.js";
+import { getRoutes } from "./routes.generated.js";
 
 export type DocSearchItem = {
   href: string;
@@ -33,7 +33,9 @@ function walkNavChildren(
 /**
  * Flat list of navigable entries (shell routes + nav labels).
  */
-export function buildDocSearchIndex(routes: readonly AppRoute[]): DocSearchItem[] {
+export function buildDocSearchIndex(
+  routes: readonly AppRoute[],
+): DocSearchItem[] {
   const navHints = new Map<string, string>();
   for (const r of routes) {
     walkNavChildren(r.navChildren, navHints);
@@ -49,7 +51,9 @@ export function buildDocSearchIndex(routes: readonly AppRoute[]): DocSearchItem[
     const hintRaw = navHints.get(href);
     const hint = hintRaw && hintRaw !== t ? hintRaw : undefined;
 
-    const next: DocSearchItem = hint ? { href, title: t, hint } : { href, title: t };
+    const next: DocSearchItem = hint
+      ? { href, title: t, hint }
+      : { href, title: t };
 
     const prev = byHref.get(href);
     if (!prev || next.title.length > prev.title.length) {
@@ -57,7 +61,9 @@ export function buildDocSearchIndex(routes: readonly AppRoute[]): DocSearchItem[
     }
   }
 
-  return Array.from(byHref.values()).sort((a, b) => a.href.localeCompare(b.href));
+  return Array.from(byHref.values()).sort((a, b) =>
+    a.href.localeCompare(b.href),
+  );
 }
 
 let cachedCatalog: DocSearchItem[] | null = null;
@@ -69,17 +75,26 @@ export function getDocSearchCatalog(): DocSearchItem[] {
 }
 
 function fold(s: string): string {
-  return s.normalize("NFKD").replace(/\p{Diacritic}/gu, "").toLowerCase();
+  return s
+    .normalize("NFKD")
+    .replace(/\p{Diacritic}/gu, "")
+    .toLowerCase();
 }
 
 /** Simple matching on title + path + hint; returns the top `limit` entries. */
-export function searchDocItems(items: readonly DocSearchItem[], queryRaw: string, limit = 8): DocSearchItem[] {
+export function searchDocItems(
+  items: readonly DocSearchItem[],
+  queryRaw: string,
+  limit = 8,
+): DocSearchItem[] {
   const q = fold(queryRaw.trim());
   if (q.length < 1) return [];
 
   const terms = [...new Set(q.split(/\s+/).filter(Boolean))];
   const scored = items.map((it) => {
-    const hay = fold(`${it.title} ${it.hint ?? ""} ${it.href.replace(/-/g, " ")}`);
+    const hay = fold(
+      `${it.title} ${it.hint ?? ""} ${it.href.replace(/-/g, " ")}`,
+    );
     let score = 0;
     for (const t of terms) {
       if (!t) continue;
@@ -94,7 +109,9 @@ export function searchDocItems(items: readonly DocSearchItem[], queryRaw: string
 
   return scored
     .filter((x) => x.score >= 0)
-    .sort((a, b) => b.score - a.score || a.item.title.localeCompare(b.item.title))
+    .sort(
+      (a, b) => b.score - a.score || a.item.title.localeCompare(b.item.title),
+    )
     .slice(0, limit)
     .map((x) => x.item);
 }

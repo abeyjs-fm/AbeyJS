@@ -65,6 +65,10 @@ function clearedValues(): Record<string, unknown> {
 
 @AbeyComponent({
   selector: "app-students",
+  route: "students",
+  parent: "/utils",
+  label: "Students",
+  navIconFa: "fa-solid fa-graduation-cap",
   template,
   stylesText: [StudentsCssUrl, abeyTableKitCss, omegaThemeCss, omegaFormCss],
   providers: [{ token: DOM_CHANNEL_TOKEN, useFactory: DOM_CHANNEL_FACTORY }],

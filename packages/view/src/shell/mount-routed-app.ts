@@ -1442,8 +1442,11 @@ export function mountRoutedApp(
       outletScrollInstantTop();
       scrollWindowAndDocumentInstantTop();
 
-      const r = matchAppRoute(p, config.routes);
-      config.onRouteChange?.(p, r);
+      const match = matchAppRoute(p, config.routes);
+      const r = match?.route;
+      const params = match?.params ?? {};
+      
+      config.onRouteChange?.(p, r ?? null);
       if (r) {
         if (config.appDocumentTitle) {
           document.title = r.title ? `${r.title} · ${config.appDocumentTitle}` : config.appDocumentTitle;
@@ -1462,7 +1465,7 @@ export function mountRoutedApp(
         }
       }
       if (r) {
-        routeCleanup = r.mount(shell.outlet) as void | (() => void);
+        routeCleanup = r.mount(shell.outlet, params) as void | (() => void);
       }
 
       if (mySeq !== navSeq) {

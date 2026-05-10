@@ -32,7 +32,10 @@ type LoginViewSpec = {
 
 export type ScaffoldMode = "minimal" | "full";
 
-async function writeIfMissing(filePath: string, contents: string): Promise<void> {
+async function writeIfMissing(
+  filePath: string,
+  contents: string,
+): Promise<void> {
   const existing = await readFile(filePath, "utf-8").catch(() => "");
   if (existing.trim() !== "") {
     return;
@@ -40,10 +43,17 @@ async function writeIfMissing(filePath: string, contents: string): Promise<void>
   await writeFile(filePath, contents, "utf-8");
 }
 
-async function ensureAppScaffold(targetDir: string, scaffold: ScaffoldMode): Promise<void> {
+async function ensureAppScaffold(
+  targetDir: string,
+  scaffold: ScaffoldMode,
+): Promise<void> {
   const root = resolve(targetDir);
   if (scaffold === "minimal") {
-    const dirs = [join(root, "src", "flows"), join(root, "src", "services"), join(root, "src", "views")];
+    const dirs = [
+      join(root, "src", "flows"),
+      join(root, "src", "services"),
+      join(root, "src", "views"),
+    ];
     for (const d of dirs) {
       await mkdir(d, { recursive: true });
     }
@@ -73,16 +83,22 @@ export function buildBooksUploadFormData(file: File): FormData {
 `,
     );
 
-    await writeIfMissing(join(root, "src", "services", "session.ts"), buildSessionTs());
-    await writeIfMissing(join(root, "src", "services", "http.ts"), buildServicesHttpTs(null));
+    await writeIfMissing(
+      join(root, "src", "services", "session.ts"),
+      buildSessionTs(),
+    );
+    await writeIfMissing(
+      join(root, "src", "services", "http.ts"),
+      buildServicesHttpTs(null),
+    );
 
     await writeIfMissing(
       join(root, "src", "flows", "README.txt"),
       [
         "AbeyJs — `flows/` folder (intents + channel events)",
         "",
-        "- Each intent is an action: `runtime.onIntent(\"Book/Import\", ...)` and the UI fires via `runtime.dispatch(intentOf(...))`.",
-        "- Chain steps: `runtime.channel.publish(\"Book/ExcelReady\", payload)` plus `runtime.channel.on(...)` to react and queue the next intent.",
+        '- Each intent is an action: `runtime.onIntent("Book/Import", ...)` and the UI fires via `runtime.dispatch(intentOf(...))`.',
+        '- Chain steps: `runtime.channel.publish("Book/ExcelReady", payload)` plus `runtime.channel.on(...)` to react and queue the next intent.',
         "- Pure helpers (file validation, math, etc.) live here or in small modules imported by flows.",
         "- HTTP: `src/services/http.ts` (`createAppHttp`, `postJson`, `postFormData`). Primary wiring stays in `src/omegaSetup.ts`.",
         "",
@@ -111,11 +127,23 @@ export function buildBooksUploadFormData(file: File): FormData {
     await mkdir(d, { recursive: true });
   }
 
-  await writeIfMissing(join(root, "src", "domain", "resources", "index.ts"), `export {};\n`);
-  await writeIfMissing(join(root, "src", "application", "use-cases", "index.ts"), `export {};\n`);
+  await writeIfMissing(
+    join(root, "src", "domain", "resources", "index.ts"),
+    `export {};\n`,
+  );
+  await writeIfMissing(
+    join(root, "src", "application", "use-cases", "index.ts"),
+    `export {};\n`,
+  );
 
-  await writeIfMissing(join(root, "src", "services", "session.ts"), buildSessionTs());
-  await writeIfMissing(join(root, "src", "services", "http.ts"), buildServicesHttpTs(null));
+  await writeIfMissing(
+    join(root, "src", "services", "session.ts"),
+    buildSessionTs(),
+  );
+  await writeIfMissing(
+    join(root, "src", "services", "http.ts"),
+    buildServicesHttpTs(null),
+  );
 
   await writeIfMissing(
     join(root, "src", "flows", "math.ts"),
@@ -159,7 +187,10 @@ export function createApiClient(runtime: OmegaRuntime, options?: { source?: stri
 `,
   );
 
-  await writeIfMissing(join(root, "src", "infra", "api", "operations.ts"), `export {};\n`);
+  await writeIfMissing(
+    join(root, "src", "infra", "api", "operations.ts"),
+    `export {};\n`,
+  );
   await writeIfMissing(
     join(root, "src", "infra", "api", "index.ts"),
     `export * from "./client.js";
@@ -167,9 +198,15 @@ export * from "./operations.js";
 `,
   );
 
-  await writeIfMissing(join(root, "src", "infra", "generated", "openapi", "index.ts"), `export {};\n`);
+  await writeIfMissing(
+    join(root, "src", "infra", "generated", "openapi", "index.ts"),
+    `export {};\n`,
+  );
 
-  await writeIfMissing(join(root, "src", "api", "index.ts"), `export * from "../infra/api/index.js";\n`);
+  await writeIfMissing(
+    join(root, "src", "api", "index.ts"),
+    `export * from "../infra/api/index.js";\n`,
+  );
 
   await writeIfMissing(
     join(root, "src", "app", "routes.ts"),
@@ -206,7 +243,10 @@ export function getRoutes(): AppRoute[] {
   );
 }
 
-function buildGeneratedApiCatalogTs(contract: ConnectContract, opts: { omegaCrudImport: string }): string {
+function buildGeneratedApiCatalogTs(
+  contract: ConnectContract,
+  opts: { omegaCrudImport: string },
+): string {
   const opLines: string[] = [];
   for (const e of contract.entities) {
     const endpoints = e.endpoints ?? {};
@@ -227,13 +267,19 @@ function buildGeneratedApiCatalogTs(contract: ConnectContract, opts: { omegaCrud
         continue;
       }
       const key = `${e.name}_${k}`.replace(/[^a-zA-Z0-9_]/g, "_");
-      const responseKind = /template|download|file|excel|pdf|octet|blob/i.test(path) ? "blob" : "json";
+      const responseKind = /template|download|file|excel|pdf|octet|blob/i.test(
+        path,
+      )
+        ? "blob"
+        : "json";
       opLines.push(
         `  ${JSON.stringify(key)}: { key: ${JSON.stringify(key)}, method: ${JSON.stringify(method)}, path: ${JSON.stringify(path)}, responseKind: ${JSON.stringify(responseKind)} },`,
       );
     }
   }
-  const ops = opLines.length ? opLines.join("\n") : "  // (no operations detected)\n";
+  const ops = opLines.length
+    ? opLines.join("\n")
+    : "  // (no operations detected)\n";
   return `// AUTO-GENERATED by \`abeyjs generate views\`
 import type { OmegaRuntime } from "@abeyjs/core";
 import { createAppHttp } from ${JSON.stringify(opts.omegaCrudImport)};
@@ -334,14 +380,19 @@ export function api(runtime: OmegaRuntime) {
 `;
 }
 
-function buildResourceFileTs(entity: EntityContract, entityCfg: EntityUiConfig): string {
+function buildResourceFileTs(
+  entity: EntityContract,
+  entityCfg: EntityUiConfig,
+): string {
   const fieldsCfg = entityCfg.fields ?? {};
   const names = Object.keys(entity.model);
   const lines: string[] = [];
   for (const name of names) {
     const meta = entity.model[name]!;
     const cfg = fieldsCfg[name];
-    const widget = sanitizeWidget(cfg?.widget) ?? toFieldKind(name, cfg?.dataType ?? meta.type, cfg?.widget, meta.format);
+    const widget =
+      sanitizeWidget(cfg?.widget) ??
+      toFieldKind(name, cfg?.dataType ?? meta.type, cfg?.widget, meta.format);
     const options =
       cfg?.widget === "select" && cfg.options
         ? `, options: { endpoint: ${JSON.stringify(cfg.options.endpoint)}, valueField: ${JSON.stringify(cfg.options.valueField)}, labelField: ${JSON.stringify(cfg.options.labelField)} }`
@@ -370,12 +421,16 @@ function kebab(s: string): string {
 
 function routeForEntity(entity: EntityContract, yamlRoute?: string): string {
   if (yamlRoute && yamlRoute.trim() !== "") {
-    return yamlRoute.trim().startsWith("/") ? yamlRoute.trim() : `/${yamlRoute.trim()}`;
+    return yamlRoute.trim().startsWith("/")
+      ? yamlRoute.trim()
+      : `/${yamlRoute.trim()}`;
   }
   return `/crud/${kebab(entity.name)}`;
 }
 
-function sanitizeWidget(widget: FieldUiConfig["widget"]): "text" | "number" | "email" | "date" | "select" | "readonly" {
+function sanitizeWidget(
+  widget: FieldUiConfig["widget"],
+): "text" | "number" | "email" | "date" | "select" | "readonly" {
   if (widget === "number") {
     return "number";
   }
@@ -415,7 +470,10 @@ function toFieldKind(
   return "text";
 }
 
-function detectRefreshTokenEndpoint(contract: ConnectContract, cfg: ConnectYamlConfig): string | null {
+function detectRefreshTokenEndpoint(
+  contract: ConnectContract,
+  cfg: ConnectYamlConfig,
+): string | null {
   const configured = cfg.app?.refreshTokenEndpoint?.trim();
   if (configured) {
     return configured;
@@ -622,7 +680,10 @@ export function postFormData(http: OmegaHttp, path: string, formData: FormData):
 `;
 }
 
-function buildOmegaCrudConnectTs(_refreshTokenEndpoint: string | null, scaffold: ScaffoldMode): string {
+function buildOmegaCrudConnectTs(
+  _refreshTokenEndpoint: string | null,
+  scaffold: ScaffoldMode,
+): string {
   const rel = scaffold === "full" ? "../services" : "./services";
   return `// AUTO-GENERATED by \`abeyjs generate views\`
 import { createOmegaRuntime, type OmegaRuntime } from "@abeyjs/core";
@@ -1031,7 +1092,10 @@ export async function performLogin(input: {
 `;
 }
 
-function detectLoginViews(contract: ConnectContract, cfg: ConnectYamlConfig): LoginViewSpec[] {
+function detectLoginViews(
+  contract: ConnectContract,
+  cfg: ConnectYamlConfig,
+): LoginViewSpec[] {
   const out: LoginViewSpec[] = [];
   for (const entity of contract.entities) {
     const entityCfg = resolveEntityConfig(entity, cfg);
@@ -1042,14 +1106,20 @@ function detectLoginViews(contract: ConnectContract, cfg: ConnectYamlConfig): Lo
     if (!looksLikeLogin) {
       continue;
     }
-    if (effectiveType !== "action" && effectiveType !== "service" && effectiveType !== "crud") {
+    if (
+      effectiveType !== "action" &&
+      effectiveType !== "service" &&
+      effectiveType !== "crud"
+    ) {
       continue;
     }
     const modelNames = Object.keys(entity.model);
     const usernameField =
-      modelNames.find((n) => /user(name)?|email|login/.test(n.toLowerCase())) ?? "username";
+      modelNames.find((n) => /user(name)?|email|login/.test(n.toLowerCase())) ??
+      "username";
     const passwordField =
-      modelNames.find((n) => /pass(word)?|clave/.test(n.toLowerCase())) ?? "password";
+      modelNames.find((n) => /pass(word)?|clave/.test(n.toLowerCase())) ??
+      "password";
     const usernameRequired = entity.model[usernameField]?.required ?? true;
     const passwordRequired = entity.model[passwordField]?.required ?? true;
     const base = kebab(entity.name);
@@ -1057,7 +1127,9 @@ function detectLoginViews(contract: ConnectContract, cfg: ConnectYamlConfig): Lo
     const configuredRoute = entityCfg.route?.trim();
     const defaultCrudRoute = `/crud/${entity.name.toLowerCase()}`;
     const rawRoute =
-      !configuredRoute || configuredRoute === defaultCrudRoute ? "/login" : configuredRoute;
+      !configuredRoute || configuredRoute === defaultCrudRoute
+        ? "/login"
+        : configuredRoute;
     out.push({
       entityName: entity.name,
       fileBase,
@@ -1073,28 +1145,37 @@ function detectLoginViews(contract: ConnectContract, cfg: ConnectYamlConfig): Lo
   return out;
 }
 
-function buildUiOverrides(entity: EntityContract, fieldsCfg: Record<string, FieldUiConfig> | undefined): string {
-  const fieldNames = fieldsCfg ? Object.keys(fieldsCfg) : Object.keys(entity.model);
-  const entries = fieldNames.map((name) => {
-    const cfg = fieldsCfg?.[name];
-    const meta = entity.model[name];
-    if (!meta) {
-      return "";
-    }
-    return `  ${JSON.stringify(name)}: {
+function buildUiOverrides(
+  entity: EntityContract,
+  fieldsCfg: Record<string, FieldUiConfig> | undefined,
+): string {
+  const fieldNames = fieldsCfg
+    ? Object.keys(fieldsCfg)
+    : Object.keys(entity.model);
+  const entries = fieldNames
+    .map((name) => {
+      const cfg = fieldsCfg?.[name];
+      const meta = entity.model[name];
+      if (!meta) {
+        return "";
+      }
+      return `  ${JSON.stringify(name)}: {
     source: ${JSON.stringify(cfg?.source ?? name)},
     label: ${JSON.stringify(cfg?.label ?? name)},
     kind: ${JSON.stringify(toFieldKind(name, cfg?.dataType ?? meta?.type, cfg?.widget, meta?.format))},
-    selectOptions: ${cfg?.widget === "select" && cfg.options
-      ? JSON.stringify({
-          endpoint: cfg.options.endpoint,
-          valueField: cfg.options.valueField,
-          labelField: cfg.options.labelField,
-          dataPath: cfg.options.dataPath,
-        })
-      : "undefined"},
+    selectOptions: ${
+      cfg?.widget === "select" && cfg.options
+        ? JSON.stringify({
+            endpoint: cfg.options.endpoint,
+            valueField: cfg.options.valueField,
+            labelField: cfg.options.labelField,
+            dataPath: cfg.options.dataPath,
+          })
+        : "undefined"
+    },
   },`;
-  }).filter((e) => e !== "");
+    })
+    .filter((e) => e !== "");
   return `const fieldUiOverrides: OpenApiCrudFieldUiOverrides = {\n${entries.join("\n")}\n};`;
 }
 
@@ -1105,25 +1186,35 @@ function buildCrudBehaviorOverrides(entityCfg: EntityUiConfig): string {
   const request = entityCfg.request;
   const lines: string[] = [];
   if (response?.listDataPath?.trim()) {
-    lines.push(`  listDataPath: ${JSON.stringify(response.listDataPath.trim())},`);
+    lines.push(
+      `  listDataPath: ${JSON.stringify(response.listDataPath.trim())},`,
+    );
   }
   if (response?.totalPath?.trim()) {
-    lines.push(`  listTotalPath: ${JSON.stringify(response.totalPath.trim())},`);
+    lines.push(
+      `  listTotalPath: ${JSON.stringify(response.totalPath.trim())},`,
+    );
   }
   if (response?.pagePath?.trim()) {
     lines.push(`  listPagePath: ${JSON.stringify(response.pagePath.trim())},`);
   }
   if (response?.pageSizePath?.trim()) {
-    lines.push(`  listPageSizePath: ${JSON.stringify(response.pageSizePath.trim())},`);
+    lines.push(
+      `  listPageSizePath: ${JSON.stringify(response.pageSizePath.trim())},`,
+    );
   }
   if (response?.totalPagesPath?.trim()) {
-    lines.push(`  listTotalPagesPath: ${JSON.stringify(response.totalPagesPath.trim())},`);
+    lines.push(
+      `  listTotalPagesPath: ${JSON.stringify(response.totalPagesPath.trim())},`,
+    );
   }
   if (request?.pageParam?.trim()) {
     lines.push(`  listPageParam: ${JSON.stringify(request.pageParam.trim())},`);
   }
   if (request?.pageSizeParam?.trim()) {
-    lines.push(`  listPageSizeParam: ${JSON.stringify(request.pageSizeParam.trim())},`);
+    lines.push(
+      `  listPageSizeParam: ${JSON.stringify(request.pageSizeParam.trim())},`,
+    );
   }
   if (request?.pageBase != null) {
     // `DiscoveredCrud.listPageBase` only allows 0|1 (or undefined). Keep it typed as a literal.
@@ -1144,7 +1235,9 @@ function buildCrudBehaviorOverrides(entityCfg: EntityUiConfig): string {
     lines.push(`  itemIdField: ${JSON.stringify(update.idField.trim())},`);
   }
   if (update?.idParam?.trim()) {
-    lines.push(`  itemPathParamName: ${JSON.stringify(update.idParam.trim())},`);
+    lines.push(
+      `  itemPathParamName: ${JSON.stringify(update.idParam.trim())},`,
+    );
   }
   if (del?.method) {
     lines.push(`  deleteMethod: ${JSON.stringify(del.method)},`);
@@ -1180,13 +1273,13 @@ function buildEntityTs(
     .map(([name]) => name);
   const showToolbar = entityCfg.showToolbar ?? appCfg?.showToolbar ?? true;
   const showTrace = entityCfg.showTrace ?? appCfg?.showTrace ?? false;
-  const showFlowMessage = entityCfg.showFlowMessage ?? appCfg?.showFlowMessage ?? false;
-  const fn = `mount${entity.name}CrudView`;
+  const showFlowMessage =
+    entityCfg.showFlowMessage ?? appCfg?.showFlowMessage ?? false;
   if (scaffold === "full") {
     return `// AUTO-GENERATED by \`abeyjs generate views\`
 import { intentOf } from "@abeyjs/core";
 import { mountOpenApiCrudView, type OpenApiCrudListBehaviorOverrides } from "@abeyjs/openapi";
-import type { OpenApiCrudFieldUiOverrides } from "@abeyjs/view";
+import { DOM_CHANNEL_FACTORY, DOM_CHANNEL_TOKEN, AbeyComponent, AbeyComponentElement, type OpenApiCrudFieldUiOverrides } from "@abeyjs/view";
 import template from "./${kebab(entity.name)}.html?raw";
 import "./${kebab(entity.name)}.css";
 import { ensureAuthenticated } from "../../app/omegaCrudConnect.js";
@@ -1196,80 +1289,89 @@ ${buildUiOverrides(entity, entityCfg.fields)}
 ${buildCrudBehaviorOverrides(entityCfg)}
 const requiredFormFields = new Set<string>(${JSON.stringify(requiredFields)});
 
-export function ${fn}(outlet: HTMLElement): (() => void) | void {
-  if (!ensureAuthenticated()) {
-    outlet.textContent = "Redirigiendo a login...";
-    return;
-  }
-  let disposed = false;
-  let cleanup: (() => void) | undefined;
-  outlet.innerHTML = template;
-  const host = outlet.querySelector<HTMLElement>('[data-role="crud-host"]');
-  if (!host) {
-    outlet.textContent = "Could not mount the CRUD view.";
-    return;
-  }
-  host.textContent = "Cargando ${menuLabel}...";
-  void (async () => {
-    try {
-      const b = await load${entity.name}Crud();
-      if (disposed) {
-        return;
-      }
-      const item = b.item;
-      if (!item) {
-        host.textContent = "No entity/path found for ${entity.name} in the connected OpenAPI contract.";
-        return;
-      }
-      const listFields = item.discovered.listView.fields
-      .filter((f) => (f.name in fieldUiOverrides) || (f.name !== ${JSON.stringify(entity.rowKey)} && /id$/i.test(f.name)))
-      .map((f) => ({
-        ...f,
-        name: fieldUiOverrides[f.name]?.source ?? f.name,
-        label: fieldUiOverrides[f.name]?.label ?? f.label,
-        kind: fieldUiOverrides[f.name]?.kind ?? f.kind ?? "text",
-        selectOptions: fieldUiOverrides[f.name]?.selectOptions,
-      }));
-      const formFields = item.discovered.formView.fields
-      .filter((f) => (f.name in fieldUiOverrides) || requiredFormFields.has(f.name) || (f.name !== ${JSON.stringify(entity.rowKey)} && /id$/i.test(f.name)))
-      .map((f) => ({
-        ...f,
-        name: fieldUiOverrides[f.name]?.source ?? f.name,
-        label: fieldUiOverrides[f.name]?.label ?? f.label,
-        kind: fieldUiOverrides[f.name]?.kind ?? f.kind ?? "text",
-        selectOptions: fieldUiOverrides[f.name]?.selectOptions,
-      }));
-      const mounted = mountOpenApiCrudView({
-        root: host,
-        discovered: {
-          ...item.discovered,
-          ...crudBehaviorOverrides,
-          listView: { ...item.discovered.listView, fields: listFields },
-          formView: { ...item.discovered.formView, fields: formFields },
-        },
-        agent: item.agent,
-        runtime: b.runtime,
-        listIntent: item.listIntent,
-        createIntent: item.createIntent,
-        updateIntent: item.updateIntent,
-        deleteIntent: item.deleteIntent,
-        showToolbar: ${JSON.stringify(showToolbar)},
-        showTrace: ${JSON.stringify(showTrace)},
-        showFlowMessage: ${JSON.stringify(showFlowMessage)},
-      });
-      cleanup = mounted.dispose;
-      void b.runtime.dispatch(intentOf(item.listIntent, undefined), { source: "crud-generated" });
-    } catch (error) {
-      if (disposed) {
-        return;
-      }
-      host.textContent = error instanceof Error ? error.message : String(error);
+@AbeyComponent({
+  selector: "app-${kebab(entity.name)}",
+  route: ${JSON.stringify(entityCfg.route || `/crud/${entity.name.toLowerCase()}`)},
+  label: ${JSON.stringify(menuLabel)},
+  navIconFa: "fa-solid fa-database",
+  template: template,
+  providers: [{ token: DOM_CHANNEL_TOKEN, useFactory: DOM_CHANNEL_FACTORY }],
+} as any)
+export class App${entity.name}Element extends AbeyComponentElement {
+  #disposed = false;
+  #cleanup: (() => void) | undefined;
+
+  connectedCallback(): void {
+    if (!ensureAuthenticated()) {
+      this.textContent = "Redirigiendo a login...";
+      return;
     }
-  })();
-  return () => {
-    disposed = true;
-    cleanup?.();
-  };
+    const host = this.querySelector<HTMLElement>('[data-role="crud-host"]');
+    if (!host) {
+      this.textContent = "Could not mount the CRUD view.";
+      return;
+    }
+    host.textContent = "Cargando ${menuLabel}...";
+    void (async () => {
+      try {
+        const b = await load${entity.name}Crud();
+        if (this.#disposed) return;
+        const item = b.item;
+        if (!item) {
+          host.textContent = "No entity/path found for ${entity.name} in the connected OpenAPI contract.";
+          return;
+        }
+        const listFields = item.discovered.listView.fields
+        .filter((f) => (f.name in fieldUiOverrides) || (f.name !== ${JSON.stringify(entity.rowKey)} && /id$/i.test(f.name)))
+        .map((f) => ({
+          ...f,
+          name: fieldUiOverrides[f.name]?.source ?? f.name,
+          label: fieldUiOverrides[f.name]?.label ?? f.label,
+          kind: fieldUiOverrides[f.name]?.kind ?? f.kind ?? "text",
+          selectOptions: fieldUiOverrides[f.name]?.selectOptions,
+        }));
+        const formFields = item.discovered.formView.fields
+        .filter((f) => (f.name in fieldUiOverrides) || requiredFormFields.has(f.name) || (f.name !== ${JSON.stringify(entity.rowKey)} && /id$/i.test(f.name)))
+        .map((f) => ({
+          ...f,
+          name: fieldUiOverrides[f.name]?.source ?? f.name,
+          label: fieldUiOverrides[f.name]?.label ?? f.label,
+          kind: fieldUiOverrides[f.name]?.kind ?? f.kind ?? "text",
+          selectOptions: fieldUiOverrides[f.name]?.selectOptions,
+        }));
+        const mounted = mountOpenApiCrudView({
+          root: host,
+          discovered: {
+            ...item.discovered,
+            ...crudBehaviorOverrides,
+            listView: { ...item.discovered.listView, fields: listFields },
+            formView: { ...item.discovered.formView, fields: formFields },
+          },
+          agent: item.agent,
+          runtime: b.runtime,
+          listIntent: item.listIntent,
+          createIntent: item.createIntent,
+          updateIntent: item.updateIntent,
+          deleteIntent: item.deleteIntent,
+          showToolbar: ${JSON.stringify(showToolbar)},
+          showTrace: ${JSON.stringify(showTrace)},
+          showFlowMessage: ${JSON.stringify(showFlowMessage)},
+        });
+        this.#cleanup = mounted.dispose;
+        void b.runtime.dispatch(intentOf(item.listIntent, undefined), { source: "crud-generated" });
+      } catch (error) {
+        if (this.#disposed) return;
+        host.textContent = error instanceof Error ? error.message : String(error);
+      }
+    })();
+    super.connectedCallback();
+  }
+
+  disconnectedCallback(): void {
+    this.#disposed = true;
+    this.#cleanup?.();
+    super.disconnectedCallback();
+  }
 }
 `;
   }
@@ -1277,7 +1379,7 @@ export function ${fn}(outlet: HTMLElement): (() => void) | void {
   return `// AUTO-GENERATED by \`abeyjs generate views\`
 import { intentOf } from "@abeyjs/core";
 import { mountOpenApiCrudView, type OpenApiCrudListBehaviorOverrides } from "@abeyjs/openapi";
-import type { OpenApiCrudFieldUiOverrides } from "@abeyjs/view";
+import { DOM_CHANNEL_FACTORY, DOM_CHANNEL_TOKEN, AbeyComponent, AbeyComponentElement, type OpenApiCrudFieldUiOverrides } from "@abeyjs/view";
 import template from "./${kebab(entity.name)}.html?raw";
 import "./${kebab(entity.name)}.css";
 import { ensureAuthenticated, initConnectedCrud } from "../../omegaCrudConnect.js";
@@ -1286,87 +1388,100 @@ ${buildUiOverrides(entity, entityCfg.fields)}
 ${buildCrudBehaviorOverrides(entityCfg)}
 const requiredFormFields = new Set<string>(${JSON.stringify(requiredFields)});
 
-export function ${fn}(outlet: HTMLElement): (() => void) | void {
-  if (!ensureAuthenticated()) {
-    outlet.textContent = "Redirigiendo a login...";
-    return;
-  }
-  let disposed = false;
-  let cleanup: (() => void) | undefined;
-  outlet.innerHTML = template;
-  const host = outlet.querySelector<HTMLElement>('[data-role="crud-host"]');
-  if (!host) {
-    outlet.textContent = "Could not mount the CRUD view.";
-    return;
-  }
-  host.textContent = "Cargando ${menuLabel}...";
-  void (async () => {
-    try {
-      const b = await initConnectedCrud();
-      if (disposed) {
-        return;
-      }
-      const item =
-        b.items.find((it) => it.discovered.path === ${JSON.stringify(endpointPath)}) ??
-        b.items.find((it) => it.discovered.entityPascal === ${JSON.stringify(sourceEntity)});
-      if (!item) {
-        host.textContent = "No entity/path found for ${entity.name} in the connected OpenAPI contract.";
-        return;
-      }
-      const listFields = item.discovered.listView.fields
-      .filter((f) => (f.name in fieldUiOverrides) || (f.name !== ${JSON.stringify(entity.rowKey)} && /id$/i.test(f.name)))
-      .map((f) => ({
-        ...f,
-        name: fieldUiOverrides[f.name]?.source ?? f.name,
-        label: fieldUiOverrides[f.name]?.label ?? f.label,
-        kind: fieldUiOverrides[f.name]?.kind ?? f.kind ?? "text",
-        selectOptions: fieldUiOverrides[f.name]?.selectOptions,
-      }));
-      const formFields = item.discovered.formView.fields
-      .filter((f) => (f.name in fieldUiOverrides) || requiredFormFields.has(f.name) || (f.name !== ${JSON.stringify(entity.rowKey)} && /id$/i.test(f.name)))
-      .map((f) => ({
-        ...f,
-        name: fieldUiOverrides[f.name]?.source ?? f.name,
-        label: fieldUiOverrides[f.name]?.label ?? f.label,
-        kind: fieldUiOverrides[f.name]?.kind ?? f.kind ?? "text",
-        selectOptions: fieldUiOverrides[f.name]?.selectOptions,
-      }));
-      const mounted = mountOpenApiCrudView({
-        root: host,
-        discovered: {
-          ...item.discovered,
-          ...crudBehaviorOverrides,
-          listView: { ...item.discovered.listView, fields: listFields },
-          formView: { ...item.discovered.formView, fields: formFields },
-        },
-        agent: item.agent,
-        runtime: b.runtime,
-        listIntent: item.listIntent,
-        createIntent: item.createIntent,
-        updateIntent: item.updateIntent,
-        deleteIntent: item.deleteIntent,
-        showToolbar: ${JSON.stringify(showToolbar)},
-        showTrace: ${JSON.stringify(showTrace)},
-        showFlowMessage: ${JSON.stringify(showFlowMessage)},
-      });
-      cleanup = mounted.dispose;
-      void b.runtime.dispatch(intentOf(item.listIntent, undefined), { source: "crud-generated" });
-    } catch (error) {
-      if (disposed) {
-        return;
-      }
-      host.textContent = error instanceof Error ? error.message : String(error);
+@AbeyComponent({
+  selector: "app-${kebab(entity.name)}",
+  route: ${JSON.stringify(entityCfg.route || `/crud/${entity.name.toLowerCase()}`)},
+  label: ${JSON.stringify(menuLabel)},
+  navIconFa: "fa-solid fa-database",
+  template: template,
+  providers: [{ token: DOM_CHANNEL_TOKEN, useFactory: DOM_CHANNEL_FACTORY }],
+} as any)
+export class App${entity.name}Element extends AbeyComponentElement {
+  #disposed = false;
+  #cleanup: (() => void) | undefined;
+
+  connectedCallback(): void {
+    if (!ensureAuthenticated()) {
+      this.textContent = "Redirigiendo a login...";
+      return;
     }
-  })();
-  return () => {
-    disposed = true;
-    cleanup?.();
-  };
+    const host = this.querySelector<HTMLElement>('[data-role="crud-host"]');
+    if (!host) {
+      this.textContent = "Could not mount the CRUD view.";
+      return;
+    }
+    host.textContent = "Cargando ${menuLabel}...";
+    void (async () => {
+      try {
+        const b = await initConnectedCrud();
+        if (this.#disposed) return;
+        const item =
+          b.items.find((it) => it.discovered.path === ${JSON.stringify(endpointPath)}) ??
+          b.items.find((it) => it.discovered.entityPascal === ${JSON.stringify(sourceEntity)});
+        if (!item) {
+          host.textContent = "No entity/path found for ${entity.name} in the connected OpenAPI contract.";
+          return;
+        }
+        const listFields = item.discovered.listView.fields
+        .filter((f) => (f.name in fieldUiOverrides) || (f.name !== ${JSON.stringify(entity.rowKey)} && /id$/i.test(f.name)))
+        .map((f) => ({
+          ...f,
+          name: fieldUiOverrides[f.name]?.source ?? f.name,
+          label: fieldUiOverrides[f.name]?.label ?? f.label,
+          kind: fieldUiOverrides[f.name]?.kind ?? f.kind ?? "text",
+          selectOptions: fieldUiOverrides[f.name]?.selectOptions,
+        }));
+        const formFields = item.discovered.formView.fields
+        .filter((f) => (f.name in fieldUiOverrides) || requiredFormFields.has(f.name) || (f.name !== ${JSON.stringify(entity.rowKey)} && /id$/i.test(f.name)))
+        .map((f) => ({
+          ...f,
+          name: fieldUiOverrides[f.name]?.source ?? f.name,
+          label: fieldUiOverrides[f.name]?.label ?? f.label,
+          kind: fieldUiOverrides[f.name]?.kind ?? f.kind ?? "text",
+          selectOptions: fieldUiOverrides[f.name]?.selectOptions,
+        }));
+        const mounted = mountOpenApiCrudView({
+          root: host,
+          discovered: {
+            ...item.discovered,
+            ...crudBehaviorOverrides,
+            listView: { ...item.discovered.listView, fields: listFields },
+            formView: { ...item.discovered.formView, fields: formFields },
+          },
+          agent: item.agent,
+          runtime: b.runtime,
+          listIntent: item.listIntent,
+          createIntent: item.createIntent,
+          updateIntent: item.updateIntent,
+          deleteIntent: item.deleteIntent,
+          showToolbar: ${JSON.stringify(showToolbar)},
+          showTrace: ${JSON.stringify(showTrace)},
+          showFlowMessage: ${JSON.stringify(showFlowMessage)},
+        });
+        this.#cleanup = mounted.dispose;
+        void b.runtime.dispatch(intentOf(item.listIntent, undefined), { source: "crud-generated" });
+      } catch (error) {
+        if (this.#disposed) return;
+        host.textContent = error instanceof Error ? error.message : String(error);
+      }
+    })();
+    super.connectedCallback();
+  }
+
+  disconnectedCallback(): void {
+    this.#disposed = true;
+    this.#cleanup?.();
+    super.disconnectedCallback();
+  }
 }
 `;
 }
 
-function buildCrudActionTs(entity: EntityContract, entityCfg: EntityUiConfig, opts: { omegaCrudImport: string }): string {
+function buildCrudActionTs(
+  entity: EntityContract,
+  entityCfg: EntityUiConfig,
+  opts: { omegaCrudImport: string },
+): string {
   const sourceEntity = entityCfg.sourceEntity?.trim() || entity.name;
   const endpointPath = entityCfg.endpointPath?.trim() || entity.routeBase;
   return `// AUTO-GENERATED by \`abeyjs generate views\`
@@ -1384,76 +1499,20 @@ export async function load${entity.name}Crud(): Promise<{ runtime: OmegaRuntime;
 `;
 }
 
-function buildRouteBlock(
-  contract: ConnectContract,
-  routeMap: Map<string, { route: string; menuLabel: string }>,
-  scaffold: ScaffoldMode,
-): string {
-  const lines: string[] = [];
-  lines.push(`    ${START}`);
-  for (const entity of contract.entities) {
-    const info = routeMap.get(entity.name);
-    if (!info) {
-      continue;
-    }
-    const fileBase = kebab(entity.name);
-    const exportName = `mount${entity.name}CrudView`;
-    const importPrefix = scaffold === "full" ? "../ui/views" : "./views";
-    lines.push("    {");
-    lines.push(`      path: ${JSON.stringify(info.route)},`);
-    lines.push(`      label: ${JSON.stringify(info.menuLabel)},`);
-    lines.push(`      title: ${JSON.stringify(info.menuLabel)},`);
-    lines.push(`      navIconFa: "fa-solid fa-database",`);
-    lines.push(
-      `      mount: lazyViewMount(() => import("${importPrefix}/${fileBase}/${fileBase}.js"), ${JSON.stringify(exportName)}),`,
-    );
-    lines.push("    },");
-  }
-  lines.push(`    ${END}`);
-  return lines.join("\n");
+async function patchRoutes(
+  _targetDir: string,
+  _contract: ConnectContract,
+  _routeMap: Map<string, { route: string; menuLabel: string }>,
+  _scaffold: ScaffoldMode,
+): Promise<void> {
+  // Manual route patching is disabled. Auto-routing handles discovery via @AbeyComponent.
 }
 
-async function patchRoutes(
+async function ensureMainStandaloneLogin(
   targetDir: string,
-  contract: ConnectContract,
-  routeMap: Map<string, { route: string; menuLabel: string }>,
+  withLogin: boolean,
   scaffold: ScaffoldMode,
 ): Promise<void> {
-  const routesPath =
-    scaffold === "full"
-      ? join(resolve(targetDir), "src", "app", "routes.ts")
-      : join(resolve(targetDir), "src", "routes.ts");
-  let routes = await readFile(routesPath, "utf-8");
-  if (!/import\s+\{[^}]*\blazyViewMount\b[^}]*\}\s+from\s+"@abeyjs\/view";/.test(routes)) {
-    routes = `import { lazyViewMount } from "@abeyjs/view";\n${routes}`;
-  }
-  if (routeMap.has("__login__")) {
-    const guardImport = scaffold === "full" ? "./omegaCrudConnect.js" : "./omegaCrudConnect.js";
-    if (!routes.includes(`from "${guardImport}"`)) {
-      routes = `import { withAuthGuard } from "${guardImport}";\n${routes}`;
-    }
-    routes = routes.replace(
-      /(\{\s*path:\s*")\/("\s*,[\s\S]*?mount:\s*)mountHome(\s*,[\s\S]*?\})/m,
-      `$1/home$2withAuthGuard(mountHome)$3`,
-    );
-  }
-  const block = buildRouteBlock(contract, routeMap, scaffold);
-  if (routes.includes(START) && routes.includes(END)) {
-    routes = routes.replace(
-      new RegExp(`${START}[\\s\\S]*${END}`, "m"),
-      `${START}\n${block.split("\n").slice(1, -1).join("\n")}\n    ${END}`,
-    );
-  } else {
-    const match = routes.match(/\s+pageRoute\(\s*[\r]?\n\s*"\*",/m);
-    if (!match || !match[0]) {
-      throw new Error("Could not find the 404 pageRoute block in routes.ts to insert CRUD routes.");
-    }
-    routes = routes.replace(match[0], `${block}\n${match[0]}`);
-  }
-  await writeFile(routesPath, routes, "utf-8");
-}
-
-async function ensureMainStandaloneLogin(targetDir: string, withLogin: boolean, scaffold: ScaffoldMode): Promise<void> {
   if (!withLogin) {
     return;
   }
@@ -1464,7 +1523,10 @@ async function ensureMainStandaloneLogin(targetDir: string, withLogin: boolean, 
   }
   const routesImport = scaffold === "full" ? "./app/routes.js" : "./routes.js";
   const sessionImport = "./services/session.js";
-  const loginImport = scaffold === "full" ? "./ui/views/login/login.js" : "./views/login/login.js";
+  const loginImport =
+    scaffold === "full"
+      ? "./ui/views/login/login.js"
+      : "./views/login/login.js";
   const next = `import { mountRoutedApp } from "@abeyjs/view";
 import "@abeyjs/view/theme/omega-default.css";
 import { getRoutes } from "${routesImport}";
@@ -1518,9 +1580,14 @@ if (path === "/" || path === "/login") {
   await writeFile(mainPath, next, "utf-8");
 }
 
-async function ensureEnvFiles(targetDir: string, contract: ConnectContract, cfg: ConnectYamlConfig): Promise<void> {
+async function ensureEnvFiles(
+  targetDir: string,
+  contract: ConnectContract,
+  cfg: ConnectYamlConfig,
+): Promise<void> {
   const root = resolve(targetDir);
-  const configuredOpenApi = cfg.app?.openApiUrl?.trim() || contract.source.swaggerUrl;
+  const configuredOpenApi =
+    cfg.app?.openApiUrl?.trim() || contract.source.swaggerUrl;
   const normalizedOpenApi = normalizeOpenApiForClient(configuredOpenApi);
   const lines = [
     "# AbeyJs connect",
@@ -1562,8 +1629,13 @@ function inferProxyTarget(urlOrPath: string): string | null {
   }
 }
 
-async function ensureViteProxy(targetDir: string, contract: ConnectContract, cfg: ConnectYamlConfig): Promise<void> {
-  const configuredOpenApi = cfg.app?.openApiUrl?.trim() || contract.source.swaggerUrl;
+async function ensureViteProxy(
+  targetDir: string,
+  contract: ConnectContract,
+  cfg: ConnectYamlConfig,
+): Promise<void> {
+  const configuredOpenApi =
+    cfg.app?.openApiUrl?.trim() || contract.source.swaggerUrl;
   const proxyTarget = inferProxyTarget(configuredOpenApi);
   if (!proxyTarget) {
     return;
@@ -1580,7 +1652,10 @@ async function ensureViteProxy(targetDir: string, contract: ConnectContract, cfg
       "/swagger": { target: ${t}, changeOrigin: true, secure: false },
     },`;
   if (/server:\s*\{\s*port:\s*(\d+)\s*\}/.test(vite)) {
-    vite = vite.replace(/server:\s*\{\s*port:\s*(\d+)\s*\}/, `server: { port: $1, ${pxy} }`);
+    vite = vite.replace(
+      /server:\s*\{\s*port:\s*(\d+)\s*\}/,
+      `server: { port: $1, ${pxy} }`,
+    );
   } else {
     vite = vite.replace(
       /export default defineConfig\(\{/,
@@ -1607,12 +1682,15 @@ async function ensureDependencies(targetDir: string): Promise<void> {
 
 async function ensureEnvTypes(targetDir: string): Promise<void> {
   const p = join(resolve(targetDir), "src", "env.d.ts");
-  const raw = await readFile(p, "utf-8").catch(() => `/// <reference types="vite/client" />\n`);
+  const raw = await readFile(p, "utf-8").catch(
+    () => `/// <reference types="vite/client" />\n`,
+  );
   if (raw.includes('declare module "*.html?raw"')) {
     await writeFile(p, raw, "utf-8");
     return;
   }
-  const next = `${raw.trimEnd()}\n` +
+  const next =
+    `${raw.trimEnd()}\n` +
     `declare module "*.html?raw" {\n` +
     `  const html: string;\n` +
     `  export default html;\n` +
@@ -1663,10 +1741,20 @@ export async function runGenerateViewsWithOptions(
     // Optional richer layers (safe: never overwrite non-empty user files)
     await writeIfMissing(
       join(root, "src", "infra", "generated", "openapi", "catalog.ts"),
-      buildGeneratedApiCatalogTs(contract, { omegaCrudImport: "../../app/omegaCrudConnect.js" }),
+      buildGeneratedApiCatalogTs(contract, {
+        omegaCrudImport: "../../app/omegaCrudConnect.js",
+      }),
     );
-    await writeIfMissing(join(root, "src", "infra", "generated", "openapi", "index.ts"), `export * from "./catalog.js";\n`);
-    await writeIfMissing(join(root, "src", "infra", "api", "operations.ts"), buildApiOperationsTs({ catalogImport: "../generated/openapi/catalog.js" }));
+    await writeIfMissing(
+      join(root, "src", "infra", "generated", "openapi", "index.ts"),
+      `export * from "./catalog.js";\n`,
+    );
+    await writeIfMissing(
+      join(root, "src", "infra", "api", "operations.ts"),
+      buildApiOperationsTs({
+        catalogImport: "../generated/openapi/catalog.js",
+      }),
+    );
   }
 
   const selected = options.onlyEntities ? new Set(options.onlyEntities) : null;
@@ -1676,24 +1764,54 @@ export async function runGenerateViewsWithOptions(
   await ensureEnvTypes(root);
   await ensureEnvFiles(root, contract, cfg);
   await ensureViteProxy(root, contract, cfg);
-  const omegaCrudPath = scaffold === "full" ? join(root, "src", "app", "omegaCrudConnect.ts") : join(root, "src", "omegaCrudConnect.ts");
+  const omegaCrudPath =
+    scaffold === "full"
+      ? join(root, "src", "app", "omegaCrudConnect.ts")
+      : join(root, "src", "omegaCrudConnect.ts");
   await mkdir(join(root, "src", "services"), { recursive: true });
-  await writeFile(join(root, "src", "services", "session.ts"), buildSessionTs(), "utf-8");
-  await writeFile(join(root, "src", "services", "http.ts"), buildServicesHttpTs(refreshTokenEndpoint), "utf-8");
-  await writeFile(omegaCrudPath, buildOmegaCrudConnectTs(refreshTokenEndpoint, scaffold), "utf-8");
+  await writeFile(
+    join(root, "src", "services", "session.ts"),
+    buildSessionTs(),
+    "utf-8",
+  );
+  await writeFile(
+    join(root, "src", "services", "http.ts"),
+    buildServicesHttpTs(refreshTokenEndpoint),
+    "utf-8",
+  );
+  await writeFile(
+    omegaCrudPath,
+    buildOmegaCrudConnectTs(refreshTokenEndpoint, scaffold),
+    "utf-8",
+  );
 
   const routeMap = new Map<string, { route: string; menuLabel: string }>();
   const generatedEntities: string[] = [];
   if (loginViews.length > 0) {
     const loginDir =
-      scaffold === "full" ? join(root, "src", "ui", "views", "login") : join(root, "src", "views", "login");
+      scaffold === "full"
+        ? join(root, "src", "ui", "views", "login")
+        : join(root, "src", "views", "login");
     await mkdir(loginDir, { recursive: true });
     const spec = loginViews[0]!;
-    await writeFile(join(loginDir, "login.html"), buildLoginHtml(spec), "utf-8");
+    await writeFile(
+      join(loginDir, "login.html"),
+      buildLoginHtml(spec),
+      "utf-8",
+    );
     await writeFile(join(loginDir, "login.css"), buildLoginCss(), "utf-8");
-    await writeFile(join(loginDir, "login.ts"), buildLoginTs({ ...spec, fileBase: "login" }, scaffold), "utf-8");
+    await writeFile(
+      join(loginDir, "login.ts"),
+      buildLoginTs({ ...spec, fileBase: "login" }, scaffold),
+      "utf-8",
+    );
     if (scaffold === "full") {
-      await writeIfMissing(join(root, "src", "application", "use-cases", "login.usecase.ts"), buildLoginActionTs({ omegaCrudImport: "../../app/omegaCrudConnect.js" }));
+      await writeIfMissing(
+        join(root, "src", "application", "use-cases", "login.usecase.ts"),
+        buildLoginActionTs({
+          omegaCrudImport: "../../app/omegaCrudConnect.js",
+        }),
+      );
     }
     routeMap.set("__login__", { route: spec.route, menuLabel: spec.menuLabel });
     generatedEntities.push(`Login(${spec.entityName})`);
@@ -1717,7 +1835,11 @@ export async function runGenerateViewsWithOptions(
         : join(root, "src", "views", kebab(entity.name));
     await mkdir(dir, { recursive: true });
     const base = kebab(entity.name);
-    await writeFile(join(dir, `${base}.html`), buildEntityHtml(entity, menuLabel), "utf-8");
+    await writeFile(
+      join(dir, `${base}.html`),
+      buildEntityHtml(entity, menuLabel),
+      "utf-8",
+    );
     await writeFile(join(dir, `${base}.css`), buildEntityCss(), "utf-8");
     await writeFile(
       join(dir, `${base}.ts`),
@@ -1726,11 +1848,25 @@ export async function runGenerateViewsWithOptions(
     );
     if (scaffold === "full") {
       await writeIfMissing(
-        join(root, "src", "application", "use-cases", `${kebab(entity.name)}.crud.usecase.ts`),
-        buildCrudActionTs(entity, entityCfg, { omegaCrudImport: "../../app/omegaCrudConnect.js" }),
+        join(
+          root,
+          "src",
+          "application",
+          "use-cases",
+          `${kebab(entity.name)}.crud.usecase.ts`,
+        ),
+        buildCrudActionTs(entity, entityCfg, {
+          omegaCrudImport: "../../app/omegaCrudConnect.js",
+        }),
       );
       await writeIfMissing(
-        join(root, "src", "domain", "resources", `${kebab(entity.name)}.resource.ts`),
+        join(
+          root,
+          "src",
+          "domain",
+          "resources",
+          `${kebab(entity.name)}.resource.ts`,
+        ),
         buildResourceFileTs(entity, entityCfg),
       );
     }
@@ -1747,15 +1883,19 @@ export async function runGenerateViewsWithOptions(
       })
       .map((e) => `export * from "./${kebab(e.name)}.resource.js";`)
       .join("\n");
-    await writeIfMissing(join(root, "src", "domain", "resources", "index.ts"), `${resourceExports}\n`);
+    await writeIfMissing(
+      join(root, "src", "domain", "resources", "index.ts"),
+      `${resourceExports}\n`,
+    );
   }
 
   if (generatedEntities.length === 0) {
-    throw new Error("No `crud` entities selected in .abeyjs/connect.json / abeyjs.connect.yml.");
+    throw new Error(
+      "No `crud` entities selected in .abeyjs/connect.json / abeyjs.connect.yml.",
+    );
   }
 
   await patchRoutes(root, contract, routeMap, scaffold);
   await ensureMainStandaloneLogin(root, loginViews.length > 0, scaffold);
   return { generatedEntities };
 }
-

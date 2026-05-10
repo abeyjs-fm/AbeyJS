@@ -5,6 +5,10 @@ import viewStyles from "./app.doc.routing.view.css?inline";
 
 @AbeyComponent({
   selector: "app-doc-routing",
+  route: "routing",
+  parent: "/guides",
+  label: "Routing",
+  navIconFa: "fa-solid fa-route",
   template,
   stylesText: [docMarkdownBase, viewStyles],
   providers: [{ token: DOM_CHANNEL_TOKEN, useFactory: DOM_CHANNEL_FACTORY }],

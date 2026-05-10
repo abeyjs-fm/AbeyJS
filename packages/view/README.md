@@ -30,7 +30,7 @@ npm install @abeyjs/view
 
 | Subpath | Purpose |
 |---------|---------|
-| **`@abeyjs/view/dev/vite-logger`** | **`createAbeyViteLogger()`** — tags logs as **`[abey]`** instead of **`[vite]`** for skim-friendly dev output. |
+| **`@abeyjs/view/dev/vite-logger`** | **`createAbeyViteLogger()`** — tags logs as **`[abeyJs]`** instead of **`[vite]`** for skim-friendly dev output. |
 | **`@abeyjs/view/dev/vite-malformed-uri-guard`** | **`abeyViteMalformedUriGuard({ locale? })`** — answers **400** for illegal **`%`** sequences **before** Vite’s static middleware throws (**`URI malformed`** noise). CLI templates enable this by default. |
 | **`@abeyjs/view/dev/vite-docs-static-site`** | Static SPA hosting helpers (GitHub Pages–style **`base`** + **`dist/<path>/index.html`** duplicates). See [Vite: static docs / GitHub Pages](#vite-static-docs--github-pages) below. |
 | **`@abeyjs/view/dev/sync-spa-html-fallback-paths`** | **`syncSpaHtmlFallbackPaths({ … })`** — writes a TS module listing route path strings from **`pageRoute` / `componentRoute`** sources via AST scanning. Use with a JSON config instead of bespoke scripts. |
@@ -73,7 +73,7 @@ Reference implementation: monorepo **`docs/web`** (`vite.config.ts`, **`abey-spa
 
 ## Routing primitives
 
-**`AppRoute`** (`shell/app-routes.ts`) — path, **`mount(outlet)`**, nav metadata.
+**`AppRoute`** (`shell/app-routes.ts`) — path (supports <strong><code>:id</code></strong>), **`mount(outlet, params)`**, nav metadata (<strong><code>order</code></strong>, <strong><code>navIconFa</code></strong>).
 
 - **`pageRoute`** + **`buildPageView` / `createPageViewElement`** — Declarative **`PageViewSpec`** pages (**`PageRouteNav`**).
 - **`componentRoute`** — **`ComponentRouteNav`** + **`ComponentRouteSpec`**; use **`satisfies`** on **`routes.ts`** for literal path types.

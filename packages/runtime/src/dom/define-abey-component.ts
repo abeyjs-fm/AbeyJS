@@ -39,6 +39,18 @@ export type AbeyComponentMeta = {
    * The custom element can override it via `runtimepath="..."`.
    */
   runtimePath?: string;
+  /**
+   * Optional route path for automatic discovery (e.g. `"/users/:id"`).
+   */
+  route?: string;
+  /**
+   * Optional navigation metadata for the router.
+   */
+  nav?: any;
+  /**
+   * Optional parent route path for nested routing.
+   */
+  parent?: string;
 };
 
 function getRuntimeFromPath(pathRaw: string): OmegaRuntime | null {

@@ -1,8 +1,12 @@
 import "/abey-styles.js";
-import { bootstrapOmegaApp, fetchSidebarNav, buildRoutesFromApi } from "@abeyjs/view";
+import {
+  bootstrapOmegaApp,
+  fetchSidebarNav,
+  buildRoutesFromApi,
+} from "@abeyjs/view";
 import "@abeyjs/view/theme/omega-default.css";
 import { createOmega } from "./omegaSetup.js";
-import { getRoutes } from "./routes.js";
+import { getRoutes } from "./routes.generated.js";
 
 let disposeRef: (() => void) | undefined;
 

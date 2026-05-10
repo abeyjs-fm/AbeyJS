@@ -37,6 +37,10 @@ function formatArtistExpression(expr: OmegaFlowExpression): { text: string; stat
 
 @AbeyComponent({
   selector: "app-abey-table",
+  route: "abey-table",
+  parent: "/utils",
+  label: "Abey Table",
+  navIconFa: "fa-solid fa-table",
   template,
   stylesText: [abeyTableKitCss, abeyTableCss],
   providers: [{ token: DOM_CHANNEL_TOKEN, useFactory: DOM_CHANNEL_FACTORY }],

@@ -11,7 +11,7 @@ import "./shared/styles/doc-find.css";
 import { attachDocSiteSearch } from "./doc-search-attach.js";
 import { installDocsSiteRootAnchorGuard } from "./docs-site-url.js";
 import { createOmega } from "./omegaSetup.js";
-import { getRoutes } from "./routes.js";
+import { getRoutes } from "./routes.generated.js";
 
 const app = document.getElementById("app");
 if (!app) {

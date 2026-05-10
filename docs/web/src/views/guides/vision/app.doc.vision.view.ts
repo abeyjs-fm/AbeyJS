@@ -5,6 +5,10 @@ import viewStyles from "./app.doc.vision.view.css?inline";
 
 @AbeyComponent({
   selector: "app-doc-vision",
+  route: "vision",
+  parent: "/guides",
+  label: "Vision",
+  navIconFa: "fa-solid fa-eye",
   template,
   stylesText: [docMarkdownBase, viewStyles],
   providers: [{ token: DOM_CHANNEL_TOKEN, useFactory: DOM_CHANNEL_FACTORY }],

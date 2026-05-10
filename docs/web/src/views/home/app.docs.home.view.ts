@@ -5,6 +5,9 @@ import homeCss from "./app.docs.home.view.css?inline";
 
 @AbeyComponent({
   selector: "app-docs-home",
+  route: "/panel",
+  label: "Documentation",
+  navIconFa: "fa-solid fa-book-open",
   template,
   stylesText: [homeCss],
   providers: [{ token: DOM_CHANNEL_TOKEN, useFactory: DOM_CHANNEL_FACTORY }],

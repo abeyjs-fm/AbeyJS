@@ -1,7 +1,7 @@
 import "/abey-styles.js";
 import { bootstrapOmegaApp } from "@abeyjs/view";
 import { createOmega } from "./omegaSetup.js";
-import { getRoutes } from "./routes.js";
+import { getRoutes } from "./routes.generated.js";
 
 const app = document.getElementById("app");
 if (!app) {

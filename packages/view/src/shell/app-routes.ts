@@ -33,7 +33,7 @@ export type AppRoute = {
    * Monta la pantalla. Devuelve opcionalmente un `dispose` al salir de la ruta
    * (p. ej. bajar suscripciones).
    */
-  mount: (outlet: HTMLElement) => void | (() => void);
+  mount: (outlet: HTMLElement, params: Record<string, string>) => void | (() => void);
   /** Un carácter o emoji junto al label en el menú lateral (plantilla “dashboard”). */
   navIcon?: string;
   /**
@@ -68,21 +68,52 @@ function firstLeafFromRoute(r: AppRoute): string | null {
   return normalizePathname(raw) === "" ? "/" : raw.startsWith("/") ? raw : `/${raw}`;
 }
 
+export type MatchResult = {
+  route: AppRoute;
+  params: Record<string, string>;
+};
+
 /**
- * Resuelve la ruta activa. Coincidencia exacta por `path` (normalizado); al final,
- * se comprueba el comodín `*`.
+ * Resuelve la ruta activa. Soporta parámetros dinámicos (p. ej. `/users/:id`).
  */
-export function matchAppRoute(path: string, routes: AppRoute[]): AppRoute | null {
+export function matchAppRoute(path: string, routes: AppRoute[]): MatchResult | null {
   const p = normalizePathname(path);
+  
   for (const r of routes) {
-    if (r.path === "*") {
-      continue;
+    if (r.path === "*") continue;
+    
+    const routePath = normalizePathname(r.path);
+    if (routePath === p) {
+      return { route: r, params: {} };
     }
-    if (normalizePathname(r.path) === p) {
-      return r;
+
+    // Parametric matching: /guides/:id
+    if (routePath.includes(":")) {
+      const parts = routePath.split("/").filter(Boolean);
+      const pathParts = p.split("/").filter(Boolean);
+      
+      if (parts.length === pathParts.length) {
+        const params: Record<string, string> = {};
+        let match = true;
+        
+        for (let i = 0; i < parts.length; i++) {
+          if (parts[i].startsWith(":")) {
+            params[parts[i].slice(1)] = pathParts[i];
+          } else if (parts[i] !== pathParts[i]) {
+            match = false;
+            break;
+          }
+        }
+        
+        if (match) {
+          return { route: r, params };
+        }
+      }
     }
   }
-  return routes.find((r) => r.path === "*") ?? null;
+
+  const wildcard = routes.find((r) => r.path === "*");
+  return wildcard ? { route: wildcard, params: {} } : null;
 }
 
 export function firstNavPath(routes: AppRoute[]): string {

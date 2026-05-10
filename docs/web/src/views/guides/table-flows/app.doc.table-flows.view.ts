@@ -5,6 +5,10 @@ import viewStyles from "./app.doc.table-flows.view.css?inline";
 
 @AbeyComponent({
   selector: "app-doc-table-flows",
+  route: "table-flows",
+  parent: "/guides",
+  label: "Table Flows",
+  navIconFa: "fa-solid fa-diagram-next",
   template,
   stylesText: [docMarkdownBase, viewStyles],
   providers: [{ token: DOM_CHANNEL_TOKEN, useFactory: DOM_CHANNEL_FACTORY }],

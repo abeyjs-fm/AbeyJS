@@ -5,6 +5,10 @@ import viewStyles from "./app.doc.cli.view.css?inline";
 
 @AbeyComponent({
   selector: "app-doc-cli",
+  route: "cli",
+  parent: "/guides",
+  label: "Cli",
+  navIconFa: "fa-solid fa-terminal",
   template,
   stylesText: [docMarkdownBase, viewStyles],
   providers: [{ token: DOM_CHANNEL_TOKEN, useFactory: DOM_CHANNEL_FACTORY }],

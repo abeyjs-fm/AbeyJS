@@ -5,6 +5,10 @@ import viewStyles from "./app.doc.tables.view.css?inline";
 
 @AbeyComponent({
   selector: "app-doc-tables",
+  route: "tables",
+  parent: "/guides",
+  label: "Tables",
+  navIconFa: "fa-solid fa-table",
   template,
   stylesText: [docMarkdownBase, viewStyles],
   providers: [{ token: DOM_CHANNEL_TOKEN, useFactory: DOM_CHANNEL_FACTORY }],
